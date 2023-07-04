@@ -7,6 +7,7 @@ export default function handler(req, res) {
       name: "Anada Laocharoensombat",
       gerder: "Boy",
       Age: "99 Years old",
+      Location: ""
     });
 
   
