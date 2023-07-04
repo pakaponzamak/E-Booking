@@ -1,7 +1,9 @@
 import Image from "next/image";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import * as React from "react";
+
+const roboto = Roboto({ subsets: ["latin"],weight:['100', '300', '400', '500', '700', '900'] });
 
 
 import StartFireBase from "../../firebase/firebase_conf";
@@ -17,7 +19,7 @@ export default function admin() {
   };
 
   return (
-    <div>
+    <div className={roboto.className}>
       <button
         data-drawer-target="default-sidebar"
         data-drawer-toggle="default-sidebar"

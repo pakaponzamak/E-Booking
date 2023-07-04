@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Inter } from "next/font/google";
+import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "./images/Denso_logo.png";
 import ReactDOM from "react-dom";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { getDatabase, ref, push, } from "firebase/database";
 import { async } from "@firebase/util";
 
 
-const inter = Inter({ subsets: ["latin"] });
+const bai_jamjuree = Bai_Jamjuree({ subsets: ["latin"] });
 
 export default function Home() {
   StartFireBase();
