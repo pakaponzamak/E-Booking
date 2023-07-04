@@ -9,7 +9,7 @@ import { getDatabase, ref, push, } from "firebase/database";
 import { async } from "@firebase/util";
 
 
-const bai_jamjuree = Bai_Jamjuree({ subsets: ["latin"] });
+const bai_jamjuree = Bai_Jamjuree({ subsets: ["latin"],weight:['200', '300', '400', '500', '600', '700'] });
 
 export default function Home() {
   StartFireBase();
