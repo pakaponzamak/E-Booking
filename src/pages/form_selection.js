@@ -25,7 +25,7 @@ export default function selectionPage(){
         <Link href="./tr_course/course_select">
        <button
           type="summit"
-          class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-10 py-2.5 text-center 
+          class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-lg px-10 py-2.5 text-center 
                                 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold"
         >
         คอร์สอบรมวินัยทางการเงิน 
