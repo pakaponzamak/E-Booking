@@ -1,10 +1,46 @@
 import Image from "next/image";
 import { Roboto } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
+import { useState, useEffect } from "react";
+import { getDatabase, ref, push,onValue,off } from "firebase/database";
+import StartFireBase from "../../firebase/firebase_conf";
 
-const roboto = Roboto({ subsets: ["latin"],weight:['100', '300', '400', '500', '700', '900'] });
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+});
 
 export default function admin() {
+  const [users, setUsers] = useState([]);
+  StartFireBase();
+
+  useEffect(() => {
+    const db = getDatabase();
+    const usersRef = ref(db, 'users');
+
+    // Listen for changes in the 'users' reference
+    onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+
+      if (data) {
+        // Convert the object of users into an array
+        const usersArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key]
+        }));
+
+        // Set the users state with the retrieved data
+        setUsers(usersArray);
+      }
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      // Turn off the listener
+      off(usersRef);
+    };
+  }, []);
+
   return (
     <div className={roboto.className}>
       <button
@@ -49,7 +85,9 @@ export default function admin() {
                     width={250}
                     className="mb-1"
                   />
-                  <p className="text-center italic text-bold">Admin Dashboard</p>
+                  <p className="text-center italic text-bold">
+                    Admin Dashboard
+                  </p>
                 </div>
               </a>
             </li>
@@ -72,8 +110,7 @@ export default function admin() {
                 <span class="ml-3">Dashboard</span>
               </a>
             </li>
-            
-            
+
             <li>
               <a
                 href="#"
@@ -95,7 +132,7 @@ export default function admin() {
                 <span class="flex-1 ml-3 whitespace-nowrap">User Data</span>
               </a>
             </li>
-            
+
             <li>
               <a
                 href="./admin_insert"
@@ -145,14 +182,18 @@ export default function admin() {
       <div class="p-4 sm:ml-64">
         <div className="text-center m-5 ">
           <div className="m-10 rounded-3xl bg-red-100 drop-shadow-lg">
-            <h1 className="font-extrabold text-4xl p-2">Users Data</h1>
+            <h1 className="font-extrabold text-4xl p-2">USERS DATA</h1>
             <div>
-              
+            {users.map((user) => (
+        <div key={user.id}>
+          <p>Name: {user.firstName}</p>
+          <p>Employee ID: {user.employeeId}</p>
+        </div>
+      ))}
             </div>
           </div>
         </div>
       </div>
-      
     </div>
   );
 }
