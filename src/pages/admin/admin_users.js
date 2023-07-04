@@ -141,11 +141,14 @@ export default function admin() {
       </aside>
 
       <div class="p-4 sm:ml-64">
-       <div className="text-center">
-        <div>
-            <h1 className="font-extrabold text-4xl">Users Data</h1>
+        <div className="text-center m-5 ">
+          <div className="m-10 rounded-3xl bg-red-100 drop-shadow-lg">
+            <h1 className="font-extrabold text-4xl p-2">Users Data</h1>
+            <div>
+              
+            </div>
+          </div>
         </div>
-       </div>
       </div>
       
     </div>
