@@ -4,7 +4,7 @@ import DensoLogo from "./images/Denso_logo.png";
 import ReactDOM from "react-dom";
 import Link from "next/link";
 import { useState } from "react";
-import StartFireBase from "./firebase/firebase_conf";
+import StartFireBase from "../firebase/firebase_conf";
 import { getDatabase, ref, push, } from "firebase/database";
 import { async } from "@firebase/util";
 

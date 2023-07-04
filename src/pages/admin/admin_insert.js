@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-import StartFireBase from "../firebase/firebase_conf";
+import StartFireBase from "../../firebase/firebase_conf";
 import { getDatabase, ref, push, } from "firebase/database";
 
 export default function admin() {
