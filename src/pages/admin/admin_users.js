@@ -13,7 +13,6 @@ const roboto = Roboto({
 export default function admin() {
   const [users, setUsers] = useState([]);
   StartFireBase();
-  const count = 0;
 
   useEffect(() => {
     const db = getDatabase();
@@ -155,27 +154,7 @@ export default function admin() {
                 <span class="flex-1 ml-3 whitespace-nowrap">Insert Data</span>
               </a>
             </li>
-            <li>
-              <a
-                href="#"
-                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <svg
-                  aria-hidden="true"
-                  class="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-                <span class="flex-1 ml-3 whitespace-nowrap">Sign Up</span>
-              </a>
-            </li>
+
           </ul>
         </div>
       </aside>
@@ -184,11 +163,12 @@ export default function admin() {
         <div className="ml-10">
           <div className="m-10 rounded-3xl bg-red-100 drop-shadow-lg pb-5">
             <h1 className="font-extrabold text-4xl p-2 mx-10 mt-2">USERS</h1>
+
             <table className="ml-10 border-collapse">
               <thead>
                 <tr>
-                  <th className="p-3">Employee ID</th>
-                  <th className="p-3">Name-Surname</th>
+                  <th className="p-3 border bg-slate-300">Employee ID</th>
+                  <th className="p-3 border bg-slate-300">Name - Surname</th>
                 </tr>
               </thead>
               <tbody>
@@ -200,6 +180,7 @@ export default function admin() {
                 ))}
               </tbody>
             </table>
+
           </div>
         </div>
       </div>
