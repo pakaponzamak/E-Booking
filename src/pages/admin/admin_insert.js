@@ -2,11 +2,7 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import * as React from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+
 
 import StartFireBase from "../../firebase/firebase_conf";
 import { getDatabase, ref, push, } from "firebase/database";
