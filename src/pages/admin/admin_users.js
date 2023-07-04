@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Roboto } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import { useState, useEffect } from "react";
-import { getDatabase, ref, push,onValue,off } from "firebase/database";
+import { getDatabase, ref, push, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 
 const roboto = Roboto({
@@ -13,10 +13,11 @@ const roboto = Roboto({
 export default function admin() {
   const [users, setUsers] = useState([]);
   StartFireBase();
+  const count = 0;
 
   useEffect(() => {
     const db = getDatabase();
-    const usersRef = ref(db, 'users');
+    const usersRef = ref(db, "users");
 
     // Listen for changes in the 'users' reference
     onValue(usersRef, (snapshot) => {
@@ -26,7 +27,7 @@ export default function admin() {
         // Convert the object of users into an array
         const usersArray = Object.keys(data).map((key) => ({
           id: key,
-          ...data[key]
+          ...data[key],
         }));
 
         // Set the users state with the retrieved data
@@ -180,17 +181,25 @@ export default function admin() {
       </aside>
 
       <div class="p-4 sm:ml-64">
-        <div className="text-center m-5 ">
-          <div className="m-10 rounded-3xl bg-red-100 drop-shadow-lg">
-            <h1 className="font-extrabold text-4xl p-2">USERS DATA</h1>
-            <div>
-            {users.map((user) => (
-        <div key={user.id}>
-          <p>Name: {user.firstName}</p>
-          <p>Employee ID: {user.employeeId}</p>
-        </div>
-      ))}
-            </div>
+        <div className="ml-10">
+          <div className="m-10 rounded-3xl bg-red-100 drop-shadow-lg pb-5">
+            <h1 className="font-extrabold text-4xl p-2 mx-10 mt-2">USERS</h1>
+            <table className="ml-10 border-collapse">
+              <thead>
+                <tr>
+                  <th className="p-3">Employee ID</th>
+                  <th className="p-3">Name-Surname</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td className="text-center p-1">{user.employeeId}</td>
+                    <td className="text-center p-1">{user.firstName}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
