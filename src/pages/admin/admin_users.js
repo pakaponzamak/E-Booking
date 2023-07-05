@@ -41,6 +41,13 @@ export default function admin() {
     };
   }, []);
 
+  function test(){
+    if(user.checkIn === false)
+    {
+      return (<div>test9999</div>)
+    }
+  }
+
   return (
     <div className={roboto.className}>
       <button
@@ -169,6 +176,7 @@ export default function admin() {
                 <tr>
                   <th className="p-3 border bg-slate-300">Employee ID</th>
                   <th className="p-3 border bg-slate-300">Name - Surname</th>
+                  <th className="p-3 border bg-slate-300">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -176,6 +184,7 @@ export default function admin() {
                   <tr key={user.id}>
                     <td className="text-center p-1">{user.employeeId}</td>
                     <td className="text-center p-1">{user.firstName}</td>
+                    <td className="text-center p-1">{user.checkIn}</td>
                   </tr>
                 ))}
               </tbody>
