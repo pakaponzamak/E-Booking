@@ -5,17 +5,21 @@ import ReactDOM from "react-dom";
 import Link from "next/link";
 import { useState } from "react";
 import StartFireBase from "../firebase/firebase_conf";
-import { getDatabase, ref, push, } from "firebase/database";
-import { async } from "@firebase/util";
+import { getDatabase, ref, push } from "firebase/database";
+import { useRouter } from 'next/router';
+import Router from 'next/router';
 
-
-const bai_jamjuree = Bai_Jamjuree({ subsets: ["latin"],weight:['200', '300', '400', '500', '600', '700'] });
+const bai_jamjuree = Bai_Jamjuree({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700"],
+});
 
 export default function Home() {
   StartFireBase();
   const [firstName, setFirstName] = useState("");
   const [employeeId, setEmployee_id] = useState("");
-  const [checkIn, SetCheckIn] = useState(false);
+  const [checkIn, SetCheckIn] = useState(true);
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,18 +27,19 @@ export default function Home() {
     const data = {
       firstName: firstName,
       employeeId: employeeId,
-      checkIn:checkIn,
+      checkIn: checkIn,
     };
     function delay(time) {
       return new Promise((resolve) => setTimeout(resolve, time));
     }
+    
 
     const db = getDatabase();
-    push(ref(db, "users/"), data)
-    delay(1000).then(() => {
-      console.log(`Inserted ${data} successfully`);
-     // alert(`Inserted ${firstName} successfully`);
-       window.location.href = "./form_selection";
+    push(ref(db, "users/"), data);
+    delay(1000)
+      .then(() => {
+        router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}`);
+        //window.location.href = "./form_selection";
       })
       .catch((error) => {
         console.error("Error inserting data:", error);
@@ -51,7 +56,7 @@ export default function Home() {
         <div className="font-extrabold text-[#D43732] italic">
           DNTH Electronic Form
         </div>
-        <div className="mb-8 font-extrabold text-[#D43732] italicv" >
+        <div className="mb-8 font-extrabold text-[#D43732] italicv">
           (ระบบฟอร์มออนไลน์)
         </div>
         <div>
@@ -80,7 +85,7 @@ export default function Home() {
         </div>
 
         <button
-          type="summit"
+          type="submit"
           class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-14 py-2.5 text-center 
                                 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold"
         >

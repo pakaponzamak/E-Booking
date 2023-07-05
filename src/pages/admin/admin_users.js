@@ -41,10 +41,9 @@ export default function admin() {
     };
   }, []);
 
-  function test(){
-    if(user.checkIn === false)
-    {
-      return (<div>test9999</div>)
+  function test() {
+    if (user.checkIn === false) {
+      return <div>test9999</div>;
     }
   }
 
@@ -161,7 +160,6 @@ export default function admin() {
                 <span class="flex-1 ml-3 whitespace-nowrap">Insert Data</span>
               </a>
             </li>
-
           </ul>
         </div>
       </aside>
@@ -184,12 +182,18 @@ export default function admin() {
                   <tr key={user.id}>
                     <td className="text-center p-1">{user.employeeId}</td>
                     <td className="text-center p-1">{user.firstName}</td>
-                    <td className="text-center p-1">{user.checkIn ? "Checked In" : "Not Checked In"}</td>
+                    <td
+                      className="text-center p-1 text-white"
+                      style={{
+                        backgroundColor: user.checkIn ? "green" : "#D43732",
+                      }}
+                    >
+                      {user.checkIn ? "เช็คอินแล้ว" : "ยังไม่ได้เช็คอิน"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
           </div>
         </div>
       </div>
