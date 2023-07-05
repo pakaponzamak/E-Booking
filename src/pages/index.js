@@ -15,7 +15,7 @@ export default function Home() {
   StartFireBase();
   const [firstName, setFirstName] = useState("");
   const [employeeId, setEmployee_id] = useState("");
-  const [checkIn, SetCheckIn] = useState("false");
+  const [checkIn, SetCheckIn] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

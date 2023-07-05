@@ -184,7 +184,7 @@ export default function admin() {
                   <tr key={user.id}>
                     <td className="text-center p-1">{user.employeeId}</td>
                     <td className="text-center p-1">{user.firstName}</td>
-                    <td className="text-center p-1">{user.checkIn}</td>
+                    <td className="text-center p-1">{user.checkIn ? "Checked In" : "Not Checked In"}</td>
                   </tr>
                 ))}
               </tbody>
