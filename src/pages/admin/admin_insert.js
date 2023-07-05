@@ -10,13 +10,15 @@ import StartFireBase from "../../firebase/firebase_conf";
 import { getDatabase, ref, push, } from "firebase/database";
 
 export default function admin() {
-  const [type, setType] = React.useState("");
-  const [healtCare, setHealthCare] = React.useState(1);
-  const [training, setTraining] = React.useState(2);
-
-  const handleChange = (event) => {
-    setType(event.target.value);
-  };
+  
+  function myFunction() {
+    var x = document.getElementById("myDIV");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
 
   return (
     <div className={roboto.className}>
