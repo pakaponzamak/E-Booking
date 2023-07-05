@@ -5,11 +5,12 @@ import * as React from "react";
 
 const roboto = Roboto({ subsets: ["latin"],weight:['100', '300', '400', '500', '700', '900'] });
 
-
-import StartFireBase from "../../firebase/firebase_conf";
 import { getDatabase, ref, push, } from "firebase/database";
+import startFireBase from "../../firebase/firebase_conf";
 
 export default function admin() {
+
+  startFireBase();
   
   function myFunction() {
     var x = document.getElementById("myDIV");

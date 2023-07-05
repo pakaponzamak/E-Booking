@@ -15,6 +15,7 @@ export default function Home() {
   StartFireBase();
   const [firstName, setFirstName] = useState("");
   const [employeeId, setEmployee_id] = useState("");
+  const [checkIn, SetCheckIn] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,6 +23,7 @@ export default function Home() {
     const data = {
       firstName: firstName,
       employeeId: employeeId,
+      checkIn:checkIn,
     };
     function delay(time) {
       return new Promise((resolve) => setTimeout(resolve, time));
@@ -30,7 +32,7 @@ export default function Home() {
     const db = getDatabase();
     push(ref(db, "users/"), data)
     delay(1000).then(() => {
-      console.log(`Inserted ${firstName} successfully`);
+      console.log(`Inserted ${data} successfully`);
      // alert(`Inserted ${firstName} successfully`);
        window.location.href = "./form_selection";
       })
