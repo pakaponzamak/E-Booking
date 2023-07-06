@@ -17,23 +17,19 @@ export default function admin() {
   useEffect(() => {
     const db = getDatabase();
     const usersRef = ref(db, "users");
-
     // Listen for changes in the 'users' reference
     onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
-
       if (data) {
         // Convert the object of users into an array
         const usersArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
         }));
-
         // Set the users state with the retrieved data
         setUsers(usersArray);
       }
     });
-
     // Clean up the listener when the component unmounts
     return () => {
       // Turn off the listener
@@ -41,11 +37,6 @@ export default function admin() {
     };
   }, []);
 
-  function test() {
-    if (user.checkIn === false) {
-      return <div>test9999</div>;
-    }
-  }
 
   return (
     <div className={roboto.className}>

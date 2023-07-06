@@ -1,9 +1,17 @@
 import Image from "next/image";
 import DensoLogo from "../images/Denso_logo.png";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function option_select() {
+  const router = useRouter();
+  const { firstName, employeeId } = router.query;
   return (
+    <div>
+      <div>
+        <p className="mr-3 mt-2 flex justify-end text-sm">ชื่อ : {firstName}</p>
+        <p className="mr-3 flex justify-end text-sm">ID : {employeeId}</p>
+      </div>
     <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14 ">
       <div>
         <Image src={DensoLogo} alt="Denso logo" width={350} className="mb-4" />
@@ -30,7 +38,7 @@ export default function option_select() {
               />
             </svg>
           </div>
-         <Link href="./confirmation">
+         <Link href={`./confirmation?firstName=${firstName}&employeeId=${employeeId}`}>
           <div className=" inline-block p-4 px-5 text-center w-40 h-50 bg-slate-300 rounded-3xl">
             รายการจอง
             <svg
@@ -50,6 +58,7 @@ export default function option_select() {
           </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 }

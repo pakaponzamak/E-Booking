@@ -14,7 +14,7 @@ export default function selectionPage() {
            <p className="mr-3 flex justify-end text-sm">ID : {employeeId}</p>
       </div>
       
-      <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14">
+      <div className="flex justify-center item-center m-7 drop-shadow-lg mt-8">
       <div className="place-content-center text-center p-10">
         <Image
           src={DensoLogo}
@@ -28,7 +28,7 @@ export default function selectionPage() {
         <div className="mb-8 font-extrabold text-[#D43732] italic">
           (ระบบฟอร์มออนไลน์)
         </div>
-        <Link href="./health_care/option_select">
+        <Link href={`./health_care/option_select?firstName=${firstName}&employeeId=${employeeId}`}>
           <button
             type="summit"
             class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-lg px-10 py-2.5 text-center 
