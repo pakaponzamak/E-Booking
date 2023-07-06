@@ -61,6 +61,7 @@ function performComparison(idParameter,nameParameter) {
     if (idParameter === anotherEmployeeId && nameParameter === anotherName){
       console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
       //updates[newPostKey] = postData;
+      alert("เช็คอินเรียบร้อยแล้ว")
       return update(ref(db), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);
