@@ -1,4 +1,4 @@
-import { getDatabase, ref,onValue,off,child, push, update } from "firebase/database";
+import { getDatabase, ref,onValue,off,child, push, update,set } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -49,17 +49,18 @@ function performComparison(idParameter,nameParameter) {
     const anotherName = firstName
     
     const db = getDatabase();
-    const newPostKey = push(child(ref(db), 'users')).key;
+    
     const updates = {};
     const postData = {
         firstName: nameParameter,
         employeeId: idParameter,
         checkIn: true
     }
+    const newPostKey = update(ref(db, "users/" + employeeId), postData);
 
     if (idParameter === anotherEmployeeId && nameParameter === anotherName){
       console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
-      updates['/users/' + newPostKey] = postData;
+      //updates[newPostKey] = postData;
       return update(ref(db), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);

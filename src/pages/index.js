@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import Link from "next/link";
 import { useState } from "react";
 import StartFireBase from "../firebase/firebase_conf";
-import { getDatabase, ref, push } from "firebase/database";
+import { getDatabase, ref, push,set } from "firebase/database";
 import { useRouter } from 'next/router';
 import Router from 'next/router';
 
@@ -33,11 +33,12 @@ export default function Home() {
       return new Promise((resolve) => setTimeout(resolve, time));
     }
     
-
     const db = getDatabase();
-    push(ref(db, "users/"), data);
+    set(ref(db, "users/" + employeeId), data);
+    //db.ref("users/").push(data)
     delay(1000)
       .then(() => {
+        //console.log(key)
         router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}`);
         //window.location.href = "./form_selection";
       })
