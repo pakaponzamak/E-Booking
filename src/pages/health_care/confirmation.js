@@ -52,8 +52,8 @@ function performComparison(idParameter,nameParameter) {
     
     const updates = {};
     const postData = {
-        firstName: anotherEmployeeId,
-        employeeId: anotherName,
+        firstName: anotherName,
+        employeeId: anotherEmployeeId,
         checkIn: true
     }
     const newPostKey = update(ref(db, "users/" + anotherEmployeeId ), postData);
