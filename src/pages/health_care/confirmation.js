@@ -1,4 +1,4 @@
-import { getDatabase, ref, push, get,update,query, orderByChild,equalTo,child,onValue,off } from "firebase/database";
+import { getDatabase, ref,onValue,off,child, push, update } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -34,8 +34,8 @@ export default function confirmation() {
 const confirmHandler = async (e) => {
     //alert(employeeId);
     {users.map((user) => (
-        performComparison(user.employeeId)
-        
+        performComparison(user.employeeId,user.firstName),
+        user.checkIn = true
         ))}
     
 };
@@ -44,11 +44,23 @@ const cancelHandler = async (e) => {
     alert("Cancel");
 }
 
-function performComparison(idParameter) {
+function performComparison(idParameter,nameParameter) {
     const anotherEmployeeId = employeeId; 
+    const anotherName = firstName
+    
+    const db = getDatabase();
+    const newPostKey = push(child(ref(db), 'users')).key;
+    const updates = {};
+    const postData = {
+        firstName: nameParameter,
+        employeeId: idParameter,
+        checkIn: true
+    }
 
-    if (idParameter === anotherEmployeeId){
-      console.log("Match found for employeeId:", employeeId);
+    if (idParameter === anotherEmployeeId && nameParameter === anotherName){
+      console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
+      updates['/users/' + newPostKey] = postData;
+      return update(ref(db), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);
     }
@@ -61,7 +73,7 @@ function performComparison(idParameter) {
       <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14 ">
         <div>
           <div className="font-extrabold text-3xl mt-10 text-center">ประวัติการจอง</div>
-          <div className="border text-center p-2 mt-10 text-xl">
+          <div className="border text-center p-3 mt-10 text-xl rounded-3xl">
             <div className="">จองคิวแพทย์(ทดลอง)</div>
             <div>
               {" "}
