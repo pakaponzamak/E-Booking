@@ -56,7 +56,7 @@ function performComparison(idParameter,nameParameter) {
         employeeId: idParameter,
         checkIn: true
     }
-    const newPostKey = update(ref(db, "users/" + employeeId), postData);
+    const newPostKey = update(ref(db, "users/" + anotherEmployeeId ), postData);
 
     if (idParameter === anotherEmployeeId && nameParameter === anotherName){
       console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
