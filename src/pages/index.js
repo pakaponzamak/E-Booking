@@ -3,9 +3,9 @@ import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "./images/Denso_logo.png";
 import ReactDOM from "react-dom";
 import Link from "next/link";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import StartFireBase from "../firebase/firebase_conf";
-import { getDatabase, ref, push,set } from "firebase/database";
+import { getDatabase, ref, push,set,onValue,off } from "firebase/database";
 import { useRouter } from 'next/router';
 import Router from 'next/router';
 
@@ -16,35 +16,92 @@ const bai_jamjuree = Bai_Jamjuree({
 
 export default function Home() {
   StartFireBase();
+  const [users, setUsers] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [employeeId, setEmployee_id] = useState("");
-  const [checkIn, SetCheckIn] = useState(false);
+  //const [checkIn, SetCheckIn] = useState(false);
   const router = useRouter()
+  var checkIn = false
+  useEffect(() => {
+    const db = getDatabase();
+    const usersRef = ref(db, "users");
+    // Listen for changes in the 'users' reference
+    onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Convert the object of users into an array
+        const usersArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        // Set the users state with the retrieved data
+        setUsers(usersArray);
+      }
+    });
+    // Clean up the listener when the component unmounts
+    return () => {
+      // Turn off the listener
+      off(usersRef);
+    };
+  }, []);
+
+const userIsNotCheckHandler = async (e) => {
+  //console.log("userIsNotCheckHandler")
+  
+  for (const user of users) {
+    if (checkUser(user.employeeId, user.firstName, user.checkIn)) {
+      
+      break; // Exit the loop when a matching user is found
+    }
+  }
+        
+} 
+function checkUser(idParameter,nameParameter,checkinParameter) {
+  console.log("checkUser")
+    const emp_id = employeeId
+    const name = firstName
+    let numberForCheck = 0 //If have data then not enter else if Statement
+    if(idParameter === emp_id && nameParameter === name) {
+       let checkIn = checkinParameter
+       numberForCheck = 1;
+       console.log("Have it yeahhhh",checkIn)
+       router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);
+       return true;
+    }
+    else if(numberForCheck !== 0) {
+      console.log("New one here")
+      //let checkIn = false
+      const data = {
+        firstName: firstName,
+        employeeId: employeeId,
+        checkIn: checkinParameter, //Problem
+      };
+  
+      function delay(time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+      }
+      
+      const db = getDatabase();
+      set(ref(db, "users/" + employeeId), data);
+      //db.ref("users/").push(data)
+      delay(1000)
+        .then(() => {
+          //console.log(key)
+          router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);
+          //window.location.href = "./form_selection";
+        })
+        .catch((error) => {
+          console.error("Error inserting data:", error);
+        });
+    }
+}
+
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const data = {
-      firstName: firstName,
-      employeeId: employeeId,
-      checkIn: checkIn,
-    };
-    function delay(time) {
-      return new Promise((resolve) => setTimeout(resolve, time));
-    }
-    
-    const db = getDatabase();
-    set(ref(db, "users/" + employeeId), data);
-    //db.ref("users/").push(data)
-    delay(1000)
-      .then(() => {
-        //console.log(key)
-        router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}`);
-        //window.location.href = "./form_selection";
-      })
-      .catch((error) => {
-        console.error("Error inserting data:", error);
-      });
+    userIsNotCheckHandler();
   };
 
   return (

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 
 export default function selectionPage() {
   const router = useRouter();
-  const { firstName, employeeId } = router.query;
+  const { firstName, employeeId,checkIn } = router.query;
   return (
     
     <div>
@@ -28,7 +28,7 @@ export default function selectionPage() {
         <div className="mb-8 font-extrabold text-[#D43732] italic">
           (ระบบฟอร์มออนไลน์)
         </div>
-        <Link href={`./health_care/option_select?firstName=${firstName}&employeeId=${employeeId}`}>
+        <Link href={`./health_care/option_select?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>
           <button
             type="summit"
             class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-lg px-10 py-2.5 text-center 

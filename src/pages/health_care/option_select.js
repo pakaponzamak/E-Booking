@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 export default function option_select() {
   const router = useRouter();
-  const { firstName, employeeId } = router.query;
+  const { firstName, employeeId,checkIn } = router.query;
   return (
     <div>
       <div>
@@ -38,7 +38,7 @@ export default function option_select() {
               />
             </svg>
           </div>
-         <Link href={`./confirmation?firstName=${firstName}&employeeId=${employeeId}`}>
+         <Link href={`./confirmation?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>
           <div className=" inline-block p-4 px-5 text-center w-40 h-50 bg-slate-300 rounded-3xl">
             รายการจอง
             <svg

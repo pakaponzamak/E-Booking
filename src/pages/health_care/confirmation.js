@@ -1,14 +1,15 @@
-import { getDatabase, ref,onValue,off,child, push, update,se,remove } from "firebase/database";
+import { getDatabase, ref,onValue,off,child, push, update,remove } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import { redirect } from 'next/navigation';
 
 export default function confirmation() {
   StartFireBase();
   const router = useRouter();
   const { firstName, employeeId } = router.query;
   const [users, setUsers] = useState([]);
-  
+
   useEffect(() => {
     const db = getDatabase();
     const usersRef = ref(db, "users");
@@ -31,13 +32,15 @@ export default function confirmation() {
       off(usersRef);
     };
   }, []);
+  console.log("Match found for employeeId:", employeeId,firstName);
 const confirmHandler = async (e) => {
     var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`)
     if(cnf) {
     {users.map((user) => (
-        performConfirm(user.employeeId,user.firstName),
+        performConfirm(user.employeeId,user.firstName,user.checkIn),
         user.checkIn = true
-        ))}}
+        ))} 
+    }
     
 };
 
@@ -47,7 +50,9 @@ const cancelHandler = async (e) => {
     {users.map((user) => (
         performDelete(user.employeeId,user.firstName)
         //user.checkIn = true
-        ))}}
+        ))}
+        router.push(`../`);
+    }
 }
 
 function performDelete(idParameter,nameParameter) {
@@ -73,12 +78,10 @@ function performDelete(idParameter,nameParameter) {
     }
 }
 
-
-
-function performConfirm(idParameter,nameParameter) {
+function performConfirm(idParameter,nameParameter,checkinParameter) {
     const anotherEmployeeId = employeeId; 
     const anotherName = firstName
-    
+
     const db = getDatabase();
     
     const updates = {};
@@ -90,9 +93,9 @@ function performConfirm(idParameter,nameParameter) {
     const newPostKey = update(ref(db, "users/" + anotherEmployeeId ), postData);
 
     if (idParameter === anotherEmployeeId && nameParameter === anotherName){
-      console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
+      console.log("Match found for employeeId:", employeeId,firstName,checkinParameter);
       //updates[newPostKey] = postData;
-      //alert("เช็คอินเรียบร้อยแล้ว")
+      //alert("เช็คอินเรียบร้อยแล้ว")           
       return update(ref(db), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);
@@ -128,6 +131,7 @@ function performConfirm(idParameter,nameParameter) {
               </button>
               <button
                 onClick={confirmHandler}
+                id="confirm"
                 class="text-white bg-[#16a34a] rounded-full text-xl  text-center 
                                 mr-2 mb-2  font-bold px-5 py-3"
               >
