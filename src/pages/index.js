@@ -21,7 +21,6 @@ export default function Home() {
   const [employeeId, setEmployee_id] = useState("");
   //const [checkIn, SetCheckIn] = useState(false);
   const router = useRouter()
-  var checkIn = false
   useEffect(() => {
     const db = getDatabase();
     const usersRef = ref(db, "users");
@@ -57,6 +56,7 @@ const userIsNotCheckHandler = async (e) => {
   if (!userFound) {
     // Execute the else statement
     // ...
+    var checkIn = false
     console.log("Insert New One")
       //let checkIn = false
       const data = {
