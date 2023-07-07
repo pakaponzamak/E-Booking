@@ -21,7 +21,7 @@ export default function Home() {
   const [employeeId, setEmployee_id] = useState("");
   //const [checkIn, SetCheckIn] = useState(false);
   const router = useRouter()
-  //var checkIn = false
+  var checkIn = false
   useEffect(() => {
     const db = getDatabase();
     const usersRef = ref(db, "users");
@@ -70,9 +70,9 @@ const userIsNotCheckHandler = async (e) => {
       }
       
       const db = getDatabase();
-      set(ref(db, "users/" + employeeId), data);
+      set(ref(db, "users/" + employeeId), data)
       //db.ref("users/").push(data)
-      delay(1000)
+      //delay(1000)
         .then(() => {
           //console.log(key)
           router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);
