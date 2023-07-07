@@ -1,4 +1,4 @@
-import { getDatabase, ref,onValue,off,child, push, update,set } from "firebase/database";
+import { getDatabase, ref,onValue,off,child, push, update,se,remove } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
@@ -32,19 +32,50 @@ export default function confirmation() {
     };
   }, []);
 const confirmHandler = async (e) => {
-    //alert(employeeId);
+    var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`)
+    if(cnf) {
     {users.map((user) => (
-        performComparison(user.employeeId,user.firstName),
+        performConfirm(user.employeeId,user.firstName),
         user.checkIn = true
-        ))}
+        ))}}
     
 };
 
 const cancelHandler = async (e) => {
-    alert("Cancel");
+    var cnf = confirm(`ต้องการจะ "ยกเลิก" การจองหรือไม่`)
+    if (cnf){
+    {users.map((user) => (
+        performDelete(user.employeeId,user.firstName)
+        //user.checkIn = true
+        ))}}
 }
 
-function performComparison(idParameter,nameParameter) {
+function performDelete(idParameter,nameParameter) {
+    const anotherEmployeeId = employeeId; 
+    const anotherName = firstName
+    
+    const db = getDatabase();
+    
+    const updates = {};
+    const postData = {
+        firstName: anotherName,
+        employeeId: anotherEmployeeId,
+        checkIn: true
+    }
+    const newPostKey = remove(ref(db, "users/" + anotherEmployeeId ), postData);
+
+    if (idParameter === anotherEmployeeId && nameParameter === anotherName){
+      console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
+      //updates[newPostKey] = postData;
+      return remove(ref(db), updates);
+    } else {
+      console.log("No match found for employeeId:", employeeId);
+    }
+}
+
+
+
+function performConfirm(idParameter,nameParameter) {
     const anotherEmployeeId = employeeId; 
     const anotherName = firstName
     
@@ -61,7 +92,7 @@ function performComparison(idParameter,nameParameter) {
     if (idParameter === anotherEmployeeId && nameParameter === anotherName){
       console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
       //updates[newPostKey] = postData;
-      alert("เช็คอินเรียบร้อยแล้ว")
+      //alert("เช็คอินเรียบร้อยแล้ว")
       return update(ref(db), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);
