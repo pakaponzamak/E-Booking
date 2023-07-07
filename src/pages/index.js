@@ -21,7 +21,7 @@ export default function Home() {
   const [employeeId, setEmployee_id] = useState("");
   //const [checkIn, SetCheckIn] = useState(false);
   const router = useRouter()
-  var checkIn = false
+  //var checkIn = false
   useEffect(() => {
     const db = getDatabase();
     const usersRef = ref(db, "users");
@@ -47,34 +47,22 @@ export default function Home() {
 
 const userIsNotCheckHandler = async (e) => {
   //console.log("userIsNotCheckHandler")
-  
+  let userFound = false;
   for (const user of users) {
     if (checkUser(user.employeeId, user.firstName, user.checkIn)) {
-      
+      userFound = true;
       break; // Exit the loop when a matching user is found
     }
   }
-        
-} 
-function checkUser(idParameter,nameParameter,checkinParameter) {
-  console.log("checkUser")
-    const emp_id = employeeId
-    const name = firstName
-    let numberForCheck = 0 //If have data then not enter else if Statement
-    if(idParameter === emp_id && nameParameter === name) {
-       let checkIn = checkinParameter
-       numberForCheck = 1;
-       console.log("Have it yeahhhh",checkIn)
-       router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);
-       return true;
-    }
-    else if(numberForCheck !== 0) {
-      console.log("New one here")
+  if (!userFound) {
+    // Execute the else statement
+    // ...
+    console.log("Insert New One")
       //let checkIn = false
       const data = {
         firstName: firstName,
         employeeId: employeeId,
-        checkIn: checkinParameter, //Problem
+        checkIn: false, //Problem
       };
   
       function delay(time) {
@@ -93,7 +81,23 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
         .catch((error) => {
           console.error("Error inserting data:", error);
         });
+  }
+        
+} 
+function checkUser(idParameter,nameParameter,checkinParameter) {
+  
+    const emp_id = employeeId
+    const name = firstName
+    let numberForCheck = 0 //If have data then not enter else if Statement
+    console.log(numberForCheck)
+    if(idParameter === emp_id && nameParameter === name) {
+       let checkIn = checkinParameter
+       numberForCheck = 1;
+       console.log("Have it yeahhhh",checkIn)
+       router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);
+       return true;
     }
+   
 }
 
 
