@@ -67,7 +67,7 @@ function performDelete(idParameter,nameParameter) {
     if (idParameter === anotherEmployeeId && nameParameter === anotherName){
       console.log("Match found for employeeId:", employeeId,firstName,newPostKey);
       //updates[newPostKey] = postData;
-      return remove(ref(db), updates);
+      return remove(ref(db, "users/" + anotherEmployeeId), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);
     }
