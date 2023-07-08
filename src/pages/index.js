@@ -91,11 +91,13 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
     let numberForCheck = 0 //If have data then not enter else if Statement
     console.log(numberForCheck)
     if(idParameter === emp_id && nameParameter === name) {
+      
        let checkIn = checkinParameter
        numberForCheck = 1;
        console.log("Have it yeahhhh",checkIn)
        router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);
        return true;
+      
     }
    
 }

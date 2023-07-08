@@ -7,10 +7,12 @@ import { redirect } from 'next/navigation';
 export default function confirmation() {
   StartFireBase();
   const router = useRouter();
-  const { firstName, employeeId } = router.query;
+  const { firstName, employeeId,checkIn } = router.query;
   const [users, setUsers] = useState([]);
+  let ifTrue;
 
   useEffect(() => {
+
     const db = getDatabase();
     const usersRef = ref(db, "users");
     // Listen for changes in the 'users' reference
@@ -33,6 +35,7 @@ export default function confirmation() {
     };
   }, []);
   console.log("Match found for employeeId:", employeeId,firstName);
+
 const confirmHandler = async (e) => {
     var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`)
     if(cnf) {
@@ -81,6 +84,7 @@ function performDelete(idParameter,nameParameter) {
 function performConfirm(idParameter,nameParameter,checkinParameter) {
     const anotherEmployeeId = employeeId; 
     const anotherName = firstName
+    const ifTrue = checkinParameter
 
     const db = getDatabase();
     
@@ -95,12 +99,14 @@ function performConfirm(idParameter,nameParameter,checkinParameter) {
     if (idParameter === anotherEmployeeId && nameParameter === anotherName){
       console.log("Match found for employeeId:", employeeId,firstName,checkinParameter);
       //updates[newPostKey] = postData;
-      //alert("เช็คอินเรียบร้อยแล้ว")           
+      //alert("เช็คอินเรียบร้อยแล้ว")    
+      
       return update(ref(db), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);
     }
 }
+
 
 
 
@@ -131,7 +137,7 @@ function performConfirm(idParameter,nameParameter,checkinParameter) {
               </button>
               <button
                 onClick={confirmHandler}
-                id="confirm"
+                id="confirm-btn"
                 class="text-white bg-[#16a34a] rounded-full text-xl  text-center 
                                 mr-2 mb-2  font-bold px-5 py-3"
               >

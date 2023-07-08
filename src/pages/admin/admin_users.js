@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Roboto } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import { useState, useEffect } from "react";
-import { getDatabase, ref, push, onValue, off } from "firebase/database";
+import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 
 const roboto = Roboto({
@@ -12,6 +12,11 @@ const roboto = Roboto({
 
 export default function admin() {
   const [users, setUsers] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [userToUpdate, setUserToUpdate] = useState(null);
+  const [firstName, setFirstName] = useState("");
+  const [employeeId, setEmployee_id] = useState("");
+
   StartFireBase();
 
   useEffect(() => {
@@ -36,8 +41,41 @@ export default function admin() {
       off(usersRef);
     };
   }, []);
+  function deleteSingleUserHandler(user) {
+    // Access the user object and perform actions
 
+    console.log("Delete Button clicked for user:", user);
+    const db = getDatabase();
+    if (
+      user.id !== "!!Do no delete!!" &&
+      user.employeeId !== "!!`~Do no delete~`!!"
+    ) {
+      var cnf = confirm(`ต้องการจะ "ลบ" ข้อมูลหรือไม่`);
+      if (cnf) {
+        remove(ref(db, "users/" + user.id));
+      }
+    } else {
+      alert("Cannot perform this action");
+    }
+    // Other actions...
+  }
 
+  const toggleForm = (user) => {
+    setShowForm(user);
+  };
+
+  function updateSingleUserHandler(user) {
+    // Access the user object and perform actions
+    console.log("Update Button clicked for user:", user);
+    if (
+      user.id !== "!!Do no delete!!" &&
+      user.employeeId !== "!!`~Do no delete~`!!"
+    ) {
+    } else {
+      alert("Cannot perform this action");
+    }
+    // Other actions...
+  }
 
   return (
     <div className={roboto.className}>
@@ -157,30 +195,125 @@ export default function admin() {
       </aside>
 
       <div class="p-4 sm:ml-64">
-        <div className="ml-10">
-          <div className="m-10 rounded-3xl bg-red-100 drop-shadow-lg pb-5">
+        <div className="ml-5">
+          <div className="m-1 rounded-3xl bg-red-100 drop-shadow-lg pb-5">
             <h1 className="font-extrabold text-4xl p-2 mx-10 mt-2">USERS</h1>
 
-            <table className="ml-10 border-collapse">
+            <table className="ml-10 border-collapse p-10">
               <thead>
                 <tr>
-                  <th className="p-3 border bg-slate-300">Employee ID</th>
-                  <th className="p-3 border bg-slate-300">Name - Surname</th>
-                  <th className="p-3 border bg-slate-300">Status</th>
+                  <th className="px-5 border bg-slate-300">Employee ID</th>
+                  <th className="px-5 border bg-slate-300">Name - Surname</th>
+                  <th className="px-5 border bg-slate-300">Status</th>
+                  <th className="px-5 border bg-slate-300">Time</th>
+                  <th className="px-5 border bg-slate-300">Plant</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user.id}>
-                    <td className="text-center p-1">{user.employeeId}</td>
-                    <td className="text-center p-1">{user.firstName}</td>
+                  <tr key={user.id} className="border-b border-l border-slate-300">
+                    <td className="text-center p-2 py-4 ">{user.employeeId}</td>
+                    <td className="text-center p-2">{user.firstName}</td>
                     <td
-                      className="text-center p-1 text-white"
+                      className="text-center p-2 text-white"
                       style={{
                         backgroundColor: user.checkIn ? "green" : "#D43732",
                       }}
                     >
                       {user.checkIn ? "เช็คอินแล้ว" : "ยังไม่ได้เช็คอิน"}
+                    </td>
+                    <td className="text-center">-NULL-</td>
+                    <td className="text-center">-NULL-</td>
+                    <td className="">
+                      <button onClick={() => deleteSingleUserHandler(user)}>
+                        <span className="text-center p-2 px-4 ml-2 text-white bg-red-700 rounded-3xl">
+                          Delete
+                        </span>
+                      </button>
+                    </td>
+
+                    <td>
+                      {showForm === user ? (
+                        <form className="flex items-center ml-2">
+                          {
+                            /* Your form content goes here */
+                            <div className="flex flex-1">
+                              <div>
+                                <input
+                                  className="p-2 rounded-full mb-1 w-32"
+                                  placeholder="ชื่อ"
+                                  type="text"
+                                  name="username"
+                                  id="username"
+                                  required="required"
+                                  onChange={(e) => setFirstName(e.target.value)}
+                                ></input>
+                              </div>
+                              <div>
+                                <input
+                                  className="p-2 rounded-full w-32"
+                                  placeholder="รหัสพนักงาน"
+                                  type="text"
+                                  name="employee_id"
+                                  id="employee_id"
+                                  required="required"
+                                  onChange={(e) =>
+                                    setEmployee_id(e.target.value)
+                                  }
+                                ></input>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={updateSingleUserHandler}
+                                className="text-center ml-2 p-1 text-white bg-green-500 rounded-full justify-center"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke-width="1.5"
+                                  stroke="currentColor"
+                                  class="w-6 h-6"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M4.5 12.75l6 6 9-13.5"
+                                  />
+                                </svg>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => toggleForm(false)}
+                                className="text-center ml-2 p-1 text-white bg-red-500 rounded-full justify-center"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke-width="1.5"
+                                  stroke="currentColor"
+                                  class="w-6 h-6"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18L18 6M6 6l12 12"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          }
+                        </form>
+                      ) : (
+                        <button
+                          onClick={() => toggleForm(user)}
+                          className=" text-center p-1 px-3 ml-2 text-white bg-orange-500 rounded-3xl"
+                        >
+                          Update
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -192,3 +325,7 @@ export default function admin() {
     </div>
   );
 }
+
+//<span className="text-center p-1 px-3 ml-2 text-white bg-orange-500 rounded-3xl">
+//Update
+//</span>
