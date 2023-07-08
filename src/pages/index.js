@@ -62,7 +62,8 @@ const userIsNotCheckHandler = async (e) => {
       const data = {
         firstName: firstName,
         employeeId: employeeId,
-        checkIn: false, //Problem
+        time: "N/A",
+        checkIn: false, 
       };
   
       function delay(time) {
