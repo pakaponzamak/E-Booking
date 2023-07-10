@@ -4,6 +4,7 @@ import DensoLogo from "../images/Denso_logo.png";
 import { useState, useEffect } from "react";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
+import { getAuth } from "firebase/auth";
 
 const roboto = Roboto({
   subsets: ["latin"],

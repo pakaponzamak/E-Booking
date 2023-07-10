@@ -63,8 +63,7 @@ export default function confirmation() {
   function fetchCheckInHandler(
     idParameter,
     nameParameter,
-    checkinParameter,
-    btnIdParameter
+    checkinParameter
   ) {
     const anotherEmployeeId = employeeId;
     const anotherName = firstName;
@@ -87,14 +86,17 @@ export default function confirmation() {
     if (cnf) {
       const buttonId = e.target.id;
       // Use the buttonId as needed
-      console.log("Button ID:", buttonId);
-      {
-        users.map(
-          (user) => (
-            performConfirm(user.employeeId, user.firstName, user.checkIn),
-            (user.checkIn = true)
-          )
-        );
+      let userFound = false;
+      for (const user of users) {
+        if (performConfirm(user.employeeId, user.firstName, user.checkIn)) {
+          userFound = true;
+          break; // Exit the loop when a matching user is found
+        }
+      }
+      if(!userFound) {
+       // console.log("No match found for userFound:", userFound);
+       alert("Account Not Found")
+       router.push(`../`);
       }
     }
   };
@@ -144,36 +146,23 @@ export default function confirmation() {
     const anotherEmployeeId = employeeId;
     const anotherName = firstName;
     //const ifTrue = checkinParameter
-
     const db = getDatabase();
-
+    
+    if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
     const updates = {};
     const postData = {
-      firstName: anotherName,
-      employeeId: anotherEmployeeId,
+      firstName: nameParameter,
+      employeeId: idParameter,
       checkIn: true,
     };
     const newPostKey = update(ref(db, "users/" + anotherEmployeeId), postData);
-
-    if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
-      console.log(
-        "Match found for employeeId:",
-        employeeId,
-        firstName,
-        checkinParameter
-      );
-      //updates[newPostKey] = postData;
-      //alert("เช็คอินเรียบร้อยแล้ว")
-
       return update(ref(db), updates);
-    } else {
-      console.log("No match found for employeeId:", employeeId);
-    }
+    } 
   }
 
   return (
     <div>
-      <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14 ">
+      <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14">
         <div>
           <div className="font-extrabold text-3xl mt-10 text-center">
             ประวัติการจอง
