@@ -170,7 +170,7 @@ export default function admin() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-                <span class="flex-1 ml-3 whitespace-nowrap">User Data</span>
+                <span class="flex-1 ml-3 whitespace-nowrap">Health Care Data</span>
               </a>
             </li>
 
@@ -220,7 +220,7 @@ export default function admin() {
                     <td className="text-center p-2 py-4 ">{user.employeeId}</td>
                     <td className="text-center p-2">{user.firstName}</td>
                     
-                    <td className="text-center">-NULL-</td>
+                    <td className="text-center">{user.plant}</td>
                     <td className="text-center">{user.time}</td>
                     <td
                       className="text-center p-2 text-white"

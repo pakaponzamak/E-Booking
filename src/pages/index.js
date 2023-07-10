@@ -21,6 +21,7 @@ export default function Home() {
   const [employeeId, setEmployee_id] = useState("");
   //const [checkIn, SetCheckIn] = useState(false);
   const router = useRouter()
+
   useEffect(() => {
     const db = getDatabase();
     const usersRef = ref(db, "users");
@@ -63,6 +64,7 @@ const userIsNotCheckHandler = async (e) => {
         firstName: firstName,
         employeeId: employeeId,
         time: "N/A",
+        plant: "N/A",
         checkIn: false, 
       };
   
@@ -133,7 +135,7 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
               name="username"
               id="username"
               required="required"
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => setFirstName(e.target.value.toLowerCase())}
             ></input>
           </div>
           <div>
@@ -144,7 +146,7 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
               name="employee_id"
               id="employee_id"
               required="required"
-              onChange={(e) => setEmployee_id(e.target.value)}
+              onChange={(e) => setEmployee_id(e.target.value.toLowerCase())}
             ></input>
           </div>
         </div>
