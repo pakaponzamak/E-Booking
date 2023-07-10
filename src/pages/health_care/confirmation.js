@@ -173,7 +173,7 @@ export default function confirmation() {
           <div className="font-extrabold text-3xl mt-10 text-center">
             ประวัติการจอง
           </div>
-          <div className="border text-center p-3 mt-10 text-xl rounded-3xl bg-slate-200 drop-shadow-3xl">
+          <div className="border text-center p-5 mt-10 text-xl rounded-3xl bg-slate-200 drop-shadow-3xl">
             <div>
               {" "}
               <u className="font-bold">ชื่อ : {name}</u>
@@ -213,19 +213,17 @@ export default function confirmation() {
                 </span>
               )}
             </div>
-            <div className="mt-5">
+            <div className="mt-5 ">
               <button
                 onClick={cancelHandler}
-                class="text-white bg-[#D43732] rounded-full text-xl  text-center 
-                                mr-10 mb-2  font-bold px-5 py-3"
+                className="text-white bg-[#D43732] rounded-full text-xl text-center font-bold px-5 py-3 mr-6 my-2 md:mr-4 md:my-0"
               >
                 ยกเลิก
               </button>
               <button
                 onClick={confirmHandler}
                 id="confirm-btn"
-                class="text-white bg-[#16a34a] rounded-full text-xl  text-center 
-                                mr-2 mb-2  font-bold px-5 py-3"
+                className="text-white bg-[#16a34a] rounded-full text-xl text-center font-bold px-5 py-3 my-2 md:my-0"
               >
                 เช็คอิน
               </button>

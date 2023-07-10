@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Roboto } from "next/font/google";
 import { Kanit } from "next/font/google";
+import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import { useState, useEffect } from "react";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
@@ -16,6 +17,10 @@ const roboto = Roboto({
 const kanit = Kanit({
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
+});
+const bai = Bai_Jamjuree({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "700"],
 });
 
 export default function admin() {
@@ -91,7 +96,7 @@ export default function admin() {
   }
 
   return (
-    <div className={kanit.className}>
+    <div className={bai.className}>
       <button
         data-drawer-target="default-sidebar"
         data-drawer-toggle="default-sidebar"
@@ -134,7 +139,7 @@ export default function admin() {
                     width={250}
                     className="mb-1"
                   />
-                  <p className="text-center italic text-bold">
+                  <p className="text-center italic font-bold">
                     Admin Dashboard
                   </p>
                 </div>
@@ -156,7 +161,7 @@ export default function admin() {
                   <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
                   <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
                 </svg>
-                <span class="ml-3">Dashboard</span>
+                <span class="ml-3 font-medium">Dashboard</span>
               </a>
             </li>
 
@@ -178,7 +183,7 @@ export default function admin() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-                <span class="flex-1 ml-3 whitespace-nowrap">Health Care Data</span>
+                <span class="flex-1 ml-3 whitespace-nowrap font-medium">Health Care Data</span>
               </a>
             </li>
 
@@ -200,17 +205,17 @@ export default function admin() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-                <span class="flex-1 ml-3 whitespace-nowrap">Insert Data</span>
+                <span class="flex-1 ml-3 whitespace-nowrap font-medium">Insert Data</span>
               </a>
             </li>
           </ul>
         </div>
       </aside>
 
-      <div className={`p-4 sm:ml-64 ${kanit.className}`}>
+      <div className={`p-4 sm:ml-64 ${bai.className}`}>
         <div className="ml-5">
           <div className="m-1 rounded-3xl bg-red-100 drop-shadow-lg pb-5">
-            <h1 className="font-bold text-4xl p-2 mx-10 mt-2">USERS</h1>
+            <h1 className="font-extrabold text-4xl p-2 mx-10 mt-2">USERS</h1>
 
             <table className="ml-10 border-collapse p-10">
               <thead>

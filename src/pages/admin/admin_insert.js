@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Roboto } from "next/font/google";
+import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import * as React from "react";
 
@@ -7,6 +8,11 @@ const roboto = Roboto({ subsets: ["latin"],weight:['100', '300', '400', '500', '
 
 import { getDatabase, ref, push, } from "firebase/database";
 import startFireBase from "../../firebase/firebase_conf";
+
+const bai = Bai_Jamjuree({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "700"],
+});
 
 export default function admin() {
 
@@ -22,7 +28,7 @@ export default function admin() {
   }
 
   return (
-    <div className={roboto.className}>
+    <div className={`${bai.className} font-medium`}>
       <button
         data-drawer-target="default-sidebar"
         data-drawer-toggle="default-sidebar"
@@ -109,7 +115,7 @@ export default function admin() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-                <span class="flex-1 ml-3 whitespace-nowrap">User Data</span>
+                <span class="flex-1 ml-3 whitespace-nowrap">Health Care Data</span>
               </a>
             </li>
 
