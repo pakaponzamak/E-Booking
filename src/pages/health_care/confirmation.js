@@ -15,9 +15,9 @@ import { redirect } from "next/navigation";
 import { Bai_Jamjuree } from "next/font/google";
 
 const bai_jamjuree = Bai_Jamjuree({
-    subsets: ["latin"],
-    weight: ["200", "300", "400", "500", "600", "700"],
-  });
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700"],
+});
 
 export default function confirmation() {
   StartFireBase();
@@ -66,11 +66,7 @@ export default function confirmation() {
     }
   };
 
-  function fetchCheckInHandler(
-    idParameter,
-    nameParameter,
-    checkinParameter
-  ) {
+  function fetchCheckInHandler(idParameter, nameParameter, checkinParameter) {
     const anotherEmployeeId = employeeId;
     const anotherName = firstName;
     //const buttonId = e.target.id;
@@ -99,10 +95,10 @@ export default function confirmation() {
           break; // Exit the loop when a matching user is found
         }
       }
-      if(!userFound) {
-       // console.log("No match found for userFound:", userFound);
-       alert("Account Not Found")
-       router.push(`../`);
+      if (!userFound) {
+        // console.log("No match found for userFound:", userFound);
+        alert("Account Not Found");
+        router.push(`../`);
       }
     }
   };
@@ -153,30 +149,33 @@ export default function confirmation() {
     const anotherName = firstName;
     //const ifTrue = checkinParameter
     const db = getDatabase();
-    
+
     if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
-    const updates = {};
-    const postData = {
-      firstName: nameParameter,
-      employeeId: idParameter,
-      checkIn: true,
-    };
-    const newPostKey = update(ref(db, "users/" + anotherEmployeeId), postData);
+      const updates = {};
+      const postData = {
+        firstName: nameParameter,
+        employeeId: idParameter,
+        checkIn: true,
+      };
+      const newPostKey = update(
+        ref(db, "users/" + anotherEmployeeId),
+        postData
+      );
       return update(ref(db), updates);
-    } 
+    }
   }
 
   return (
     <div className={bai_jamjuree.className}>
-      <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14">
+      <div className="flex justify-center item-center m-5 drop-shadow-lg mt-14 my-10">
         <div>
           <div className="font-extrabold text-3xl mt-10 text-center">
             ประวัติการจอง
           </div>
-          <div className="border text-center p-5 mt-10 text-xl rounded-3xl bg-slate-200 drop-shadow-3xl">
+          <div className="border text-center p-10 my-20 mt-10 text-2xl rounded-3xl bg-slate-200 drop-shadow-3xl">
             <div>
               {" "}
-              <u className="font-bold">ชื่อ : {name}</u>
+              <u className="font-extrabold">ชื่อ : {name}</u>
             </div>
             <div>
               {" "}
@@ -213,17 +212,17 @@ export default function confirmation() {
                 </span>
               )}
             </div>
-            <div className="mt-5 ">
+            <div className="mt-5 p-2 flex flex-wrap justify-center space-x-4">
               <button
                 onClick={cancelHandler}
-                className="text-white bg-[#D43732] rounded-full text-xl text-center font-bold px-5 py-3 mr-6 my-2 md:mr-4 md:my-0"
+                className="text-white bg-[#D43732] rounded-full text-xl text-center font-bold px-6 py-3 "
               >
                 ยกเลิก
               </button>
               <button
                 onClick={confirmHandler}
                 id="confirm-btn"
-                className="text-white bg-[#16a34a] rounded-full text-xl text-center font-bold px-5 py-3 my-2 md:my-0"
+                className="text-white bg-[#16a34a] rounded-full text-xl text-center font-bold px-6 py-3 "
               >
                 เช็คอิน
               </button>
