@@ -1,12 +1,19 @@
 import Image from "next/image";
 import { Roboto } from "next/font/google";
+import { Kanit } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import { useState, useEffect } from "react";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import { getAuth } from "firebase/auth";
 
+
 const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+});
+
+const kanit = Kanit({
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
 });
@@ -84,7 +91,7 @@ export default function admin() {
   }
 
   return (
-    <div className={roboto.className}>
+    <div className={kanit.className}>
       <button
         data-drawer-target="default-sidebar"
         data-drawer-toggle="default-sidebar"
@@ -200,10 +207,10 @@ export default function admin() {
         </div>
       </aside>
 
-      <div class="p-4 sm:ml-64 ">
+      <div className={`p-4 sm:ml-64 ${kanit.className}`}>
         <div className="ml-5">
           <div className="m-1 rounded-3xl bg-red-100 drop-shadow-lg pb-5">
-            <h1 className="font-extrabold text-4xl p-2 mx-10 mt-2">USERS</h1>
+            <h1 className="font-bold text-4xl p-2 mx-10 mt-2">USERS</h1>
 
             <table className="ml-10 border-collapse p-10">
               <thead>

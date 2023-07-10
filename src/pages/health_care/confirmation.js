@@ -12,6 +12,12 @@ import StartFireBase from "../../firebase/firebase_conf";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
+import { Bai_Jamjuree } from "next/font/google";
+
+const bai_jamjuree = Bai_Jamjuree({
+    subsets: ["latin"],
+    weight: ["200", "300", "400", "500", "600", "700"],
+  });
 
 export default function confirmation() {
   StartFireBase();
@@ -161,13 +167,13 @@ export default function confirmation() {
   }
 
   return (
-    <div>
+    <div className={bai_jamjuree.className}>
       <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14">
         <div>
           <div className="font-extrabold text-3xl mt-10 text-center">
             ประวัติการจอง
           </div>
-          <div className="border text-center p-3 mt-10 text-xl rounded-3xl">
+          <div className="border text-center p-3 mt-10 text-xl rounded-3xl bg-slate-200 drop-shadow-3xl">
             <div>
               {" "}
               <u className="font-bold">ชื่อ : {name}</u>
@@ -189,7 +195,7 @@ export default function confirmation() {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="currentColor"
-                    className="w-12 h-12"
+                    className="w-10 h-10"
                   >
                     <path
                       strokeLinecap="round"

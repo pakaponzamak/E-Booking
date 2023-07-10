@@ -114,7 +114,7 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
   };
 
   return (
-    <main className="flex justify-center item-center m-7 drop-shadow-lg mt-14 ">
+    <main className={`flex justify-center items-center m-7 drop-shadow-lg mt-14 ${bai_jamjuree.className}`}>
       <form
         className="place-content-center text-center p-10 "
         onSubmit={handleSubmit}

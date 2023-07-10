@@ -2,12 +2,18 @@ import Image from "next/image";
 import DensoLogo from "../images/Denso_logo.png";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Bai_Jamjuree } from "next/font/google";
+
+const bai_jamjuree = Bai_Jamjuree({
+    subsets: ["latin"],
+    weight: ["200", "300", "400", "500", "600", "700"],
+  });
 
 export default function option_select() {
   const router = useRouter();
   const { firstName, employeeId,checkIn } = router.query;
   return (
-    <div>
+    <div className={bai_jamjuree.className}>
       <div>
         <p className="mr-3 mt-2 flex justify-end text-sm">ชื่อ : {firstName}</p>
         <p className="mr-3 flex justify-end text-sm">ID : {employeeId}</p>
