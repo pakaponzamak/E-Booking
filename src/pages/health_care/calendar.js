@@ -106,13 +106,13 @@ export default function Calendar() {
         ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white bg-red-600 hover:bg-red-700"
         : isClickedDay
         ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-        : "text-right p-2 w-10 h-10";
+        : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-200 ";
 
     const dayElement = (
       <div key={i} className="flex-none ">
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col hover:bg-blue-100 bg-slate-200`}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col `}
         >
           <div className="text-center">{i}</div>
         </button>
