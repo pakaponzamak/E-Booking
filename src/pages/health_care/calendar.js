@@ -188,7 +188,7 @@ export default function Calendar() {
             />
           </svg>
         </button>
-        <div className="flex text-center justify-center gap-3">{days}</div>
+        <div className="flex text-center justify-center gap-2">{days}</div>
         <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
