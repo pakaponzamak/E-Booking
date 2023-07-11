@@ -12,6 +12,7 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
+  const [buttonClass, setButtonClass] = useState("border-2 text-right p-2 w-10 h-10");
   const scrollRef = useRef(null);
   StartFireBase();
   const router = useRouter();
@@ -77,41 +78,43 @@ export default function Calendar() {
   const currentYear = currentDate.getFullYear();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
+  const today = new Date();
+  const todayDate = today.getDate();
+  
   const days = [];
   for (let i = startIndex; i < startIndex + 7; i++) {
     if (i > daysInMonth) break;
     const date = new Date(currentYear, currentMonth, i);
-    const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
-    const isCurrentMonth =
-      currentMonth === date.getMonth() && currentYear === date.getFullYear();
-    const isCurrentDate = isCurrentMonth && i === currentDate.getDate();
+    const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
+    const firstLetterOfDay = dayOfWeek.charAt(0);
+    const isCurrentDate = i === todayDate;
     const isClickedDay = i === clickedDay;
-
-    const buttonClass = isCurrentDate
-      ? "border rounded-3xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600"
+  
+    const dayButtonClass = isCurrentDate && i === todayDate
+      ? "border rounded-3xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600 text-white"
       : isClickedDay
-      ? "border rounded-3xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600"
+      ? "border rounded-3xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
       : "border-2 text-right p-2 w-10 h-10";
-
+  
     const dayElement = (
       <div key={i} className="flex-none">
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${buttonClass} rounded-3xl text-center justify-center items-center flex flex-col hover:bg-blue-100`}
+          className={`${dayButtonClass} rounded-3xl text-center justify-center items-center flex flex-col hover:bg-blue-100`}
         >
           <div className="text-center">{i}</div>
         </button>
       </div>
     );
-
+  
     days.push(dayElement);
   }
+  
 
   return (
-    <main className="m-3 col-span-5">
+    <main className={`m-3 col-span-5 ${bai_jamjuree.className}`}>
          <div className="mb-5">
-        <p className="mr-3  flex justify-end text-sm">ชื่อ : {firstName}</p>
-        <p className="mr-3 flex justify-end text-sm">ID : {employeeId}</p>
+        <p className="mr-3  flex justify-end text-sm">ชื่อ : {firstName} ID : {employeeId}</p>
       </div>
       <div className="flex justify-between mb-4">
         <button onClick={previousMonth}>
