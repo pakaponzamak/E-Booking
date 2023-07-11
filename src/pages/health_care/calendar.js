@@ -93,7 +93,7 @@ export default function Calendar() {
   for (let i = startIndex; i < startIndex + 7; i++) {
     if (i > daysInMonth) break;
     const date = new Date(currentYear, currentMonth, i);
-    const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
+    const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
     const firstLetterOfDay = dayOfWeek.charAt(0);
     const isCurrentDate = i === todayDate;
     const isClickedDay = i === clickedDay;
@@ -110,10 +110,12 @@ export default function Calendar() {
 
     const dayElement = (
       <div key={i} className="flex-none ">
+        <div className="text-center text-xs">{dayOfWeek}</div>
         <button
           onClick={() => handleNumberClick(i)}
           className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col `}
         >
+            
           <div className="text-center">{i}</div>
         </button>
       </div>
