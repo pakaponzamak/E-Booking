@@ -121,7 +121,7 @@ export default function Calendar() {
   }
 
   return (
-    <main className={`m-3  ${bai_jamjuree.className} overflow-x: auto`}>
+    <main className={`m-3  ${bai_jamjuree.className} justify-center item-center `}>
       <div className="mb-1">
         <p className="mr-5  flex justify-end text-sm">
           ชื่อ :&nbsp; <strong>{firstName}</strong>&nbsp; ID : &nbsp;
@@ -137,7 +137,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-10 h-10"
+            className="w-8 h-8"
           >
             <path
               strokeLinecap="round"
@@ -159,7 +159,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-10 h-10"
+            className="w-8 h-8"
           >
             <path
               strokeLinecap="round"
@@ -179,7 +179,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-10 h-10"
+            className="w-8 h-8"
           >
             <path
               strokeLinecap="round"
@@ -196,7 +196,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-10 h-10 "
+            className="w-8 h-8"
           >
             <path
               strokeLinecap="round"
