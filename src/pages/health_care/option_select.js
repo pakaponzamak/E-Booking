@@ -28,6 +28,7 @@ export default function option_select() {
           (DNTH Health Care Center)
         </div>
         <div className="mt-20  text-center">
+        <Link href={`./calendar?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>
           <div className=" inline-block p-4 px-5 text-center w-40 h-50 bg-slate-300 rounded-3xl mr-5">
             จองคิว
             <svg
@@ -44,6 +45,7 @@ export default function option_select() {
               />
             </svg>
           </div>
+          </Link>
          <Link href={`./confirmation?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>
           <div className=" inline-block p-4 px-5 text-center w-40 h-50 bg-slate-300 rounded-3xl">
             รายการจอง

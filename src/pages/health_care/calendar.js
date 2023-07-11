@@ -1,20 +1,32 @@
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { Bai_Jamjuree } from "next/font/google";
+import StartFireBase from "../../firebase/firebase_conf";
+
+const bai_jamjuree = Bai_Jamjuree({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700"],
+});
 
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
   const scrollRef = useRef(null);
+  StartFireBase();
+  const router = useRouter();
+  const { firstName, employeeId, checkIn } = router.query;
 
   const handleNumberClick = (number) => {
     setClickedDay(number);
-    const currentMonth = currentDate.getMonth();
+    const currentMonth = currentDate.getMonth() ;
     const currentYear = currentDate.getFullYear();
     const date = new Date(currentYear, currentMonth, number);
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
 
     console.log("Clicked number:", number);
     console.log("Day of the week:", dayOfWeek);
+    console.log("month :", currentMonth + 1);
   };
 
   const previous7Days = () => {
@@ -96,7 +108,11 @@ export default function Calendar() {
   }
 
   return (
-    <main className="m-6 col-span-5">
+    <main className="m-3 col-span-5">
+         <div className="mb-5">
+        <p className="mr-3  flex justify-end text-sm">ชื่อ : {firstName}</p>
+        <p className="mr-3 flex justify-end text-sm">ID : {employeeId}</p>
+      </div>
       <div className="flex justify-between mb-4">
         <button onClick={previousMonth}>
           <svg
