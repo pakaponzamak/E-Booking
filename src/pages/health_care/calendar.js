@@ -121,7 +121,7 @@ export default function Calendar() {
   }
 
   return (
-    <main className={`m-3  ${bai_jamjuree.className} justify-center item-center `}>
+    <main className={`m-2  ${bai_jamjuree.className} justify-center item-center `}>
       <div className="mb-1">
         <p className="mr-5  flex justify-end text-sm">
           ชื่อ :&nbsp; <strong>{firstName}</strong>&nbsp; ID : &nbsp;
