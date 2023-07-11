@@ -22,6 +22,7 @@ export default function Calendar() {
     setClickedDay(number);
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
+    const currentDay = currentDate.getDate();
     const date = new Date(currentYear, currentMonth, number);
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
 
@@ -120,7 +121,7 @@ export default function Calendar() {
   }
 
   return (
-    <main className={`m-3 col-span-5 ${bai_jamjuree.className}`}>
+    <main className={`m-3  ${bai_jamjuree.className}`}>
       <div className="mb-1">
         <p className="mr-5  flex justify-end text-sm">
           ชื่อ :&nbsp; <strong>{firstName}</strong>&nbsp; ID : &nbsp;
@@ -207,7 +208,7 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-2"></div>
       <div>
-        
+
       </div>
     </main>
   );
