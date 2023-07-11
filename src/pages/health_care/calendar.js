@@ -12,9 +12,7 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
-  const [buttonClass, setButtonClass] = useState(
-    "border-2 text-right p-2 w-10 h-10"
-  );
+ 
   const scrollRef = useRef(null);
   StartFireBase();
   const router = useRouter();
@@ -128,16 +126,17 @@ export default function Calendar() {
           ชื่อ :&nbsp; <strong>{firstName}</strong>&nbsp; ID : &nbsp;
           <strong>{employeeId}</strong>
         </p>
+        <div className="border-b p-1 mb-2"></div>
       </div>
-      <div className="flex justify-between mb-4">
+      <div className="flex justify-between text-center">
         <button onClick={previousMonth}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="2.5"
+            strokeWidth="1.5"
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-10 h-10"
           >
             <path
               strokeLinecap="round"
@@ -146,8 +145,8 @@ export default function Calendar() {
             />
           </svg>
         </button>
-        <h2 className="flex text-center justify-center font-bold">
-          {currentDate.toLocaleDateString("en-US", {
+        <h2 className="flex text-center justify-center font-bold text-2xl">
+          {currentDate.toLocaleDateString("th-TH", {
             month: "long",
             year: "numeric",
           })}
@@ -157,9 +156,9 @@ export default function Calendar() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="2.5"
+            strokeWidth="1.5"
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-10 h-10"
           >
             <path
               strokeLinecap="round"
@@ -169,16 +168,17 @@ export default function Calendar() {
           </svg>
         </button>
       </div>
-      <div className="flex text-center justify-center gap-3">{days}</div>
-      <div ref={scrollRef} className="flex justify-between mt-4">
+      <div className="border-b p-1 mb-2"></div>
+      
+      <div ref={scrollRef} className="flex justify-between ">
         <button onClick={previous7Days} disabled={startIndex === 1}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="2.5"
+            strokeWidth="1.5"
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-10 h-10"
           >
             <path
               strokeLinecap="round"
@@ -187,14 +187,15 @@ export default function Calendar() {
             />
           </svg>
         </button>
+        <div className="flex text-center justify-center gap-3">{days}</div>
         <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="2.5"
+            strokeWidth="1.5"
             stroke="currentColor"
-            className="w-6 h-6 "
+            className="w-10 h-10 "
           >
             <path
               strokeLinecap="round"
@@ -203,6 +204,10 @@ export default function Calendar() {
             />
           </svg>
         </button>
+      </div>
+      <div className="border-b p-1 mb-2"></div>
+      <div>
+        
       </div>
     </main>
   );

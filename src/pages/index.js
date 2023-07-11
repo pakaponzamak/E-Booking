@@ -1,13 +1,11 @@
 import Image from "next/image";
 import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "./images/Denso_logo.png";
-import ReactDOM from "react-dom";
-import Link from "next/link";
 import { useState,useEffect } from "react";
 import StartFireBase from "../firebase/firebase_conf";
 import { getDatabase, ref, push,set,onValue,off } from "firebase/database";
 import { useRouter } from 'next/router';
-import Router from 'next/router';
+
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -104,9 +102,6 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
     }
    
 }
-
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
