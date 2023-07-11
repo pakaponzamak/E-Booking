@@ -103,16 +103,16 @@ export default function Calendar() {
       i === todayDate &&
       todayMonth === currentMonth &&
       todayYear === currentYear
-        ? "border rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600 text-white"
+        ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white bg-red-600 hover:bg-red-700"
         : isClickedDay
-        ? "border rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-        : "border-2 text-right p-2 w-10 h-10";
+        ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+        : "text-right p-2 w-10 h-10";
 
     const dayElement = (
       <div key={i} className="flex-none ">
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col hover:bg-blue-100`}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col hover:bg-blue-100 bg-slate-200`}
         >
           <div className="text-center">{i}</div>
         </button>
@@ -223,7 +223,7 @@ export default function Calendar() {
             <p>Onside : {counterState} / 99999</p>
           </div>
           <div className="flex justify-between mt-3">
-            <p>Place :</p>
+            <p>Place :</p>  
             <button onClick={incrementCounter}>
             <div className="">
               <svg
