@@ -103,10 +103,10 @@ export default function Calendar() {
       i === todayDate &&
       todayMonth === currentMonth &&
       todayYear === currentYear
-        ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white bg-red-600 hover:bg-red-700"
+        ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white bg-red-500 hover:bg-red-700"
         : isClickedDay
         ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-        : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-200 ";
+        : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300 ";
 
     const dayElement = (
       <div key={i} className="flex-none ">
