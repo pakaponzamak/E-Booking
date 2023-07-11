@@ -52,7 +52,6 @@ export default function selectionPage() {
             คอร์สอบรมวินัยทางการเงิน
           </button>
         </Link>
-
         <Link href="../admin/admin_users">
           <button
             type="summit"

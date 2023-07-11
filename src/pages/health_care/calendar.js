@@ -12,7 +12,9 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
- 
+  const [counterState, setCounterState] = useState(0);
+  const incrementCounter = () => setCounterState(counterState + 1);
+
   const scrollRef = useRef(null);
   StartFireBase();
   const router = useRouter();
@@ -101,16 +103,16 @@ export default function Calendar() {
       i === todayDate &&
       todayMonth === currentMonth &&
       todayYear === currentYear
-        ? "border rounded-3xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600 text-white"
+        ? "border rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600 text-white"
         : isClickedDay
-        ? "border rounded-3xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+        ? "border rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
         : "border-2 text-right p-2 w-10 h-10";
 
     const dayElement = (
-      <div key={i} className="flex-none">
+      <div key={i} className="flex-none ">
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${dayButtonClass} rounded-3xl text-center justify-center items-center flex flex-col hover:bg-blue-100`}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col hover:bg-blue-100`}
         >
           <div className="text-center">{i}</div>
         </button>
@@ -121,7 +123,9 @@ export default function Calendar() {
   }
 
   return (
-    <main className={`m-2  ${bai_jamjuree.className} justify-center item-center `}>
+    <main
+      className={`m-2  ${bai_jamjuree.className} justify-center item-center `}
+    >
       <div className="mb-1">
         <p className="mr-5  flex justify-end text-sm">
           ชื่อ :&nbsp; <strong>{firstName}</strong>&nbsp; ID : &nbsp;
@@ -147,6 +151,7 @@ export default function Calendar() {
           </svg>
         </button>
         <h2 className="flex text-center justify-center font-bold text-2xl">
+          {clickedDay} &nbsp;
           {currentDate.toLocaleDateString("th-TH", {
             month: "long",
             year: "numeric",
@@ -170,7 +175,7 @@ export default function Calendar() {
         </button>
       </div>
       <div className="border-b p-1 mb-2"></div>
-      
+
       <div ref={scrollRef} className="flex justify-between ">
         <button onClick={previous7Days} disabled={startIndex === 1}>
           <svg
@@ -206,9 +211,41 @@ export default function Calendar() {
           </svg>
         </button>
       </div>
-      <div className="border-b p-1 mb-2"></div>
+      <div className="border-b p-1 mb-5"></div>
       <div>
-
+        <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-2">
+          <div className="flex justify-between mb-2">
+            <h1>Date : </h1>
+            <p>Online : </p>
+          </div>
+          <div className="flex justify-between mb-2">
+            <p>Lecturer :</p>
+            <p>Onside : {counterState} / 99999</p>
+          </div>
+          <div className="flex justify-between">
+            <p>Place :</p>
+            <button onClick={incrementCounter}>
+            <div className="-translate-x-5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-10 h-10 text-green-600"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            </button>
+          </div>
+        </div>
+        
+        
       </div>
     </main>
   );
