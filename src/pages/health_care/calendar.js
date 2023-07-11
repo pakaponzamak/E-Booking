@@ -80,6 +80,8 @@ export default function Calendar() {
 
   const today = new Date();
   const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
   
   const days = [];
   for (let i = startIndex; i < startIndex + 7; i++) {
@@ -90,7 +92,7 @@ export default function Calendar() {
     const isCurrentDate = i === todayDate;
     const isClickedDay = i === clickedDay;
   
-    const dayButtonClass = isCurrentDate && i === todayDate
+    const dayButtonClass = isCurrentDate && i === todayDate && todayMonth === currentMonth && todayYear === currentYear
       ? "border rounded-3xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600 text-white"
       : isClickedDay
       ? "border rounded-3xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
@@ -122,7 +124,7 @@ export default function Calendar() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="1.5"
+            strokeWidth="2.5"
             stroke="currentColor"
             className="w-6 h-6"
           >
@@ -144,7 +146,7 @@ export default function Calendar() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="1.5"
+            strokeWidth="2.5"
             stroke="currentColor"
             className="w-6 h-6"
           >
@@ -163,7 +165,7 @@ export default function Calendar() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="1.5"
+            strokeWidth="2.5"
             stroke="currentColor"
             className="w-6 h-6"
           >
@@ -179,9 +181,9 @@ export default function Calendar() {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth="1.5"
+            strokeWidth="2.5"
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-6 h-6 "
           >
             <path
               strokeLinecap="round"
