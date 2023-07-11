@@ -12,7 +12,9 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
-  const [buttonClass, setButtonClass] = useState("border-2 text-right p-2 w-10 h-10");
+  const [buttonClass, setButtonClass] = useState(
+    "border-2 text-right p-2 w-10 h-10"
+  );
   const scrollRef = useRef(null);
   StartFireBase();
   const router = useRouter();
@@ -20,7 +22,7 @@ export default function Calendar() {
 
   const handleNumberClick = (number) => {
     setClickedDay(number);
-    const currentMonth = currentDate.getMonth() ;
+    const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
     const date = new Date(currentYear, currentMonth, number);
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
@@ -69,10 +71,13 @@ export default function Calendar() {
       const currentDateElement =
         scrollRef.current.querySelector(".current-date");
       if (currentDateElement) {
-        currentDateElement.scrollIntoView({ behavior: "smooth" });
+        currentDateElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }
     }
-  }, [currentDate]);
+  }, []);
 
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -82,7 +87,7 @@ export default function Calendar() {
   const todayDate = today.getDate();
   const todayMonth = today.getMonth();
   const todayYear = today.getFullYear();
-  
+
   const days = [];
   for (let i = startIndex; i < startIndex + 7; i++) {
     if (i > daysInMonth) break;
@@ -91,13 +96,17 @@ export default function Calendar() {
     const firstLetterOfDay = dayOfWeek.charAt(0);
     const isCurrentDate = i === todayDate;
     const isClickedDay = i === clickedDay;
-  
-    const dayButtonClass = isCurrentDate && i === todayDate && todayMonth === currentMonth && todayYear === currentYear
-      ? "border rounded-3xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600 text-white"
-      : isClickedDay
-      ? "border rounded-3xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-      : "border-2 text-right p-2 w-10 h-10";
-  
+
+    const dayButtonClass =
+      isCurrentDate &&
+      i === todayDate &&
+      todayMonth === currentMonth &&
+      todayYear === currentYear
+        ? "border rounded-3xl text-right p-2 bg-red-500 w-10 h-10 current-date hover:bg-red-600 text-white"
+        : isClickedDay
+        ? "border rounded-3xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+        : "border-2 text-right p-2 w-10 h-10";
+
     const dayElement = (
       <div key={i} className="flex-none">
         <button
@@ -108,15 +117,17 @@ export default function Calendar() {
         </button>
       </div>
     );
-  
+
     days.push(dayElement);
   }
-  
 
   return (
     <main className={`m-3 col-span-5 ${bai_jamjuree.className}`}>
-         <div className="mb-5">
-        <p className="mr-3  flex justify-end text-sm">ชื่อ : {firstName} ID : {employeeId}</p>
+      <div className="mb-1">
+        <p className="mr-5  flex justify-end text-sm">
+          ชื่อ :&nbsp; <strong>{firstName}</strong>&nbsp; ID : &nbsp;
+          <strong>{employeeId}</strong>
+        </p>
       </div>
       <div className="flex justify-between mb-4">
         <button onClick={previousMonth}>
