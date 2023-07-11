@@ -29,6 +29,13 @@ export default function confirmation() {
   const [emp, setEmp] = useState("");
   const [checkInStatus, setCheckInStatus] = useState("");
 
+  var today = new Date();
+  var date =
+    today.getDate() + "-" + (today.getMonth() + 1) + "-" +today.getFullYear() ;
+  var time =
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  var dateTime = date + " " + time;
+
   useEffect(() => {
     const db = getDatabase();
     const usersRef = ref(db, "users");
@@ -59,8 +66,10 @@ export default function confirmation() {
   }, [users]);
 
   const fetchCheckIn = async () => {
+    let already = false;
     for (const user of users) {
       if (fetchCheckInHandler(user.employeeId, user.firstName, user.checkIn)) {
+        already = true;
         break; // Exit the loop when a matching user is found
       }
     }
@@ -80,7 +89,6 @@ export default function confirmation() {
       }
       return true;
     }
-    return false;
   }
 
   const confirmHandler = async (e) => {
@@ -89,6 +97,7 @@ export default function confirmation() {
       const buttonId = e.target.id;
       // Use the buttonId as needed
       let userFound = false;
+      
       for (const user of users) {
         if (performConfirm(user.employeeId, user.firstName, user.checkIn)) {
           userFound = true;
@@ -150,7 +159,7 @@ export default function confirmation() {
     //const ifTrue = checkinParameter
     const db = getDatabase();
 
-    if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
+    if (idParameter === anotherEmployeeId && nameParameter === anotherName && checkinParameter !== true) {
       const updates = {};
       const postData = {
         firstName: nameParameter,
@@ -162,6 +171,11 @@ export default function confirmation() {
         postData
       );
       return update(ref(db), updates);
+    }
+    else if(idParameter === anotherEmployeeId && nameParameter === anotherName && checkinParameter === true)
+    {
+        alert(`ท่านได้ทำการเช็คอินไปแล้ว`);
+        return true;
     }
   }
 
