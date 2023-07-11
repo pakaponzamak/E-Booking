@@ -222,10 +222,10 @@ export default function Calendar() {
             <p>Lecturer :</p>
             <p>Onside : {counterState} / 99999</p>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between mt-3">
             <p>Place :</p>
             <button onClick={incrementCounter}>
-            <div className="-translate-x-5">
+            <div className="">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
