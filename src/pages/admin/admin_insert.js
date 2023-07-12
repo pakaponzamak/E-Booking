@@ -180,12 +180,12 @@ export default function admin() {
       </aside>
 
       <div class="p-4 sm:ml-64">
-        <div className="text-center ">
-          <div className=" rounded-3xl bg-red-100 drop-shadow-lg">
-            <h1 className="font-extrabold text-4xl pt-2">คอร์สอบรมวินัยทางการเงิน</h1>
+        <div className="">
+          <div className=" rounded-3xl bg-red-100 drop-shadow-lg p-5">
+            <h1 className="font-extrabold text-4xl pt-2 text-center">คอร์สอบรมวินัยทางการเงิน</h1>
             <div>
               <form
-                className="place-content-center text-center p-3"
+                className="p-3 text-center"
                 onSubmit={handleSubmit}
               >
                 <div className="mb-5">
@@ -253,6 +253,7 @@ export default function admin() {
                     </label>
                   </div>
                   <div>
+                    <label className="mr-2">ผู้บรรยาย</label>
                     <input
                       className="border-2 px-5 py-3 rounded-full mb-5 "
                       placeholder="ผู้บรรยาย"
@@ -266,6 +267,7 @@ export default function admin() {
                     ></input>
                   </div>
                   <div>
+                  <label className="mr-2">สถานที่</label>
                     <input
                       className="border-2 px-5 py-3 rounded-full mb-5 "
                       placeholder="สถานที่"
@@ -279,6 +281,7 @@ export default function admin() {
                     ></input>
                   </div>
                   <div>
+                  <label className="mr-2">Online Code</label>
                     <input
                       className="border-2 px-5 py-3 rounded-full mb-5 "
                       placeholder="Online Code"
@@ -290,6 +293,7 @@ export default function admin() {
                     ></input>
                   </div>
                   <div>
+                  <label className="mr-2">จำนวนคน</label>
                     <input
                       className="border-2 px-5 py-3 rounded-full mb-5 "
                       placeholder="จำนวนคน"
@@ -335,7 +339,7 @@ export default function admin() {
                   class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-14 py-2.5 text-center 
                                 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold"
                 >
-                  เข้าสู่ระบบ
+                  ยืนยัน
                 </button>
               </form>
             </div>
