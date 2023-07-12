@@ -53,15 +53,30 @@ export default function Calendar() {
     };
   }, []);
 
+  //Auto go to current Date when entered
+  useEffect(() => {
+    // Scroll to current date section
+    if (scrollRef.current) {
+      const currentDateElement =
+        scrollRef.current.querySelector(".current-date");
+      if (currentDateElement) {
+        currentDateElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+  }, []);
+
   const handleNumberClick = (day) => {
     setClickedDay(day);
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
     //const currentDay = currentDate.getDate();
-    const date = new Date(currentYear, currentMonth, day);
-    const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
-
-    console.log(currentYear+"-"+(currentMonth+1)+"-"+day)
+    //const date = new Date(currentYear, currentMonth, day);
+    //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
+    const date = (currentYear+"-"+(currentMonth+1)+"-"+day)
+    console.log(date)
   };
 
   const previous7Days = () => {
@@ -97,19 +112,7 @@ export default function Calendar() {
     setStartIndex(1);
   };
 
-  useEffect(() => {
-    // Scroll to current date section
-    if (scrollRef.current) {
-      const currentDateElement =
-        scrollRef.current.querySelector(".current-date");
-      if (currentDateElement) {
-        currentDateElement.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-    }
-  }, []);
+
 
   const currentDay = currentDate.getDate();
   const currentMonth = currentDate.getMonth();
@@ -173,7 +176,7 @@ export default function Calendar() {
         number: course.number + 1,
       };
 
-      update(ref(db, "courses/" + course.course + course.timeStart + course.onlineCode), postData);
+      update(ref(db, "courses/" + course.course + course.date + course.onlineCode), postData);
     } else {
       alert("เต็มแล้วครับพ่อหนุ่ม");
     }
@@ -280,7 +283,7 @@ export default function Calendar() {
         </button>
       </div>
       <div className="border-b p-1 mb-5"></div>
-      <div>
+      <div>  
         {courses.map((courses) => (
           <div
             key={courses.id}
@@ -290,7 +293,7 @@ export default function Calendar() {
               <h1>
                 Date :{" "}
                 <strong>
-                  {courses.date} - {courses.timeStart} - {courses.timeEnd}
+                  {courses.timeStart} - {courses.timeEnd}
                 </strong>
               </h1>
               <p>
@@ -318,22 +321,9 @@ export default function Calendar() {
               >
                 <div className="">
                   {courses.number >= courses.amount ? (
-                    <span className="text-white bg-red-600 p-1 rounded-2xl font-semibold">ครบจำนวนแล้ว</span>
+                    <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">ที่นั่งเต็มแล้ว</span>
                   ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="w-10 h-10 text-green-600"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
+                    <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">เลือก</span>
                   )}
                 </div>
               </button>
@@ -341,6 +331,7 @@ export default function Calendar() {
           </div>
         ))}
       </div>
+     
     </main>
   );
 }
