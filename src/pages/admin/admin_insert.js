@@ -182,7 +182,7 @@ export default function admin() {
       <div class="p-4 sm:ml-64">
         <div className="text-center ">
           <div className=" rounded-3xl bg-red-100 drop-shadow-lg">
-            <h1 className="font-extrabold text-4xl pt-2">INSERT DATA</h1>
+            <h1 className="font-extrabold text-4xl pt-2">คอร์สอบรมวินัยทางการเงิน</h1>
             <div>
               <form
                 className="place-content-center text-center p-3"

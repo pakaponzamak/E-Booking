@@ -178,7 +178,7 @@ export default function Calendar() {
 
       update(ref(db, "courses/" + course.course + course.timeStart), postData);
     } else {
-      alert("Full");
+      alert("เต็มแล้วครับพ่อหนุ่ม");
     }
   };
 
@@ -307,7 +307,7 @@ export default function Calendar() {
         {courses.map((courses) => (
           <div
             key={courses.id}
-            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-2"
+            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
           >
             <div className="flex justify-between mb-2">
               <h1>
