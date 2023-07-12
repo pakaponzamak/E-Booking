@@ -53,18 +53,15 @@ export default function Calendar() {
     };
   }, []);
 
-  const handleNumberClick = (number) => {
-    setClickedDay(number);
+  const handleNumberClick = (day) => {
+    setClickedDay(day);
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-    const currentDay = currentDate.getDate();
-    const date = new Date(currentYear, currentMonth, number);
+    //const currentDay = currentDate.getDate();
+    const date = new Date(currentYear, currentMonth, day);
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
 
-    console.log("Clicked number:", number);
-    console.log("Day of the week:", dayOfWeek);
-    console.log("month :", currentMonth + 1);
-    console.log(users);
+    console.log(currentYear+"-"+(currentMonth+1)+"-"+day)
   };
 
   const previous7Days = () => {
@@ -182,26 +179,6 @@ export default function Calendar() {
     }
   };
 
-  function performCountCheck(
-    numberParam,
-    amountParam,
-    courseParam,
-    timeStartParam
-  ) {
-    const db = getDatabase();
-    const updates = {};
-    if (numberParam < amountParam) {
-      setCounterState(counterState + 1);
-
-      const postData = {
-        number: counterState,
-      };
-      update(ref(db, "courses/" + courseParam + timeStartParam), postData);
-    }
-    if (numberParam >= amountParam) {
-      return true;
-    }
-  }
 
   return (
     <main
@@ -313,7 +290,7 @@ export default function Calendar() {
               <h1>
                 Date :{" "}
                 <strong>
-                  {courses.timeStart} - {courses.timeEnd}
+                  {courses.date} - {courses.timeStart} - {courses.timeEnd}
                 </strong>
               </h1>
               <p>
