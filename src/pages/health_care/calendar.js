@@ -2,7 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Bai_Jamjuree } from "next/font/google";
 import StartFireBase from "../../firebase/firebase_conf";
-import { getDatabase, ref, remove, onValue, off ,update} from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  remove,
+  onValue,
+  off,
+  update,
+} from "firebase/database";
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -57,7 +64,7 @@ export default function Calendar() {
     console.log("Clicked number:", number);
     console.log("Day of the week:", dayOfWeek);
     console.log("month :", currentMonth + 1);
-    console.log(users)
+    console.log(users);
   };
 
   const previous7Days = () => {
@@ -92,7 +99,6 @@ export default function Calendar() {
     setCurrentDate(nextDate);
     setStartIndex(1);
   };
-
 
   useEffect(() => {
     // Scroll to current date section
@@ -152,32 +158,50 @@ export default function Calendar() {
     days.push(dayElement);
   }
 
-  const countClickCheckHandler = async (e) => {
-    for (const course of courses) {
-        if(performCountCheck(course.number,course.amount,course.course,course.timeStart))
-        alert("Full")
-        break;
-      }
+  const countClickCheckHandler = async (course) => {
+    const db = getDatabase();
+    if (course.number < course.amount) {
+      const updatedCourses = courses.map((c) => {
+        if (c.id === course.id) {
+          return {
+            ...c,
+            number: c.number + 1,
+          };
+        }
+        return c;
+      });
+      setCourses(updatedCourses);
+
+      const postData = {
+        number: course.number + 1,
+      };
+
+      update(ref(db, "courses/" + course.course + course.timeStart), postData);
+    } else {
+      alert("Full");
+    }
   };
 
-  function performCountCheck(numberParam,amountParam,courseParam,timeStartParam){
+  function performCountCheck(
+    numberParam,
+    amountParam,
+    courseParam,
+    timeStartParam
+  ) {
     const db = getDatabase();
     const updates = {};
-    if(numberParam < amountParam){
-        setCounterState(counterState + 1)
-        
-        const postData = {
-            number: counterState
-          };
-          update(
-            ref(db, "courses/" + courseParam + timeStartParam),
-            postData);
-     }
-        if(numberParam >= amountParam){
-            return true;
-      }
+    if (numberParam < amountParam) {
+      setCounterState(counterState + 1);
+
+      const postData = {
+        number: counterState,
+      };
+      update(ref(db, "courses/" + courseParam + timeStartParam), postData);
+    }
+    if (numberParam >= amountParam) {
+      return true;
+    }
   }
-      
 
   return (
     <main
@@ -280,41 +304,66 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-5"></div>
       <div>
-  {courses.map((courses) => (
-    <div key={courses.id} className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-2">
-      <div className="flex justify-between mb-2">
-        <h1>Date : <strong>{courses.timeStart} - {courses.timeEnd}</strong></h1>
-        <p>Online : <strong>{courses.onlineCode}</strong></p>
-      </div>
-      <div className="flex justify-between mb-2">
-        <p>Lecturer : <strong>{courses.lecturer}</strong></p>
-        <p>Onside : <strong>{courses.number} / {courses.amount}</strong></p>
-      </div>
-      <div className="flex justify-between mt-3">
-        <p>Place : <strong>{courses.hall}</strong></p>
-        <button onClick={countClickCheckHandler}>
-          <div className="">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-10 h-10 text-green-600"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+        {courses.map((courses) => (
+          <div
+            key={courses.id}
+            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-2"
+          >
+            <div className="flex justify-between mb-2">
+              <h1>
+                Date :{" "}
+                <strong>
+                  {courses.timeStart} - {courses.timeEnd}
+                </strong>
+              </h1>
+              <p>
+                Online : <strong>{courses.onlineCode}</strong>
+              </p>
+            </div>
+            <div className="flex justify-between mb-2">
+              <p>
+                Lecturer : <strong>{courses.lecturer}</strong>
+              </p>
+              <p>
+                Onside :{" "}
+                <strong>
+                  {courses.number} / {courses.amount}
+                </strong>
+              </p>
+            </div>
+            <div className="flex justify-between mt-3">
+              <p>
+                Place : <strong>{courses.hall}</strong>
+              </p>
+              <button
+                onClick={() => countClickCheckHandler(courses)}
+                className={courses.number >= courses.amount ? "full-button" : ""}
+              >
+                <div className="">
+                  {courses.number >= courses.amount ? (
+                    <span className="text-white bg-red-600 p-1 rounded-2xl">เต็ม</span>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-10 h-10 text-green-600"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  )}
+                </div>
+              </button>
+            </div>
           </div>
-        </button>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
-
     </main>
   );
 }
