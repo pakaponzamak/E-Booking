@@ -341,7 +341,7 @@ export default function Calendar() {
               >
                 <div className="">
                   {courses.number >= courses.amount ? (
-                    <span className="text-white bg-red-600 p-1 rounded-2xl">เต็ม</span>
+                    <span className="text-white bg-red-600 p-1 rounded-2xl font-semibold">ครบจำนวนแล้ว</span>
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
