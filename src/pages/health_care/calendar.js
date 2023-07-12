@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Bai_Jamjuree } from "next/font/google";
 import StartFireBase from "../../firebase/firebase_conf";
+import { getDatabase, ref, remove, onValue, off ,update} from "firebase/database";
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -12,13 +13,38 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
-  const [counterState, setCounterState] = useState(0);
-  const incrementCounter = () => setCounterState(counterState + 1);
+  const [counterState, setCounterState] = useState(1);
+  const [users, setUser] = useState([]);
+  const [courses, setCourses] = useState([]);
+  //const incrementCounter = () => setCounterState(counterState + 1);
 
   const scrollRef = useRef(null);
   StartFireBase();
   const router = useRouter();
   const { firstName, employeeId, checkIn } = router.query;
+
+  useEffect(() => {
+    const db = getDatabase();
+    const courseRef = ref(db, "courses");
+    // Listen for changes in the 'users' reference
+    onValue(courseRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Convert the object of users into an array
+        const usersArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        // Set the users state with the retrieved data
+        setCourses(usersArray);
+      }
+    });
+    // Clean up the listener when the component unmounts
+    return () => {
+      // Turn off the listener
+      off(courseRef);
+    };
+  }, []);
 
   const handleNumberClick = (number) => {
     setClickedDay(number);
@@ -31,6 +57,7 @@ export default function Calendar() {
     console.log("Clicked number:", number);
     console.log("Day of the week:", dayOfWeek);
     console.log("month :", currentMonth + 1);
+    console.log(users)
   };
 
   const previous7Days = () => {
@@ -66,6 +93,7 @@ export default function Calendar() {
     setStartIndex(1);
   };
 
+
   useEffect(() => {
     // Scroll to current date section
     if (scrollRef.current) {
@@ -80,6 +108,7 @@ export default function Calendar() {
     }
   }, []);
 
+  const currentDay = currentDate.getDate();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -115,7 +144,6 @@ export default function Calendar() {
           onClick={() => handleNumberClick(i)}
           className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col `}
         >
-            
           <div className="text-center">{i}</div>
         </button>
       </div>
@@ -123,6 +151,33 @@ export default function Calendar() {
 
     days.push(dayElement);
   }
+
+  const countClickCheckHandler = async (e) => {
+    for (const course of courses) {
+        if(performCountCheck(course.number,course.amount,course.course,course.timeStart))
+        alert("Full")
+        break;
+      }
+  };
+
+  function performCountCheck(numberParam,amountParam,courseParam,timeStartParam){
+    const db = getDatabase();
+    const updates = {};
+    if(numberParam < amountParam){
+        setCounterState(counterState + 1)
+        
+        const postData = {
+            number: counterState
+          };
+          update(
+            ref(db, "courses/" + courseParam + timeStartParam),
+            postData);
+     }
+        if(numberParam >= amountParam){
+            return true;
+      }
+  }
+      
 
   return (
     <main
@@ -153,11 +208,21 @@ export default function Calendar() {
           </svg>
         </button>
         <h2 className="flex text-center justify-center font-bold text-2xl">
-          {clickedDay} &nbsp;
-          {currentDate.toLocaleDateString("th-TH", {
-            month: "long",
-            year: "numeric",
-          })}
+          {clickedDay ? (
+            <>
+              {clickedDay}&nbsp;
+              {currentDate.toLocaleDateString("th-TH", {
+                month: "long",
+                year: "numeric",
+              })}
+            </>
+          ) : (
+            currentDate.toLocaleDateString("th-TH", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            })
+          )}
         </h2>
         <button onClick={nextMonth}>
           <svg
@@ -215,40 +280,41 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-5"></div>
       <div>
-        <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-2">
-          <div className="flex justify-between mb-2">
-            <h1>Date : </h1>
-            <p>Online : </p>
-          </div>
-          <div className="flex justify-between mb-2">
-            <p>Lecturer :</p>
-            <p>Onside : {counterState} / 99999</p>
-          </div>
-          <div className="flex justify-between mt-3">
-            <p>Place :</p>  
-            <button onClick={incrementCounter}>
-            <div className="">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-10 h-10 text-green-600"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            </button>
-          </div>
-        </div>
-        
-        
+  {courses.map((courses) => (
+    <div key={courses.id} className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-2">
+      <div className="flex justify-between mb-2">
+        <h1>Date : <strong>{courses.timeStart} - {courses.timeEnd}</strong></h1>
+        <p>Online : <strong>{courses.onlineCode}</strong></p>
       </div>
+      <div className="flex justify-between mb-2">
+        <p>Lecturer : <strong>{courses.lecturer}</strong></p>
+        <p>Onside : <strong>{courses.number} / {courses.amount}</strong></p>
+      </div>
+      <div className="flex justify-between mt-3">
+        <p>Place : <strong>{courses.hall}</strong></p>
+        <button onClick={countClickCheckHandler}>
+          <div className="">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-10 h-10 text-green-600"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
     </main>
   );
 }

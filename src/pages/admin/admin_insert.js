@@ -3,10 +3,13 @@ import { Roboto } from "next/font/google";
 import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import * as React from "react";
+import { useState } from "react";
+import { getDatabase, ref, push, set, onValue, off } from "firebase/database";
 
-const roboto = Roboto({ subsets: ["latin"],weight:['100', '300', '400', '500', '700', '900'] });
-
-import { getDatabase, ref, push, } from "firebase/database";
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+});
 import startFireBase from "../../firebase/firebase_conf";
 
 const bai = Bai_Jamjuree({
@@ -15,17 +18,47 @@ const bai = Bai_Jamjuree({
 });
 
 export default function admin() {
-
   startFireBase();
-  
-  function myFunction() {
-    var x = document.getElementById("myDIV");
-    if (x.style.display === "none") {
-      x.style.display = "block";
-    } else {
-      x.style.display = "none";
-    }
+
+  const [timeStart, setTimeStart] = useState("");
+  const [timeEnd, setTimeEnd] = useState("");
+  const [date, setDate] = useState("");
+  const [lecturer, setLecturer] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [onlineCode, setOnlineCode] = useState("");
+  const [meetHall, setMeetHall] = useState("");
+  const [course, setCourse] = useState("")
+  const [plantSelect, setPlantSelect] = useState(null);
+  const number = 0;
+
+  const handleOptionChange = (event) => {
+    setPlantSelect(event.target.value);
+  };
+
+  const courseOptionChange = (event) => {
+    setCourse(event.target.value)
   }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const db = getDatabase();
+    const data = {
+      course: course,
+      timeStart: timeStart,
+      timeEnd: timeEnd,
+      date: date,
+      lecturer: lecturer,
+      amount: amount,
+      hall: meetHall,
+      plant: plantSelect,
+      onlineCode: onlineCode,
+      number:number
+    };
+    set(ref(db, "courses/" + course +timeStart), data).then(() => {alert("เรียบร้อยแล้ว")}).catch((error) => {
+      console.error("Error inserting data:", error);
+    });
+
+  };
 
   return (
     <div className={`${bai.className} font-medium`}>
@@ -115,7 +148,9 @@ export default function admin() {
                     clip-rule="evenodd"
                   ></path>
                 </svg>
-                <span class="flex-1 ml-3 whitespace-nowrap">Health Care Data</span>
+                <span class="flex-1 ml-3 whitespace-nowrap">
+                  Health Care Data
+                </span>
               </a>
             </li>
 
@@ -140,17 +175,169 @@ export default function admin() {
                 <span class="flex-1 ml-3 whitespace-nowrap">Insert Data</span>
               </a>
             </li>
-
           </ul>
         </div>
       </aside>
 
       <div class="p-4 sm:ml-64">
-        <div className="text-center m-5 ">
-          <div className="m-10 rounded-3xl bg-red-100 drop-shadow-lg">
-            <h1 className="font-extrabold text-4xl p-2">INSERT DATA</h1>
+        <div className="text-center ">
+          <div className=" rounded-3xl bg-red-100 drop-shadow-lg">
+            <h1 className="font-extrabold text-4xl pt-2">INSERT DATA</h1>
             <div>
-              
+              <form
+                className="place-content-center text-center p-3"
+                onSubmit={handleSubmit}
+              >
+                <div className="mb-5">
+                  <div>
+                  <p>เลือก Course</p>
+                    <label className="mx-3">
+                      <input
+                        type="radio"
+                        name="tmc1"
+                        value="TMC-1"
+                        checked={course === "TMC-1"}
+                        onChange={courseOptionChange}
+                        className="mx-2"
+                      />
+                      TMC 1
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="tmc2"
+                        value="TMC-2"
+                        checked={course === "TMC-2"}
+                        onChange={courseOptionChange}
+                        className="mx-2"
+                      />
+                      TMC 2
+                    </label>
+                  </div>
+                  <div className="p-2">
+                    <p>เลือก Plant</p>
+                    <label>
+                      <input
+                        type="radio"
+                        name="srg"
+                        value="SRG"
+                        checked={plantSelect === "SRG"}
+                        onChange={handleOptionChange}
+                        className="mx-2"
+                      />
+                      SRG
+                    </label>
+
+                    <label>
+                      <input
+                        type="radio"
+                        name="well"
+                        value="WELL"
+                        checked={plantSelect === "WELL"}
+                        onChange={handleOptionChange}
+                        className="mx-2"
+                      />
+                      WELL
+                    </label>
+
+                    <label>
+                      <input
+                        type="radio"
+                        name="bpk"
+                        value="BPK"
+                        checked={plantSelect === "BPK"}
+                        onChange={handleOptionChange}
+                        className="mx-2"
+                      />
+                      BPK
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      className="border-2 px-5 py-3 rounded-full mb-5 "
+                      placeholder="ผู้บรรยาย"
+                      type="text"
+                      name="username"
+                      id="username"
+                      required="required"
+                      onChange={(e) =>
+                        setLecturer(e.target.value.toLowerCase())
+                      }
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      className="border-2 px-5 py-3 rounded-full mb-5 "
+                      placeholder="สถานที่"
+                      type="text"
+                      name="employee_id"
+                      id="employee_id"
+                      required="required"
+                      onChange={(e) =>
+                        setMeetHall(e.target.value.toLowerCase())
+                      }
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      className="border-2 px-5 py-3 rounded-full mb-5 "
+                      placeholder="Online Code"
+                      type="text"
+                      name="employee_id"
+                      id="employee_id"
+                      required="required"
+                      onChange={(e) => setOnlineCode(e.target.value)}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      className="border-2 px-5 py-3 rounded-full mb-5 "
+                      placeholder="จำนวนคน"
+                      type="number"
+                      name="employee_id"
+                      id="employee_id"
+                      required="required"
+                      onChange={(e) => setAmount(e.target.value)}
+                    ></input>
+                  </div>
+                  <div>
+                    <span className="mx-3">วันที่</span>
+                    <input
+                      type="date"
+                      id="datepciker"
+                      name="datepicker"
+                      className="p-4 rounded-2xl px-5 py-3 mb-5"
+                      onChange={(e) => setDate(e.target.value)}
+                    ></input>
+                  </div>
+                  <div>
+                    <span className="mx-3">ตั้งแต่</span>
+                    <input
+                      type="time"
+                      id="datepciker"
+                      name="datepicker"
+                      className="p-4 rounded-2xl px-5 py-3"
+                      onChange={(e) => setTimeStart(e.target.value)}
+                    ></input>
+                    <span className="mx-3">ไปจนถึง</span>
+                    <input
+                      type="time"
+                      id="datepciker"
+                      name="datepicker"
+                      className="p-4 rounded-2xl px-5 py-3"
+                      onChange={(e) => setTimeEnd(e.target.value)}
+                    ></input>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-14 py-2.5 text-center 
+                                mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold"
+                >
+                  เข้าสู่ระบบ
+                </button>
+              </form>
             </div>
           </div>
         </div>
