@@ -176,7 +176,7 @@ export default function Calendar() {
         number: course.number + 1,
       };
 
-      update(ref(db, "courses/" + course.course + course.timeStart), postData);
+      update(ref(db, "courses/" + course.course + course.timeStart + course.onlineCode), postData);
     } else {
       alert("เต็มแล้วครับพ่อหนุ่ม");
     }
