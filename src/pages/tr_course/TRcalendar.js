@@ -77,12 +77,12 @@ export default function Calendar() {
     //const date = new Date(currentYear, currentMonth, day);
     //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
     const date = (currentYear+"-"+(currentMonth+1)+"-"+day)
-    //console.log(date)
+    console.log(date)
 
     const filteredCourses = courses.filter((course) => {
       const courseDate = course.date
       
-      console.log(courseDate)
+      //console.log(courseDate)
       return (
         courseDate === date
       );
@@ -146,31 +146,39 @@ export default function Calendar() {
     const firstLetterOfDay = dayOfWeek.charAt(0);
     const isCurrentDate = i === todayDate;
     const isClickedDay = i === clickedDay;
+  
+    const isPastDate = date < today; // Check if the date is in the past
+    const isDisabled = isPastDate && !isCurrentDate; // Set the disabled state based on whether it's a past date and not the current date
+  
+    const dayButtonClass = isClickedDay
+  ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+  : isDisabled
+  ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+  : isCurrentDate
+  ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+  : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
 
-    const dayButtonClass =
-      isCurrentDate &&
-      i === todayDate &&
-      todayMonth === currentMonth &&
-      todayYear === currentYear
-        ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white bg-red-500 hover:bg-red-600"
-        : isClickedDay
-        ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-        : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300 ";
 
+  
+  
     const dayElement = (
-      <div key={i} className="flex-none ">
+      <div key={i} className="flex-none">
         <div className="text-center text-xs">{dayOfWeek}</div>
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col `}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
+          disabled={isDisabled} // Disable the button for past dates
+          style={isPastDate && ! isCurrentDate ? { backgroundColor: "#e2e8f0" } : null} // Change background color for past dates
         >
           <div className="text-center">{i}</div>
         </button>
       </div>
     );
-
+  
     days.push(dayElement);
   }
+  
+  
 
   const countClickCheckHandler = async (course) => {
     const db = getDatabase();
