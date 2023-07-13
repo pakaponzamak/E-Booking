@@ -20,8 +20,6 @@ export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
-  const [counterState, setCounterState] = useState(1);
-  const [users, setUser] = useState([]);
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState(courses);
   //const incrementCounter = () => setCounterState(counterState + 1);
@@ -67,6 +65,8 @@ export default function Calendar() {
         });
       }
     }
+    setClickedDay(currentDate.getDate());
+    setStartIndex(currentDate.getDate())
   }, []);
 
   const handleNumberClick = (day) => {
@@ -168,7 +168,7 @@ export default function Calendar() {
           onClick={() => handleNumberClick(i)}
           className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
           disabled={isDisabled} // Disable the button for past dates
-          style={isPastDate && ! isCurrentDate ? { backgroundColor: "#e2e8f0" } : null} // Change background color for past dates
+          style={isPastDate && ! isCurrentDate ? { backgroundColor: "#f1f5f9" } : null} // Change background color for past dates
         >
           <div className="text-center">{i}</div>
         </button>
