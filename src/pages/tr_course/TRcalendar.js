@@ -190,7 +190,7 @@ export default function Calendar() {
       };
 
       update(
-        ref(db, "courses/" + course.course + course.date + course.onlineCode),
+        ref(db, "courses/" + course.course + course.date + course.timeStart + course.onlineCode),
         postData
       );
     } else {
@@ -300,7 +300,7 @@ export default function Calendar() {
       <div className="border-b p-1 mb-5"></div>
       <div>
         {courses
-          .sort((a, b) => a.timeStart.localeCompare(b.timeStart))
+          .sort((a, b) => a.timeStart > b.timeStart ? 1 : -1)
           .filter((course) => {
             const courseDate = new Date(course.date);
             const courseDay = courseDate.getDate();

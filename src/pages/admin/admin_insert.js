@@ -54,7 +54,7 @@ export default function admin() {
       onlineCode: onlineCode,
       number:number
     };
-    set(ref(db, "courses/" + course + date + onlineCode), data).then(() => {alert("เรียบร้อยแล้ว")}).catch((error) => {
+    set(ref(db, "courses/" + course + date + timeStart + onlineCode ), data).then(() => {alert("เรียบร้อยแล้ว")}).catch((error) => {
       console.error("Error inserting data:", error);
     });
 
