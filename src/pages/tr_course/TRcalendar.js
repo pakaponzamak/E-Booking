@@ -23,6 +23,7 @@ export default function Calendar() {
   const [counterState, setCounterState] = useState(1);
   const [users, setUser] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState(courses);
   //const incrementCounter = () => setCounterState(counterState + 1);
 
   const scrollRef = useRef(null);
@@ -38,12 +39,12 @@ export default function Calendar() {
       const data = snapshot.val();
       if (data) {
         // Convert the object of users into an array
-        const usersArray = Object.keys(data).map((key) => ({
+        const coursesArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
         }));
         // Set the users state with the retrieved data
-        setCourses(usersArray);
+        setCourses(coursesArray);
       }
     });
     // Clean up the listener when the component unmounts
@@ -76,7 +77,20 @@ export default function Calendar() {
     //const date = new Date(currentYear, currentMonth, day);
     //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
     const date = (currentYear+"-"+(currentMonth+1)+"-"+day)
-    console.log(date)
+    //console.log(date)
+
+    const filteredCourses = courses.filter((course) => {
+      const courseDate = course.date
+      
+      console.log(courseDate)
+      return (
+        courseDate === date
+      );
+      
+    });
+    
+    setFilteredCourses(filteredCourses);
+    
   };
 
   const previous7Days = () => {
@@ -183,6 +197,7 @@ export default function Calendar() {
   };
 
 
+
   return (
     <main
       className={`m-2  ${bai_jamjuree.className} justify-center item-center `}
@@ -284,7 +299,12 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-5"></div>
       <div>  
-        {courses.map((courses) => (
+      {courses
+      .filter((course) => {
+        const courseDate = new Date(course.date);
+        const courseDay = courseDate.getDate();
+        return clickedDay && clickedDay === courseDay;
+      }).map((courses) => (
           <div
             key={courses.id}
             className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
@@ -317,7 +337,7 @@ export default function Calendar() {
               </p>
               <button
                 onClick={() => countClickCheckHandler(courses)}
-                className={courses.number >= courses.amount ? "full-button" : ""}
+                className={courses.number >= courses.amount ? "" : ""}
               >
                 <div className="">
                   {courses.number >= courses.amount ? (

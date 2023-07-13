@@ -262,7 +262,7 @@ export default function admin() {
                       id="username"
                       required="required"
                       onChange={(e) =>
-                        setLecturer(e.target.value.toLowerCase())
+                        setLecturer(e.target.value)
                       }
                     ></input>
                   </div>
@@ -276,7 +276,7 @@ export default function admin() {
                       id="employee_id"
                       required="required"
                       onChange={(e) =>
-                        setMeetHall(e.target.value.toLowerCase())
+                        setMeetHall(e.target.value)
                       }
                     ></input>
                   </div>
