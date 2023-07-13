@@ -105,7 +105,7 @@ export default function tr_admin_course() {
         router.push("../admin_TRcourse/admin_insert");
         break;
       case "Option 4":
-        router.push("./TRusers");
+        router.push("./tr_admin_users");
         break;
       case "Option 5":
         router.push("./tr_admin_course");

@@ -80,7 +80,7 @@ export default function all_users() {
         router.push("../admin_TRcourse/admin_insert");
         break;
         case "Option 4":
-        router.push("../admin_TRcourse/TRusers")
+        router.push("../admin_TRcourse/tr_admin_users")
         break;
         case "Option 5":
         router.push("../admin_TRcourse/tr_admin_course")
