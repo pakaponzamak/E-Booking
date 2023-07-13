@@ -19,6 +19,7 @@ const bai_jamjuree = Bai_Jamjuree({
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
+  const [dayMonthYear,setDayMonthYear] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState(courses);
@@ -71,13 +72,14 @@ export default function Calendar() {
 
   const handleNumberClick = (day) => {
     setClickedDay(day);
-    const currentMonth = currentDate.getMonth();
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0")
     const currentYear = currentDate.getFullYear();
     //const currentDay = currentDate.getDate();
     //const date = new Date(currentYear, currentMonth, day);
     //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
-    const date = currentYear + "-" + (currentMonth + 1) + "-" + day;
-    console.log(date);
+    const date = currentYear + "-" + (currentMonth) + "-" + day;
+    setDayMonthYear(date)
+    console.log(dayMonthYear);
 
     const filteredCourses = courses.filter((course) => {
       const courseDate = course.date;
@@ -142,15 +144,15 @@ export default function Calendar() {
     const isClickedDay = i === clickedDay;
 
     const isPastDate = date < today; // Check if the date is in the past
-    const isDisabled = isPastDate && !isCurrentDate; // Set the disabled state based on whether it's a past date and not the current date
+    const isDisabled = isPastDate && !isCurrentDate ; // Set the disabled state based on whether it's a past date and not the current date
 
     const dayButtonClass = isClickedDay
-      ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-      : isDisabled
-      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
-      : isCurrentDate
-      ? "rounded-xl text-right p-2 bg-red-400 w-10 h-10 current-date text-white"
-      : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
+    ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+    : isDisabled 
+    ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+    : isCurrentDate && i === todayDate && todayMonth === currentMonth && todayYear === currentYear
+    ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+    : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
 
     const dayElement = (
       <div key={i} className="flex-none">
@@ -302,9 +304,11 @@ export default function Calendar() {
         {courses
           .sort((a, b) => a.timeStart > b.timeStart ? 1 : -1)
           .filter((course) => {
-            const courseDate = new Date(course.date);
-            const courseDay = courseDate.getDate();
-            return clickedDay === courseDay;
+            const courseDate = (course.date);
+            console.log(courseDate)
+            console.log(dayMonthYear)
+            //const courseDay = courseDate.getDate();
+            return dayMonthYear === courseDate;
           })
           .map((courses) => (
             <div
