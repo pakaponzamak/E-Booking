@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { Roboto } from "next/font/google";
-import { Kanit } from "next/font/google";
+
 import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "../images/Denso_logo.png";
 import { useState, useEffect } from "react";
@@ -8,22 +7,12 @@ import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import { getAuth } from "firebase/auth";
 
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
-});
-
-const kanit = Kanit({
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
-});
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "700"],
 });
 
-export default function admin() {
+export default function hCare_users() {
   const [users, setUsers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [userToUpdate, setUserToUpdate] = useState(null);

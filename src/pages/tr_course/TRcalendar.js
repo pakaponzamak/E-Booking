@@ -149,7 +149,7 @@ export default function Calendar() {
       : isDisabled
       ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
       : isCurrentDate
-      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+      ? "rounded-xl text-right p-2 bg-red-400 w-10 h-10 current-date text-white"
       : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
 
     const dayElement = (

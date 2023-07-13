@@ -64,6 +64,9 @@ const userIsNotCheckHandler = async (e) => {
         time: "N/A",
         plant: "N/A",
         checkIn: false, 
+        courses: {
+          
+          }
       };
   
       function delay(time) {

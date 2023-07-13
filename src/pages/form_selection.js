@@ -52,7 +52,7 @@ export default function selectionPage() {
             คอร์สอบรมวินัยทางการเงิน
           </button>
         </Link>
-        <Link href="../admin/admin_users">
+        <Link href="../admin/all_users">
           <button
             type="summit"
             class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-10 py-2.5 text-center 
