@@ -66,7 +66,7 @@ export default function Calendar() {
       }
     }
     setClickedDay(currentDate.getDate());
-    setStartIndex(currentDate.getDate())
+    setStartIndex(currentDate.getDate());
   }, []);
 
   const handleNumberClick = (day) => {
@@ -76,21 +76,17 @@ export default function Calendar() {
     //const currentDay = currentDate.getDate();
     //const date = new Date(currentYear, currentMonth, day);
     //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
-    const date = (currentYear+"-"+(currentMonth+1)+"-"+day)
-    console.log(date)
+    const date = currentYear + "-" + (currentMonth + 1) + "-" + day;
+    console.log(date);
 
     const filteredCourses = courses.filter((course) => {
-      const courseDate = course.date
-      
+      const courseDate = course.date;
+
       //console.log(courseDate)
-      return (
-        courseDate === date
-      );
-      
+      return courseDate === date;
     });
-    
+
     setFilteredCourses(filteredCourses);
-    
   };
 
   const previous7Days = () => {
@@ -126,8 +122,6 @@ export default function Calendar() {
     setStartIndex(1);
   };
 
-
-
   const currentDay = currentDate.getDate();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -143,24 +137,21 @@ export default function Calendar() {
     if (i > daysInMonth) break;
     const date = new Date(currentYear, currentMonth, i);
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
-    const firstLetterOfDay = dayOfWeek.charAt(0);
+
     const isCurrentDate = i === todayDate;
     const isClickedDay = i === clickedDay;
-  
+
     const isPastDate = date < today; // Check if the date is in the past
     const isDisabled = isPastDate && !isCurrentDate; // Set the disabled state based on whether it's a past date and not the current date
-  
+
     const dayButtonClass = isClickedDay
-  ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-  : isDisabled
-  ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
-  : isCurrentDate
-  ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
-  : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
+      ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+      : isDisabled
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+      : isCurrentDate
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+      : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
 
-
-  
-  
     const dayElement = (
       <div key={i} className="flex-none">
         <div className="text-center text-xs">{dayOfWeek}</div>
@@ -168,17 +159,17 @@ export default function Calendar() {
           onClick={() => handleNumberClick(i)}
           className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
           disabled={isDisabled} // Disable the button for past dates
-          style={isPastDate && ! isCurrentDate ? { backgroundColor: "#f1f5f9" } : null} // Change background color for past dates
+          style={
+            isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
+          } // Change background color for past dates
         >
           <div className="text-center">{i}</div>
         </button>
       </div>
     );
-  
+
     days.push(dayElement);
   }
-  
-  
 
   const countClickCheckHandler = async (course) => {
     const db = getDatabase();
@@ -198,13 +189,14 @@ export default function Calendar() {
         number: course.number + 1,
       };
 
-      update(ref(db, "courses/" + course.course + course.date + course.onlineCode), postData);
+      update(
+        ref(db, "courses/" + course.course + course.date + course.onlineCode),
+        postData
+      );
     } else {
       alert("เต็มแล้วครับพ่อหนุ่ม");
     }
   };
-
-
 
   return (
     <main
@@ -306,60 +298,65 @@ export default function Calendar() {
         </button>
       </div>
       <div className="border-b p-1 mb-5"></div>
-      <div>  
-      {courses
-      .filter((course) => {
-        const courseDate = new Date(course.date);
-        const courseDay = courseDate.getDate();
-        return clickedDay && clickedDay === courseDay;
-      }).map((courses) => (
-          <div
-            key={courses.id}
-            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
-          >
-            <div className="flex justify-between mb-2">
-              <h1>
-                Date :{" "}
-                <strong>
-                  {courses.timeStart} - {courses.timeEnd}
-                </strong>
-              </h1>
-              <p>
-                Online : <strong>{courses.onlineCode}</strong>
-              </p>
+      <div>
+        {courses
+          .sort((a, b) => a.timeStart.localeCompare(b.timeStart))
+          .filter((course) => {
+            const courseDate = new Date(course.date);
+            const courseDay = courseDate.getDate();
+            return clickedDay === courseDay;
+          })
+          .map((courses) => (
+            <div
+              key={courses.id}
+              className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+            >
+              <div className="flex justify-between mb-2">
+                <h1>
+                  Date :{" "}
+                  <strong>
+                    {courses.timeStart} - {courses.timeEnd}
+                  </strong>
+                </h1>
+                <p>
+                  Online : <strong>{courses.onlineCode}</strong>
+                </p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <p>
+                  Lecturer : <strong>{courses.lecturer}</strong>
+                </p>
+                <p>
+                  Onside :{" "}
+                  <strong>
+                    {courses.number} / {courses.amount}
+                  </strong>
+                </p>
+              </div>
+              <div className="flex justify-between mt-3">
+                <p>
+                  Place : <strong>{courses.hall}</strong>
+                </p>
+                <button
+                  onClick={() => countClickCheckHandler(courses)}
+                  className={courses.number >= courses.amount ? "" : ""}
+                >
+                  <div className="">
+                    {courses.number >= courses.amount ? (
+                      <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
+                        ที่นั่งเต็มแล้ว
+                      </span>
+                    ) : (
+                      <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                        เลือก
+                      </span>
+                    )}
+                  </div>
+                </button>
+              </div>
             </div>
-            <div className="flex justify-between mb-2">
-              <p>
-                Lecturer : <strong>{courses.lecturer}</strong>
-              </p>
-              <p>
-                Onside :{" "}
-                <strong>
-                  {courses.number} / {courses.amount}
-                </strong>
-              </p>
-            </div>
-            <div className="flex justify-between mt-3">
-              <p>
-                Place : <strong>{courses.hall}</strong>
-              </p>
-              <button
-                onClick={() => countClickCheckHandler(courses)}
-                className={courses.number >= courses.amount ? "" : ""}
-              >
-                <div className="">
-                  {courses.number >= courses.amount ? (
-                    <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">ที่นั่งเต็มแล้ว</span>
-                  ) : (
-                    <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">เลือก</span>
-                  )}
-                </div>
-              </button>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
-     
     </main>
   );
 }
