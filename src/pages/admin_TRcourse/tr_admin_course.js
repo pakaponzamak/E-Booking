@@ -98,9 +98,7 @@ export default function tr_admin_course() {
 
   const navigateToSection = (menu) => {
     switch (menu) {
-      case "all_users":
-        router.push("../admin/all_users");
-        break;
+      
       case "about":
         router.push("../admin_TRcourse/admin_insert");
         break;
@@ -110,6 +108,18 @@ export default function tr_admin_course() {
       case "Option 5":
         router.push("./tr_admin_course");
         break;
+        case "Option 2":
+        router.push("../admin_health/hc_admin_users");
+        break;
+        case "Option 3":
+          router.push("../admin_health/hc_admin_list");
+          break;
+          case "tr insert":
+          router.push("./tr_admin_insert");
+          break;
+          case "Option 1":
+          router.push("../admin_health/hc_admin_insert");
+          break;
 
       // Add more cases for other menu items and corresponding routes
       default:
@@ -134,33 +144,7 @@ export default function tr_admin_course() {
 
         <nav className="text-gray-300 flex-1 drop-shadow-lg">
           <ul className="space-y-2 py-4 mx-2">
-            <li>
-              <a
-                href="#"
-                className={`flex items-center px-4 py-3 ${
-                  isMenuActive("all_users")
-                    ? "text-white border-b-2 border-blue-500 bg-blue-500 rounded-3xl"
-                    : "text-gray-400 hover:text-white"
-                }`}
-                onClick={() => handleMenuClick("all_users")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6 mr-2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                  />
-                </svg>
-                ข้อมูลผู้ใช้งาน
-              </a>
-            </li>
+           
 
             <li>
               <a
@@ -268,7 +252,7 @@ export default function tr_admin_course() {
                         />
                       </svg>
 
-                      <span className="ml-2">ข้อมูลตารางแพทย์</span>
+                      <span className="ml-2">ตารางแพทย์</span>
                     </a>
                   </li>
                 </ul>
@@ -305,11 +289,11 @@ export default function tr_admin_course() {
                     <a
                       href="#"
                       className={`flex items-center px-4 py-3 ${
-                        isMenuActive("Option 3")
+                        isMenuActive("tr insert")
                           ? "text-white border-b-2 border-blue-500 bg-blue-500 rounded-3xl"
                           : "text-gray-400 hover:text-white"
                       }`}
-                      onClick={() => handleSubMenuClick("Option 3")}
+                      onClick={() => handleSubMenuClick("tr insert")}
                     >
                       <svg
                         className="h-6 w-6 mr-2"
