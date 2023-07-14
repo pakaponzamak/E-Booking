@@ -5,6 +5,17 @@ import { useRouter } from "next/router";
 import DensoLogo from "../images/Denso_logo.png";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Slider, { SliderThumb } from "@mui/material/Slider";
+import { styled } from "@mui/material/styles";
+
+import dayjs from "dayjs";
+
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "700"],
@@ -16,6 +27,34 @@ export default function tr_admin_course() {
   const [isCourseExpanded, setIsCourseExpanded] = useState(false);
   const [course, setCourses] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [selectCourse, setSelectCourse] = useState("");
+  const [selectPlant, setSelectPlant] = useState("");
+  const [name, setName] = useState("");
+  const [place, setPlace] = useState("");
+  const [onlineCode, setOnlineCode] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [date, setDate] = useState("");
+  const [timeStart, setTimeStart] = useState("");
+  const [timeEnd, setTimeEnd] = useState("");
+  const [click,setClick] = useState(0)
+
+  const increase = () => {
+   setClick(count => count + 1)
+  }
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const handleSelectCourseChange = (event) => {
+    setSelectCourse(event.target.value);
+  };
+  const handleSelectPlantChange = (event) => {
+    setSelectPlant(event.target.value);
+  };
+  const handleSliderChange = (event, newValue) => {
+    setAmount(newValue);
+  };
 
   StartFireBase();
 
@@ -41,6 +80,45 @@ export default function tr_admin_course() {
       off(courseRef);
     };
   }, []);
+
+  const PrettoSlider = styled(Slider)({
+    color: "#52af77",
+    height: 8,
+    "& .MuiSlider-track": {
+      border: "none",
+    },
+    "& .MuiSlider-thumb": {
+      height: 24,
+      width: 24,
+      backgroundColor: "#fff",
+      border: "2px solid currentColor",
+      "&:focus, &:hover, &.Mui-active, &.Mui-focusVisible": {
+        boxShadow: "inherit",
+      },
+      "&:before": {
+        display: "none",
+      },
+    },
+    "& .MuiSlider-valueLabel": {
+      lineHeight: 1.2,
+      fontSize: 12,
+      background: "unset",
+      padding: 0,
+      width: 32,
+      height: 32,
+      borderRadius: "50% 50% 50% 0",
+      backgroundColor: "#52af77",
+      transformOrigin: "bottom left",
+      transform: "translate(50%, -100%) rotate(-45deg) scale(0)",
+      "&:before": { display: "none" },
+      "&.MuiSlider-valueLabelOpen": {
+        transform: "translate(50%, -100%) rotate(-45deg) scale(1)",
+      },
+      "& > *": {
+        transform: "rotate(45deg)",
+      },
+    },
+  });
 
   const router = useRouter();
   const toggleForm = (user) => {
@@ -98,7 +176,6 @@ export default function tr_admin_course() {
 
   const navigateToSection = (menu) => {
     switch (menu) {
-      
       case "about":
         router.push("../admin_TRcourse/admin_insert");
         break;
@@ -108,18 +185,18 @@ export default function tr_admin_course() {
       case "Option 5":
         router.push("../admin_TRcourse/tr_admin_course");
         break;
-        case "Option 2":
+      case "Option 2":
         router.push("../admin_health/hc_admin_users");
         break;
-        case "Option 3":
+      case "Option 3":
         router.push("./hc_admin_list");
         break;
-        case "tr insert":
-          router.push("../admin_TRcourse/tr_admin_insert");
-          break;
-          case "Option 1":
-          router.push("./hc_admin_insert");
-          break;
+      case "tr insert":
+        router.push("../admin_TRcourse/tr_admin_insert");
+        break;
+      case "Option 1":
+        router.push("./hc_admin_insert");
+        break;
 
       // Add more cases for other menu items and corresponding routes
       default:
@@ -144,8 +221,6 @@ export default function tr_admin_course() {
 
         <nav className="text-gray-300 flex-1 drop-shadow-lg">
           <ul className="space-y-2 py-4 mx-2">
-           
-
             <li>
               <a
                 href="#"
@@ -402,9 +477,239 @@ export default function tr_admin_course() {
         <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col">
           <h1 className="font-extrabold text-3xl p-3 ">ใส่ข้อมูลข้อมูลคอร์ส</h1>
           <div className="border-b border-gray-800 mb-4"></div>
-          
-          <div>Test</div>
-        </div>
+
+   <div className="grid grid-cols-2">
+         <div>
+          <div className="text-center mb-3 ">
+           
+            <FormControl>
+              <div>เลือกคอร์ส</div>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={selectCourse}
+                onChange={handleSelectCourseChange}
+              >
+                <FormControlLabel
+                  value="TMC-1"
+                  control={<Radio />}
+                  label="TMC - 1"
+                />
+                <FormControlLabel
+                  value="TMC-2"
+                  control={<Radio />}
+                  label="TMC - 2"
+                />
+              </RadioGroup>
+            </FormControl>
+          </div>
+          <div className="text-center mb-1">
+            <FormControl>
+              <div>เลือก Plant</div>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={selectPlant}
+                onChange={handleSelectPlantChange}
+              >
+                <FormControlLabel value="SRG" control={<Radio />} label="SRG" />
+                <FormControlLabel
+                  value="WELL"
+                  control={<Radio />}
+                  label="WELL"
+                />
+                <FormControlLabel value="BPK" control={<Radio />} label="BPK" />
+              </RadioGroup>
+            </FormControl>
+          </div>
+          <div className="text-center">
+            <div>ผู้บรรยาย</div>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "35ch" },
+              }}
+              noValidate
+              autoComplete="off"
+              onChange={(e) => setName(e.target.value)}
+            >
+              <TextField
+                id="outlined-basic"
+                label="ผู้บรรยาย"
+                variant="outlined"
+              />
+            </Box>
+            <div>สถานที่</div>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "35ch" },
+              }}
+              noValidate
+              autoComplete="off"
+              onChange={(e) => setPlace(e.target.value)}
+            >
+              <TextField
+                id="outlined-basic"
+                label="สถานที่"
+                variant="outlined"
+              />
+            </Box>
+            <div>Online Code</div>
+            <Box
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "35ch" },
+              }}
+              noValidate
+              autoComplete="off"
+              onChange={(e) => setOnlineCode(e.target.value)}
+            >
+              <TextField
+                id="outlined-basic"
+                label="Online Code"
+                variant="outlined"
+              />
+            </Box>
+            <div className="text-center">
+              <div>จำนวนคน</div>
+              <Box
+                component="form"
+                sx={{
+                  "& > :not(style)": { m: 1, width: "30ch", height: "3ch" },
+                }}
+                noValidate
+                autoComplete="off"
+                onChange={(e) => setAmount(e.target.value)}
+              >
+                <TextField
+                  id="outlined-basic"
+                  label="จำนวนคน"
+                  variant="outlined"
+                  type="number"
+                />
+              </Box>
+              <Box sx={{ m: 3 }} />
+
+              <Slider
+                value={amount}
+                onChange={handleSliderChange}
+                min={0}
+                max={100}
+                step={1}
+                defaultValue={0}
+                sx={{ width: "25%" }}
+                valueLabelDisplay="auto"
+              />
+            </div>
+            <div>
+              <label htmlFor="datepicker-date" className="mx-2">
+                วันที่
+              </label>
+              <input
+                type="date"
+                id="datepicker-date"
+                name="datepicker-date"
+                className="p-4 rounded-2xl px-4 py-3 mr-2"
+                onChange={(e) => setDate(e.target.value)}
+              />
+              <label htmlFor="datepicker-date" className="mx-2">
+                เวลา :{" "}
+              </label>
+              <input
+                type="time"
+                id="datepicker-start"
+                name="datepicker-start"
+                className="p-4 rounded-2xl px-4 py-3"
+                onChange={(e) => setTimeStart(e.target.value)}
+              />
+              <label htmlFor="datepicker-end" className="mx-2">
+                ไปจนถึง
+              </label>
+              <input
+                type="time"
+                id="datepicker-end"
+                name="datepicker-end"
+                className="p-4 rounded-2xl px-4 py-3"
+                onChange={(e) => setTimeEnd(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-20 py-3 text-center 
+                                mr-2 mb-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold mt-10"
+            >
+              ยืนยัน
+            </button>
+          </div>
+          </div>
+          <div><div
+              
+              className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+            >
+               <div className="text-center font-extrabold text-3xl">Preview</div>
+               <div className="flex justify-between mb-2">
+                <h1>
+                  Course :{" "}
+                  <strong>
+                    {selectCourse}
+                  </strong>
+                </h1>
+                <p>
+                  Plant : <strong>{selectPlant}</strong>
+                </p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <h1>
+                  Time :{" "}
+                  <strong>
+                    {timeStart} - {timeEnd}
+                  </strong>
+                </h1>
+                <p>
+                  Online : <strong>{onlineCode}</strong>
+                </p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <p>
+                  Lecturer : <strong>{name}</strong>
+                </p>
+                <p>
+                  Onside :{" "}
+                  <strong>
+                    {click} / {amount}
+                  </strong>
+                </p>
+              </div>
+              <div className="flex justify-between mt-3">
+                <p>
+                  Place : <strong>{place}</strong>
+                </p>
+                <button
+                  onClick={increase}
+                  className={click >= amount ? "" : ""}
+                  disabled={click >= amount}
+                >
+                  <div className="">
+                    {click >= amount ? (
+                      <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold cursor-not-allowed">
+                        ที่นั่งเต็มแล้ว
+                      </span>
+                    ) : (
+                      <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                        เลือก
+                      </span>
+                    )}
+                  </div>
+                </button>
+              </div>
+              
+            </div></div>
+          </div>
+          </div>
       </div>
     </div>
   );
