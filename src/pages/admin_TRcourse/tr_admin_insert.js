@@ -9,12 +9,9 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+
 import Slider, { SliderThumb } from "@mui/material/Slider";
 import { styled } from "@mui/material/styles";
-
-import dayjs from "dayjs";
 
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
@@ -36,11 +33,11 @@ export default function tr_admin_course() {
   const [date, setDate] = useState("");
   const [timeStart, setTimeStart] = useState("");
   const [timeEnd, setTimeEnd] = useState("");
-  const [click,setClick] = useState(0)
+  const [click, setClick] = useState(0);
 
   const increase = () => {
-   setClick(count => count + 1)
-  }
+    setClick((count) => count + 1);
+  };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -478,238 +475,223 @@ export default function tr_admin_course() {
           <h1 className="font-extrabold text-3xl p-3 ">ใส่ข้อมูลข้อมูลคอร์ส</h1>
           <div className="border-b border-gray-800 mb-4"></div>
 
-   <div className="grid grid-cols-2">
-         <div>
-          <div className="text-center mb-3 ">
-           
-            <FormControl>
-              <div>เลือกคอร์ส</div>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={selectCourse}
-                onChange={handleSelectCourseChange}
-              >
-                <FormControlLabel
-                  value="TMC-1"
-                  control={<Radio />}
-                  label="TMC - 1"
-                />
-                <FormControlLabel
-                  value="TMC-2"
-                  control={<Radio />}
-                  label="TMC - 2"
-                />
-              </RadioGroup>
-            </FormControl>
-          </div>
-          <div className="text-center mb-1">
-            <FormControl>
-              <div>เลือก Plant</div>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={selectPlant}
-                onChange={handleSelectPlantChange}
-              >
-                <FormControlLabel value="SRG" control={<Radio />} label="SRG" />
-                <FormControlLabel
-                  value="WELL"
-                  control={<Radio />}
-                  label="WELL"
-                />
-                <FormControlLabel value="BPK" control={<Radio />} label="BPK" />
-              </RadioGroup>
-            </FormControl>
-          </div>
-          <div className="text-center">
-            <div>ผู้บรรยาย</div>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "35ch" },
-              }}
-              noValidate
-              autoComplete="off"
-              onChange={(e) => setName(e.target.value)}
-            >
-              <TextField
-                id="outlined-basic"
-                label="ผู้บรรยาย"
-                variant="outlined"
-              />
-            </Box>
-            <div>สถานที่</div>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "35ch" },
-              }}
-              noValidate
-              autoComplete="off"
-              onChange={(e) => setPlace(e.target.value)}
-            >
-              <TextField
-                id="outlined-basic"
-                label="สถานที่"
-                variant="outlined"
-              />
-            </Box>
-            <div>Online Code</div>
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { m: 1, width: "35ch" },
-              }}
-              noValidate
-              autoComplete="off"
-              onChange={(e) => setOnlineCode(e.target.value)}
-            >
-              <TextField
-                id="outlined-basic"
-                label="Online Code"
-                variant="outlined"
-              />
-            </Box>
-            <div className="text-center">
-              <div>จำนวนคน</div>
-              <Box
-                component="form"
-                sx={{
-                  "& > :not(style)": { m: 1, width: "30ch", height: "3ch" },
-                }}
-                noValidate
-                autoComplete="off"
-                onChange={(e) => setAmount(e.target.value)}
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="จำนวนคน"
-                  variant="outlined"
-                  type="number"
-                />
-              </Box>
-              <Box sx={{ m: 3 }} />
-
-              <Slider
-                value={amount}
-                onChange={handleSliderChange}
-                min={0}
-                max={100}
-                step={1}
-                defaultValue={0}
-                sx={{ width: "25%" }}
-                valueLabelDisplay="auto"
-              />
-            </div>
+          <div className="grid grid-cols-2">
             <div>
-              <label htmlFor="datepicker-date" className="mx-2">
-                วันที่
-              </label>
-              <input
-                type="date"
-                id="datepicker-date"
-                name="datepicker-date"
-                className="p-4 rounded-2xl px-4 py-3 mr-2"
-                onChange={(e) => setDate(e.target.value)}
-              />
-              <label htmlFor="datepicker-date" className="mx-2">
-                เวลา :{" "}
-              </label>
-              <input
-                type="time"
-                id="datepicker-start"
-                name="datepicker-start"
-                className="p-4 rounded-2xl px-4 py-3"
-                onChange={(e) => setTimeStart(e.target.value)}
-              />
-              <label htmlFor="datepicker-end" className="mx-2">
-                ไปจนถึง
-              </label>
-              <input
-                type="time"
-                id="datepicker-end"
-                name="datepicker-end"
-                className="p-4 rounded-2xl px-4 py-3"
-                onChange={(e) => setTimeEnd(e.target.value)}
-              />
-            </div>
+              <div className="text-center mb-3 ">
+                <FormControl>
+                  <div>เลือกคอร์ส</div>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={selectCourse}
+                    onChange={handleSelectCourseChange}
+                  >
+                    <FormControlLabel
+                      value="TMC-1"
+                      control={<Radio />}
+                      label="TMC - 1"
+                    />
+                    <FormControlLabel
+                      value="TMC-2"
+                      control={<Radio />}
+                      label="TMC - 2"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div className="text-center mb-1">
+                <FormControl>
+                  <div>เลือก Plant</div>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={selectPlant}
+                    onChange={handleSelectPlantChange}
+                  >
+                    <FormControlLabel
+                      value="SRG"
+                      control={<Radio />}
+                      label="SRG"
+                    />
+                    <FormControlLabel
+                      value="WELL"
+                      control={<Radio />}
+                      label="WELL"
+                    />
+                    <FormControlLabel
+                      value="BPK"
+                      control={<Radio />}
+                      label="BPK"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div className="text-center">
+                <div>ผู้บรรยาย</div>
+                <input
+                  className="px-10 py-3 rounded-xl m-2 "
+                  placeholder="ผู้บรรยาย"
+                  type="text"
+                  name="username"
+                  id="username"
+                  required="required"
+                  onChange={(e) => setName(e.target.value)}
+                ></input>
+                <div>สถานที่</div>
+                <input
+                  className=" px-10 py-3 rounded-xl m-2 "
+                  placeholder="สถานที่"
+                  type="text"
+                  name="username"
+                  id="username"
+                  required="required"
+                  onChange={(e) => setPlace(e.target.value)}
+                ></input>
+                <div>Online Code</div>
+                <input
+                  className=" px-10 py-3 rounded-xl m-2 "
+                  placeholder="Online Code"
+                  type="text"
+                  name="username"
+                  id="username"
+                  required="required"
+                  onChange={(e) => setOnlineCode(e.target.value)}
+                ></input>
+                <div className="text-center">
+                  <div>จำนวนคน</div>
+                  <input
+                  className=" px-10 py-3 rounded-xl m-2 "
+                  placeholder="จำนวนคน"
+                  type="number"
+                  name="username"
+                  id="username"
+                  required="required"
+                  onChange={(e) => setAmount(e.target.value)}
+                ></input>
+                
+<div>
+                  <Slider
+                    value={amount}
+                    onChange={handleSliderChange}
+                    min={0}
+                    max={100}
+                    step={1}
+                    defaultValue={0}
+                    sx={{ width: "25%" }}
+                    valueLabelDisplay="auto"
+                  /></div>
+                </div>
+                <div>
+                  <label htmlFor="datepicker-date" className="mx-2">
+                    วันที่
+                  </label>
+                  <input
+                    type="date"
+                    id="datepicker-date"
+                    name="datepicker-date"
+                    className="p-4 rounded-2xl px-4 py-3 mr-2"
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                  <label htmlFor="datepicker-date" className="mx-2">
+                    เวลา :{" "}
+                  </label>
+                  <input
+                    type="time"
+                    id="datepicker-start"
+                    name="datepicker-start"
+                    className="p-4 rounded-2xl px-4 py-3"
+                    onChange={(e) => setTimeStart(e.target.value)}
+                  />
+                  <label htmlFor="datepicker-end" className="mx-2">
+                    ไปจนถึง
+                  </label>
+                  <input
+                    type="time"
+                    id="datepicker-end"
+                    name="datepicker-end"
+                    className="p-4 rounded-2xl px-4 py-3"
+                    onChange={(e) => setTimeEnd(e.target.value)}
+                  />
+                </div>
 
-            <button
-              type="submit"
-              class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-20 py-3 text-center 
-                                mr-2 mb-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold mt-10"
-            >
-              ยืนยัน
-            </button>
-          </div>
-          </div>
-          <div><div
-              
-              className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
-            >
-               <div className="text-center font-extrabold text-3xl">Preview</div>
-               <div className="flex justify-between mb-2">
-                <h1>
-                  Course :{" "}
-                  <strong>
-                    {selectCourse}
-                  </strong>
-                </h1>
-                <p>
-                  Plant : <strong>{selectPlant}</strong>
-                </p>
-              </div>
-              <div className="flex justify-between mb-2">
-                <h1>
-                  Time :{" "}
-                  <strong>
-                    {timeStart} - {timeEnd}
-                  </strong>
-                </h1>
-                <p>
-                  Online : <strong>{onlineCode}</strong>
-                </p>
-              </div>
-              <div className="flex justify-between mb-2">
-                <p>
-                  Lecturer : <strong>{name}</strong>
-                </p>
-                <p>
-                  Onside :{" "}
-                  <strong>
-                    {click} / {amount}
-                  </strong>
-                </p>
-              </div>
-              <div className="flex justify-between mt-3">
-                <p>
-                  Place : <strong>{place}</strong>
-                </p>
                 <button
-                  onClick={increase}
-                  className={click >= amount ? "" : ""}
-                  disabled={click >= amount}
+                  type="submit"
+                  class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-20 py-3 text-center 
+                                mr-2 mb-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold mt-10"
                 >
-                  <div className="">
-                    {click >= amount ? (
-                      <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold cursor-not-allowed">
-                        ที่นั่งเต็มแล้ว
-                      </span>
-                    ) : (
-                      <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
-                        เลือก
-                      </span>
-                    )}
-                  </div>
+                  ยืนยัน
                 </button>
               </div>
-              
-            </div></div>
+            </div>
+            <div>
+              <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5">
+                <div className="text-center font-extrabold text-3xl">
+                  Preview
+                </div>
+                <div className="flex justify-between mb-2">
+                  <h1>
+                    Date : <strong>{date}</strong>
+                  </h1>
+                  
+                </div>
+                <div className="flex justify-between mb-2">
+                  <h1>
+                    Course : <strong>{selectCourse}</strong>
+                  </h1>
+                  <p>
+                    Plant : <strong>{selectPlant}</strong>
+                  </p>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <h1>
+                    Time :{" "}
+                    <strong>
+                      {timeStart} - {timeEnd}
+                    </strong>
+                  </h1>
+                  <p>
+                    Online : <strong>{onlineCode}</strong>
+                  </p>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <p>
+                    Lecturer : <strong>{name}</strong>
+                  </p>
+                  <p>
+                    Onside :{" "}
+                    <strong>
+                      {click} / {amount}
+                    </strong>
+                  </p>
+                </div>
+                <div className="flex justify-between mt-3">
+                  <p>
+                    Place : <strong>{place}</strong>
+                  </p>
+                  <button
+                    onClick={increase}
+                    className={click >= amount ? "" : ""}
+                    disabled={click >= amount}
+                  >
+                    <div className="">
+                      {click >= amount ? (
+                        <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold cursor-not-allowed">
+                          ที่นั่งเต็มแล้ว
+                        </span>
+                      ) : (
+                        <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                          เลือก
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          </div>
+        </div>
       </div>
     </div>
   );
