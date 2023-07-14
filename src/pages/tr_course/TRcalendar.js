@@ -68,6 +68,12 @@ export default function Calendar() {
     }
     setClickedDay(currentDate.getDate());
     setStartIndex(currentDate.getDate());
+    const currentDay = currentDate.getDate();
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0")
+    const currentYear = currentDate.getFullYear();
+    const date = currentYear + "-" + (currentMonth) + "-" + currentDay.toString().padStart(2, "0");
+    setDayMonthYear(date);
+    console.log(dayMonthYear)
   }, []);
 
   const handleNumberClick = (day) => {
@@ -77,7 +83,8 @@ export default function Calendar() {
     //const currentDay = currentDate.getDate();
     //const date = new Date(currentYear, currentMonth, day);
     //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
-    const date = currentYear + "-" + (currentMonth) + "-" + day;
+    
+    const date = currentYear + "-" + (currentMonth) + "-" + day.toString().padStart(2, "0");
     setDayMonthYear(date)
     console.log(dayMonthYear);
 
@@ -304,10 +311,7 @@ export default function Calendar() {
         {courses
           .sort((a, b) => a.timeStart > b.timeStart ? 1 : -1)
           .filter((course) => {
-            const courseDate = (course.date);
-            console.log(courseDate)
-            console.log(dayMonthYear)
-            //const courseDay = courseDate.getDate();
+            const courseDate = (course.date); 
             return dayMonthYear === courseDate;
           })
           .map((courses) => (
