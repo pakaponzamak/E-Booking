@@ -1,14 +1,17 @@
-import React, { useState, useEffect,useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Bai_Jamjuree } from "next/font/google";
 import { useRouter } from "next/router";
 import DensoLogo from "../images/Denso_logo.png";
-import { getDatabase, ref, set, onValue, off } from "firebase/database";
+import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
+
+import Slider, { SliderThumb } from "@mui/material/Slider";
+import debounce from "lodash/debounce";
 
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
@@ -20,24 +23,47 @@ export default function tr_admin_course() {
   const [isHealthCareExpanded, setIsHealthCareExpanded] = useState(false);
   const [isCourseExpanded, setIsCourseExpanded] = useState(false);
   const [course, setCourses] = useState([]);
- // const [showForm, setShowForm] = useState(false);
-  const [courseOption, setCourseOption] = useState("");
-  const [plantOption, setPlantOption] = useState("");
-  const [lecturer,setLecturer] = useState("")
+  const [showForm, setShowForm] = useState(false);
+  const [selectCourse, setSelectCourse] = useState("");
+  const [selectPlant, setSelectPlant] = useState("");
+  const [name, setName] = useState("");
   const [place, setPlace] = useState("");
   const [onlineCode, setOnlineCode] = useState("");
   const [amount, setAmount] = useState(0);
   const [date, setDate] = useState("");
   const [timeStart, setTimeStart] = useState("");
   const [timeEnd, setTimeEnd] = useState("");
-
   const [click, setClick] = useState(0);
 
   const increase = () => {
     setClick((count) => count + 1);
   };
 
+  const handleDateChange = useCallback((event) => {
+   setDate(event.target.value);
+  }, []);
+  const handleNameChange = useCallback((event) => {
+   setName(event.target.value);
+  }, []);
 
+  const handleSelectCourseChange = useCallback((event) => {
+    setSelectCourse(event.target.value);
+  }, []);
+
+  const handleSelectPlantChange = useCallback((event) => {
+    setSelectPlant(event.target.value);
+  }, []);
+
+  const debouncedSliderChange = useCallback(
+   debounce((event, newValue) => {
+     setAmount(newValue);
+   }, 300),
+   []
+ );
+ 
+ const handleSliderChange = useCallback((event, newValue) => {
+   debouncedSliderChange(event, newValue);
+ }, [debouncedSliderChange]);
 
   StartFireBase();
 
@@ -65,86 +91,70 @@ export default function tr_admin_course() {
   }, []);
 
 
+
   const router = useRouter();
- 
-  const handleSubmit = () => {
-   if (
-      courseOption.trim() === "" ||
-      timeStart.trim() === "" ||
-      timeEnd.trim() === "" ||
-      date.trim() === "" ||
-      lecturer.trim() === "" ||
-      place.trim() === "" ||
-      plantOption.trim() === "" ||
-      onlineCode.trim() === "" ||
-      amount === 0
+  const toggleForm = useCallback((user) => {
+    if (
+      user.id !== "!!Do no delete!!" &&
+      user.employeeId !== "!!`~Do no delete~`!!"
     ) {
-      alert("Please fill out all the required fields.");
-      return;
+      setShowForm(user);
+    } else {
+      alert("Cannot perform this action");
     }
+  }, []);
 
+  const deleteSingleUserHandler = useCallback((course) => {
+    // Access the user object and perform actions
+    console.log("Delete Button clicked for user:", course);
     const db = getDatabase();
-    const data = {
-      course: courseOption,
-      timeStart: timeStart,
-      timeEnd: timeEnd,
-      date: date,
-      lecturer: lecturer,
-      amount: amount,
-      hall: place,
-      plant: plantOption,
-      onlineCode: onlineCode,
-      number:0
-    };
-    set(ref(db, "courses/" + courseOption + date + timeStart + onlineCode ), data).then(() => {alert("เรียบร้อยแล้ว");window.location.reload();}).catch((error) => {
-      console.error("Error inserting data:", error);
-    });
-  }
+    var cnf = confirm(`ต้องการจะ "ลบ" ข้อมูลหรือไม่`);
+    if (cnf) {
+      remove(ref(db, "courses/" + course.id));
+    }
+    // Other actions...
+  }, []);
 
- const handlePlaceChange = useCallback((e) => {
-   setPlace(e.target.value);
- }, []);
+  const updateSingleUserHandler = useCallback((course) => {
+    // Update the user object
+    console.log("Update Button clicked for user:", course);
+    // Other actions...
+  }, []);
 
-  const courseOptionChange = (event) => {
-   setCourseOption(event.target.value)
-   console.log(courseOption)
- }
- const plantOptionChange = (event) => {
-   setPlantOption(event.target.value)
-   console.log(plantOption)
- }
+  const courseOptionChange = useCallback((event) => {
+    setCourses(event.target.value);
+  }, []);
 
-  const toggleHealthCareMenu = () => {
+  const toggleHealthCareMenu = useCallback(() => {
     setIsHealthCareExpanded(!isHealthCareExpanded);
     setIsCourseExpanded(false);
     setActiveMenu("healthcare");
-  };
+  }, [isHealthCareExpanded]);
 
-  const toggleCourseMenu = () => {
+  const toggleCourseMenu = useCallback(() => {
     setIsCourseExpanded(!isCourseExpanded);
     setIsHealthCareExpanded(false);
     setActiveMenu("trainingcourse");
-  };
+  }, [isCourseExpanded]);
 
-  const handleMenuClick = (menu) => {
+  const handleMenuClick = useCallback((menu) => {
     setActiveMenu(menu);
     setIsHealthCareExpanded(false);
     setIsCourseExpanded(false);
     navigateToSection(menu);
-  };
+  }, []);
 
-  const handleSubMenuClick = (menu) => {
+  const handleSubMenuClick = useCallback((menu) => {
     setActiveMenu(menu);
     navigateToSection(menu);
-  };
+  }, []);
 
-  const isMenuActive = (menu) => {
+  const isMenuActive = useCallback((menu) => {
     return activeMenu === menu;
-  };
+  }, [activeMenu]);
 
-  const navigateToSection = (menu) => {
+  const navigateToSection = useCallback((menu) => {
     switch (menu) {
-      
       case "about":
         router.push("../admin_TRcourse/admin_insert");
         break;
@@ -154,26 +164,24 @@ export default function tr_admin_course() {
       case "Option 5":
         router.push("../admin_TRcourse/tr_admin_course");
         break;
-        case "Option 2":
+      case "Option 2":
         router.push("../admin_health/hc_admin_users");
         break;
-        case "Option 3":
+      case "Option 3":
         router.push("./hc_admin_list");
         break;
-        case "tr insert":
-          router.push("../admin_TRcourse/tr_admin_insert");
-          break;
-          case "Option 1":
-          router.push("./hc_admin_insert");
-          break;
+      case "tr insert":
+        router.push("../admin_TRcourse/tr_admin_insert");
+        break;
+      case "Option 1":
+        router.push("./hc_admin_insert");
+        break;
 
       // Add more cases for other menu items and corresponding routes
       default:
         break;
     }
-  };
-
-  
+  }, []);
 
   return (
     <div className={`flex h-screen ${bai.className} bg-slate-100`}>
@@ -192,8 +200,6 @@ export default function tr_admin_course() {
 
         <nav className="text-gray-300 flex-1 drop-shadow-lg">
           <ul className="space-y-2 py-4 mx-2">
-           
-
             <li>
               <a
                 href="#"
@@ -450,18 +456,18 @@ export default function tr_admin_course() {
         <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col">
           <h1 className="font-extrabold text-3xl p-3 ">ใส่ข้อมูลข้อมูลคอร์ส</h1>
           <div className="border-b border-gray-800 mb-4"></div>
+
           <div className="grid grid-cols-2">
             <div>
-            <div className="text-center mb-3 mt-10">
+              <div className="text-center mb-3 ">
                 <FormControl>
                   <div>เลือกคอร์ส</div>
                   <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
-                    value={courseOption}
-                    required="required"
-                    onChange={courseOptionChange}
+                    value={selectCourse}
+                    onChange={handleSelectCourseChange}
                   >
                     <FormControlLabel
                       value="TMC-1"
@@ -483,9 +489,8 @@ export default function tr_admin_course() {
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
-                    required="required"
-                    value={plantOption}
-                    onChange={plantOptionChange}
+                    value={selectPlant}
+                    onChange={handleSelectPlantChange}
                   >
                     <FormControlLabel
                       value="SRG"
@@ -506,7 +511,7 @@ export default function tr_admin_course() {
                 </FormControl>
               </div>
               <div className="text-center">
-              <div>ผู้บรรยาย</div>
+                <div>ผู้บรรยาย</div>
                 <input
                   className="px-10 py-3 rounded-xl m-2 "
                   placeholder="ผู้บรรยาย"
@@ -514,9 +519,7 @@ export default function tr_admin_course() {
                   name="username"
                   id="username"
                   required="required"
-                  onChange={(e) =>
-                     setLecturer(e.target.value)
-                   }
+                  onChange={handleNameChange}
                 ></input>
                 <div>สถานที่</div>
                 <input
@@ -526,7 +529,7 @@ export default function tr_admin_course() {
                   name="username"
                   id="username"
                   required="required"
-                  onChange={handlePlaceChange}
+                  onChange={(e) => setPlace(e.target.value)}
                 ></input>
                 <div>Online Code</div>
                 <input
@@ -538,9 +541,7 @@ export default function tr_admin_course() {
                   required="required"
                   onChange={(e) => setOnlineCode(e.target.value)}
                 ></input>
-                
-              </div>
-              <div className="text-center">
+                <div className="text-center">
                   <div>จำนวนคน</div>
                   <input
                   className=" px-10 py-3 rounded-xl m-2 "
@@ -548,12 +549,23 @@ export default function tr_admin_course() {
                   type="number"
                   name="username"
                   id="username"
-                 
                   required="required"
                   onChange={(e) => setAmount(e.target.value)}
                 ></input>
-                <div className="mb-5"></div>
-                <div className="mb-20">
+                
+                 <div>
+                  <Slider
+                    value={amount}
+                    onChange={handleSliderChange}
+                    min={0}
+                    max={100}
+                    step={1}
+                    defaultValue={0}
+                    sx={{ width: "25%" }}
+                    valueLabelDisplay="auto"
+                  /></div>
+                </div>
+                <div>
                   <label htmlFor="datepicker-date" className="mx-2">
                     วันที่
                   </label>
@@ -562,7 +574,7 @@ export default function tr_admin_course() {
                     id="datepicker-date"
                     name="datepicker-date"
                     className="p-4 rounded-2xl px-4 py-3 mr-2"
-                    onChange={(e) => setDate(e.target.value)}
+                    onChange={handleDateChange}
                   />
                   <label htmlFor="datepicker-date" className="mx-2">
                     เวลา :{" "}
@@ -585,14 +597,19 @@ export default function tr_admin_course() {
                     onChange={(e) => setTimeEnd(e.target.value)}
                   />
                 </div>
-                
-               
-                </div>
-             
+
+                <button
+                  type="submit"
+                  class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-20 py-3 text-center 
+                                mr-2 mb-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold mt-10"
+                >
+                  ยืนยัน
+                </button>
+              </div>
             </div>
+            
             <div>
-            <div>
-              <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 mt-10">
+              <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5">
                 <div className="text-center font-extrabold text-3xl">
                   Preview
                 </div>
@@ -604,10 +621,10 @@ export default function tr_admin_course() {
                 </div>
                 <div className="flex justify-between mb-2">
                   <h1>
-                    Course : <strong>{courseOption}</strong>
+                    Course : <strong>{selectCourse}</strong>
                   </h1>
                   <p>
-                    Plant : <strong>{plantOption}</strong>
+                    Plant : <strong>{selectPlant}</strong>
                   </p>
                 </div>
                 <div className="flex justify-between mb-2">
@@ -623,7 +640,7 @@ export default function tr_admin_course() {
                 </div>
                 <div className="flex justify-between mb-2">
                   <p>
-                    Lecturer : <strong>{lecturer}</strong>
+                    Lecturer : <strong>{name}</strong>
                   </p>
                   <p>
                     Onside :{" "}
@@ -655,20 +672,7 @@ export default function tr_admin_course() {
                   </button>
                 </div>
               </div>
-              <div className="text-center">
-              <button
-                  type="button"
-                  onClick={handleSubmit}
-                  class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-32 py-3 text-center 
-                                mr-2 mb-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold mt-5"
-                >
-                  ยืนยัน
-                </button>
-                   
-              </div>
             </div>
-            </div>
-
           </div>
         </div>
       </div>
