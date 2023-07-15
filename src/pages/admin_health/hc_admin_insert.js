@@ -635,7 +635,7 @@ export default function tr_admin_course() {
               <div className="text-center"></div>
               <div className="text-center">
                 <div className="mb-5"></div>
-                <div className="mb-20">
+                <div className="mb-5">
                   <label htmlFor="datepicker-date" className="mx-2">
                     วันที่
                   </label>
@@ -646,6 +646,8 @@ export default function tr_admin_course() {
                     className="p-4 rounded-2xl px-4 py-3 mr-2"
                     onChange={(e) => setDate(e.target.value)}
                   />
+                  </div>
+                  <div>
                   <label htmlFor="datepicker-date" className="mx-2">
                     เวลา :{" "}
                   </label>
@@ -665,8 +667,8 @@ export default function tr_admin_course() {
                     name="datepicker-end"
                     className="p-4 rounded-2xl px-4 py-3"
                     onChange={(e) => setTimeEnd(e.target.value)}
-                  />
-                </div>
+                  /></div>
+                
                 <button
                   type="button"
                   onClick={handleSubmit}
