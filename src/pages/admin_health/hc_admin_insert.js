@@ -1,21 +1,220 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Bai_Jamjuree } from "next/font/google";
 import { useRouter } from "next/router";
 import DensoLogo from "../images/Denso_logo.png";
-import { getDatabase, ref, remove, onValue, off } from "firebase/database";
+import { getDatabase, ref, set, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "700"],
 });
 
 export default function tr_admin_course() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [startIndex, setStartIndex] = useState(1);
+  const [clickedDay, setClickedDay] = useState(null);
+  const [dayMonthYear, setDayMonthYear] = useState(null);
   const [activeMenu, setActiveMenu] = useState(null);
   const [isHealthCareExpanded, setIsHealthCareExpanded] = useState(false);
   const [isCourseExpanded, setIsCourseExpanded] = useState(false);
-  const [course, setCourses] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  const [courses, setCourses] = useState([]);
+  // const [showForm, setShowForm] = useState(false);
+  const [docTypeOption, setDocTypeOption] = useState("");
+  const [plantOption, setPlantOption] = useState("");
+  //const [place, setPlace] = useState("");
+  const [amount, setAmount] = useState(1);
+  const [click, setClick] = useState(0);
+  const [date, setDate] = useState("");
+  const [timeStart, setTimeStart] = useState("");
+  const [timeEnd, setTimeEnd] = useState("");
+  const [toThaiDate, setToThaiDate] = useState("");
+  const [alreadyPicked, setAlreadyPicked] = useState(false); //มี Plant 2 ที่ BPK WELL , มีประเภทแพทย์ , วัน เวลา แพทย์
+  const [filteredCourses, setFilteredCourses] = useState(courses);
+
+  const currentDay = currentDate.getDate();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const scrollRef = useRef(null);
+  StartFireBase();
+
+  const today = new Date();
+  const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
+  useEffect(() => {
+    // Scroll to current date section
+    if (scrollRef.current) {
+      const currentDateElement =
+        scrollRef.current.querySelector(".current-date");
+      if (currentDateElement) {
+        currentDateElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+    setClickedDay(currentDate.getDate());
+    setStartIndex(currentDate.getDate());
+    const currentDay = currentDate.getDate();
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
+    const currentYear = currentDate.getFullYear();
+    const date =
+      currentYear +
+      "-" +
+      currentMonth +
+      "-" +
+      currentDay.toString().padStart(2, "0");
+    setDayMonthYear(date);
+    console.log(dayMonthYear);
+  }, []);
+
+  const handleNumberClick = (day) => {
+    setClickedDay(day);
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
+    const currentYear = currentDate.getFullYear();
+    //const currentDay = currentDate.getDate();
+    //const date = new Date(currentYear, currentMonth, day);
+    //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
+
+    const date =
+      currentYear + "-" + currentMonth + "-" + day.toString().padStart(2, "0");
+    setDayMonthYear(date);
+    console.log(dayMonthYear);
+
+    const filteredCourses = courses.filter((course) => {
+      const courseDate = course.date;
+
+      //console.log(courseDate)
+      return courseDate === date;
+    });
+
+    setFilteredCourses(filteredCourses);
+  };
+
+  const previous7Days = () => {
+    setStartIndex((prevStartIndex) => Math.max(1, prevStartIndex - 7));
+  };
+
+  const next7Days = () => {
+    const daysInMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    ).getDate();
+    setStartIndex((prevStartIndex) =>
+      Math.min(prevStartIndex + 7, daysInMonth - 6)
+    );
+  };
+
+  const previousMonth = () => {
+    const previousDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1
+    );
+    setCurrentDate(previousDate);
+    setStartIndex(1);
+  };
+
+  const nextMonth = () => {
+    const nextDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1
+    );
+    setCurrentDate(nextDate);
+    setStartIndex(1);
+  };
+
+  const days = [];
+  for (let i = startIndex; i < startIndex + 7; i++) {
+    if (i > daysInMonth) break;
+    const date = new Date(currentYear, currentMonth, i);
+    const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
+
+    const isCurrentDate = i === todayDate;
+    const isClickedDay =
+      i === clickedDay &&
+      currentYear === todayYear &&
+      currentMonth === todayMonth &&
+      i < todayDate;
+
+    const isPastDate = date < today;
+
+    const isDisabled = isPastDate && !isCurrentDate; // Set the disabled state based on whether it's a past date and not the current date
+
+    const dayButtonClass = isClickedDay
+      ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+      : isDisabled
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+      : isCurrentDate &&
+        i === todayDate &&
+        todayMonth === currentMonth &&
+        todayYear === currentYear
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+      : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
+
+    const dayElement = (
+      <div key={i} className="flex-none">
+        <div className="text-center text-xs">{dayOfWeek}</div>
+        <button
+          onClick={() => handleNumberClick(i)}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
+          disabled={isDisabled} // Disable the button for past dates
+          style={
+            isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
+          } // Change background color for past dates
+        >
+          <div className="text-center">{i}</div>
+        </button>
+      </div>
+    );
+
+    days.push(dayElement);
+  }
+
+  const countClickCheckHandler = async (course) => {
+    const db = getDatabase();
+    if (course.number < course.amount) {
+      const updatedCourses = courses.map((c) => {
+        if (c.id === course.id) {
+          return {
+            ...c,
+            number: c.number + 1,
+          };
+        }
+        return c;
+      });
+      setCourses(updatedCourses);
+
+      const postData = {
+        number: course.number + 1,
+      };
+
+      update(
+        ref(
+          db,
+          "courses/" +
+            course.course +
+            course.date +
+            course.timeStart +
+            course.onlineCode
+        ),
+        postData
+      );
+    } else {
+      alert("เต็มแล้วครับพ่อหนุ่ม");
+    }
+  };
+
+  const increase = () => {
+    setClick((count) => count + 1);
+  };
 
   StartFireBase();
 
@@ -43,29 +242,17 @@ export default function tr_admin_course() {
   }, []);
 
   const router = useRouter();
-  const toggleForm = (user) => {
-    if (
-      user.id !== "!!Do no delete!!" &&
-      user.employeeId !== "!!`~Do no delete~`!!"
-    ) {
-      setShowForm(user);
-    } else {
-      alert("Cannot perform this action");
-    }
+
+  const handleSubmit = () => {
+    alert("ยังไม่ได้ต่อ Database");
   };
-  function deleteSingleUserHandler(course) {
-    // Access the user object and perform actions
-    console.log("Delete Button clicked for user:", course);
-    const db = getDatabase();
-    var cnf = confirm(`ต้องการจะ "ลบ" ข้อมูลหรือไม่`);
-    if (cnf) {
-      remove(ref(db, "courses/" + course.id));
-    }
-    // Other actions...
-  }
-  function updateSingleUserHandler(course) {}
-  const courseOptionChange = (event) => {
-    setCourses(event.target.value);
+
+  const docTypeOptionChange = (event) => {
+    setDocTypeOption(event.target.value);
+  };
+  const plantOptionChange = (event) => {
+    setPlantOption(event.target.value);
+    console.log(plantOption);
   };
 
   const toggleHealthCareMenu = () => {
@@ -98,7 +285,6 @@ export default function tr_admin_course() {
 
   const navigateToSection = (menu) => {
     switch (menu) {
-      
       case "about":
         router.push("../admin_TRcourse/admin_insert");
         break;
@@ -108,19 +294,18 @@ export default function tr_admin_course() {
       case "Option 5":
         router.push("../admin_TRcourse/tr_admin_course");
         break;
-        case "Option 2":
-        router.push("../admin_health/hc_admin_users");
+      case "Option 2":
+        router.push("./hc_admin_users");
         break;
-        case "Option 3":
+      case "Option 3":
         router.push("./hc_admin_list");
         break;
-        case "tr insert":
-          router.push("../admin_TRcourse/tr_admin_insert");
-          break;
-          case "Option 1":
-          router.push("./hc_admin_insert");
-          break;
-
+      case "tr insert":
+        router.push("../admin_TRcourse/tr_admin_insert");
+        break;
+      case "Option 1":
+        router.push("./hc_admin_insert");
+        break;
       // Add more cases for other menu items and corresponding routes
       default:
         break;
@@ -128,7 +313,7 @@ export default function tr_admin_course() {
   };
 
   return (
-    <div className={`flex h-screen ${bai.className} bg-slate-100`}>
+    <div className={`flex ${bai.className} bg-slate-100`}>
       <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl">
         <div className="p-4 text-center">
           <Image
@@ -144,8 +329,6 @@ export default function tr_admin_course() {
 
         <nav className="text-gray-300 flex-1 drop-shadow-lg">
           <ul className="space-y-2 py-4 mx-2">
-           
-
             <li>
               <a
                 href="#"
@@ -400,9 +583,336 @@ export default function tr_admin_course() {
 
       <div className="flex-1 w-min drop-shadow-lg">
         <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col">
-          <h1 className="font-extrabold text-3xl p-3 ">ใส่ข้อมูลแพทย์</h1>
+          <h1 className="font-extrabold text-3xl p-3 ">ใส่ข้อมูลข้อมูลแพทย์</h1>
           <div className="border-b border-gray-800 mb-4"></div>
-          
+          <div className="grid grid-cols-2 mb-20">
+            <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg  mt-5">
+              <div className="text-center mb-3 mt-10">
+                <FormControl>
+                  <div>เลือก Plant</div>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={plantOption}
+                    required="required"
+                    onChange={plantOptionChange}
+                  >
+                    <FormControlLabel
+                      value="WELL"
+                      control={<Radio />}
+                      label="WELL"
+                    />
+                    <FormControlLabel
+                      value="BPK"
+                      control={<Radio />}
+                      label="BPK"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div className="text-center mb-1">
+                <FormControl>
+                  <div>เลือกประเภทแพทย์</div>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    required="required"
+                    value={docTypeOption}
+                    onChange={docTypeOptionChange}
+                  >
+                    <FormControlLabel
+                      value="แพทย์เฉพาะทางอายุรกรรม"
+                      control={<Radio />}
+                      label="เฉพาะทางอายุรกรรม"
+                    />
+                    <FormControlLabel
+                      value="แพทย์เฉพาะทางกระดูกและข้อ"
+                      control={<Radio />}
+                      label="เฉพาะทางกระดูกและข้อ"
+                    />
+                    <FormControlLabel
+                      value="แพทย์โรคทั่วไป"
+                      control={<Radio />}
+                      label="โรคทั่วไป"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </div>
+              <div className="text-center"></div>
+              <div className="text-center">
+                <div className="mb-5"></div>
+                <div className="mb-20">
+                  <label htmlFor="datepicker-date" className="mx-2">
+                    วันที่
+                  </label>
+                  <input
+                    type="date"
+                    id="datepicker-date"
+                    name="datepicker-date"
+                    className="p-4 rounded-2xl px-4 py-3 mr-2"
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                  <label htmlFor="datepicker-date" className="mx-2">
+                    เวลา :{" "}
+                  </label>
+                  <input
+                    type="time"
+                    id="datepicker-start"
+                    name="datepicker-start"
+                    className="p-4 rounded-2xl px-4 py-3"
+                    onChange={(e) => setTimeStart(e.target.value)}
+                  />
+                  <label htmlFor="datepicker-end" className="mx-2">
+                    ไปจนถึง
+                  </label>
+                  <input
+                    type="time"
+                    id="datepicker-end"
+                    name="datepicker-end"
+                    className="p-4 rounded-2xl px-4 py-3"
+                    onChange={(e) => setTimeEnd(e.target.value)}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-32 py-3 text-center 
+                                mr-2 mb-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold mt-5"
+                >
+                  ยืนยัน
+                </button>
+              </div>
+            </div>
+            <div>
+              <div>
+                <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 mt-5">
+                  <div className="text-center font-extrabold text-3xl">
+                    Preview
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <h1>
+                      ประเภท : <strong>{docTypeOption}</strong>
+                    </h1>
+                  </div>
+                  <div className="flex justify-between mb-2">
+                    <h1>
+                      Plant : <strong>{plantOption}</strong>
+                    </h1>
+                  </div>
+
+                  <div className="flex justify-between mb-2">
+                    <p>
+                      วันที่ :{" "}
+                      <strong>
+                        {new Date(date).toLocaleDateString("th-TH", {
+                          dateStyle: "long",
+                        })}
+                      </strong>
+                    </p>
+
+                    <p>
+                      จำนวน :{" "}
+                      <strong>
+                        {click} / {amount}
+                      </strong>
+                    </p>
+                  </div>
+                  <div className="flex justify-between mt-3">
+                    <p>
+                      เวลา :{" "}
+                      <strong>
+                        {timeStart} - {timeEnd}{" "}
+                      </strong>
+                    </p>
+                    <button
+                      onClick={increase}
+                      className={click >= amount ? "" : ""}
+                      disabled={click >= amount}
+                    >
+                      <div className="">
+                        {click >= amount ? (
+                          <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold cursor-not-allowed">
+                            จองแล้ว
+                          </span>
+                        ) : (
+                          <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                            ว่าง
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg  mt-5">
+                  <main className={`m-2   justify-center item-center `}>
+                    <div className="mb-1">
+                      <div className="border-b p-1 mb-2"></div>
+                    </div>
+                    <div className="flex justify-between text-center">
+                      <button onClick={previousMonth}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="w-8 h-8"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"
+                          />
+                        </svg>
+                      </button>
+                      <h2 className="flex text-center justify-center font-bold text-2xl">
+                        {clickedDay ? (
+                          <>
+                            {clickedDay}&nbsp;
+                            {currentDate.toLocaleDateString("th-TH", {
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </>
+                        ) : (
+                          currentDate.toLocaleDateString("th-TH", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })
+                        )}
+                      </h2>
+                      <button onClick={nextMonth}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="w-8 h-8"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="border-b p-1 mb-2"></div>
+
+                    <div ref={scrollRef} className="flex justify-between ">
+                      <button
+                        onClick={previous7Days}
+                        disabled={startIndex === 1}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="w-8 h-8"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15.75 19.5L8.25 12l7.5-7.5"
+                          />
+                        </svg>
+                      </button>
+                      <div className="flex text-center justify-center gap-2">
+                        {days}
+                      </div>
+                      <button
+                        onClick={next7Days}
+                        disabled={startIndex + 7 > daysInMonth}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="w-8 h-8"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="border-b p-1 mb-5"></div>
+                    <div>
+                      {courses
+                        .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
+                        .filter((course) => {
+                          const courseDate = course.date;
+                          return dayMonthYear === courseDate;
+                        })
+                        .map((courses) => (
+                          <div
+                            key={courses.id}
+                            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+                          >
+                            <div className="flex justify-between mb-2">
+                              <h1>
+                                Date :{" "}
+                                <strong>
+                                  {courses.timeStart} - {courses.timeEnd}
+                                </strong>
+                              </h1>
+                              <p>
+                                Online : <strong>{courses.onlineCode}</strong>
+                              </p>
+                            </div>
+                            <div className="flex justify-between mb-2">
+                              <p>
+                                Lecturer : <strong>{courses.lecturer}</strong>
+                              </p>
+                              <p>
+                                Onside :{" "}
+                                <strong>
+                                  {courses.number} / {courses.amount}
+                                </strong>
+                              </p>
+                            </div>
+                            <div className="flex justify-between mt-3">
+                              <p>
+                                Place : <strong>{courses.hall}</strong>
+                              </p>
+                              <button
+                                
+                                className={
+                                  courses.number >= courses.amount ? "" : ""
+                                }
+                              >
+                                <div className="">
+                                  {courses.number >= courses.amount ? (
+                                    <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
+                                      ที่นั่งเต็มแล้ว
+                                    </span>
+                                  ) : (
+                                    <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                                      เลือก
+                                    </span>
+                                  )}
+                                </div>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </main>
+                </div>
+                <div className="text-center"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

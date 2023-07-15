@@ -148,9 +148,10 @@ export default function Calendar() {
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
 
     const isCurrentDate = i === todayDate;
-    const isClickedDay = i === clickedDay;
+    const isClickedDay = i === clickedDay && (currentYear === todayYear && currentMonth === todayMonth && i < todayDate);;
 
-    const isPastDate = date < today; // Check if the date is in the past
+    const isPastDate = date < today;
+
     const isDisabled = isPastDate && !isCurrentDate ; // Set the disabled state based on whether it's a past date and not the current date
 
     const dayButtonClass = isClickedDay

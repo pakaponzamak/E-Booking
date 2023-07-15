@@ -73,18 +73,28 @@ export default function all_users() {
 
   const navigateToSection = (menu) => {
     switch (menu) {
-      case "all_users":
-        router.push("./all_users");
-        break;
+      
       case "about":
         router.push("../admin_TRcourse/admin_insert");
         break;
-        case "Option 4":
-        router.push("../admin_TRcourse/tr_admin_users")
+      case "Option 4":
+        router.push("../admin_TRcourse/tr_admin_users");
         break;
         case "Option 5":
-        router.push("../admin_TRcourse/tr_admin_course")
+        router.push("../admin_TRcourse/tr_admin_course");
         break;
+        case "Option 2":
+        router.push("../admin_health/hc_admin_users");
+        break;
+        case "Option 3":
+          router.push("../admin_health/hc_admin_list");
+          break;
+          case "tr insert":
+          router.push("../admin_TRcourse/tr_admin_insert");
+          break;
+          case "Option 1":
+          router.push("../admin_health/hc_admin_insert");
+          break;
       // Add more cases for other menu items and corresponding routes
       default:
         break;
