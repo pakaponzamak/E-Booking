@@ -242,7 +242,7 @@ export default function tr_admin_course() {
       onlineCode: onlineCode,
       number:0
     };
-    set(ref(db, "courses/" + courseOption + date + timeStart + onlineCode ), data).then(() => {alert("เรียบร้อยแล้ว");window.location.reload();}).catch((error) => {
+    set(ref(db, "courses/" + courseOption + date + timeStart + onlineCode ), data).then(() => {alert("เรียบร้อยแล้ว");}).catch((error) => {
       console.error("Error inserting data:", error);
     });
   }
@@ -322,8 +322,8 @@ export default function tr_admin_course() {
   
 
   return (
-    <div className={`flex ${bai.className} bg-slate-100`}>
-      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl">
+    <div className={`flex ${bai.className} bg-slate-100  overflow-y-auto `}>
+      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl h-screen">
         <div className="p-4 text-center">
           <Image
             src={DensoLogo}
@@ -592,8 +592,8 @@ export default function tr_admin_course() {
         </nav>
       </div>
 
-      <div className="flex-1 w-min drop-shadow-lg">
-        <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col">
+      <div className="flex-1 w-min drop-shadow-lg h-screen">
+        <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col ">
           <h1 className="font-extrabold text-3xl p-3 ">ใส่ข้อมูลข้อมูลคอร์ส</h1>
           <div className="border-b border-gray-800 mb-4"></div>
           <div className="grid grid-cols-2">
@@ -745,13 +745,15 @@ export default function tr_admin_course() {
             </div>
             <div>
             <div>
-              <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 mt-5">
+              <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-10 mt-5">
                 <div className="text-center font-extrabold text-3xl">
                   Preview
                 </div>
                 <div className="flex justify-between mb-2">
                   <h1>
-                    Date : <strong>{date}</strong>
+                    Date : <strong>{new Date(date).toLocaleDateString("th-TH", {
+                          dateStyle: "long",
+                        })}</strong>
                   </h1>
                   
                 </div>
@@ -812,7 +814,7 @@ export default function tr_admin_course() {
               
                    
               </div>
-              <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg  mt-5">
+              <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg  mt-5 overflow-y-auto h-96">
                   <main className={`m-2   justify-center item-center `}>
                     <div className="mb-1">
                       <div className="border-b p-1 mb-2"></div>
@@ -924,7 +926,7 @@ export default function tr_admin_course() {
                         .map((courses) => (
                           <div
                             key={courses.id}
-                            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+                            className=" m-3 p-2 rounded-xl bg-white drop-shadow-lg mb-5"
                           >
                             <div className="flex justify-between mb-2">
                               <h1>
@@ -953,7 +955,7 @@ export default function tr_admin_course() {
                                 Place : <strong>{courses.hall}</strong>
                               </p>
                               <button
-                                
+                                disabled
                                 className={
                                   courses.number >= courses.amount ? "" : ""
                                 }

@@ -24,6 +24,7 @@ export default function tr_admin_course() {
   const [isHealthCareExpanded, setIsHealthCareExpanded] = useState(false);
   const [isCourseExpanded, setIsCourseExpanded] = useState(false);
   const [courses, setCourses] = useState([]);
+  const [healthCare,setHealthCare] = useState([])
   // const [showForm, setShowForm] = useState(false);
   const [docTypeOption, setDocTypeOption] = useState("");
   const [plantOption, setPlantOption] = useState("");
@@ -33,8 +34,8 @@ export default function tr_admin_course() {
   const [date, setDate] = useState("");
   const [timeStart, setTimeStart] = useState("");
   const [timeEnd, setTimeEnd] = useState("");
-  const [toThaiDate, setToThaiDate] = useState("");
-  const [alreadyPicked, setAlreadyPicked] = useState(false); //มี Plant 2 ที่ BPK WELL , มีประเภทแพทย์ , วัน เวลา แพทย์
+  //const [toThaiDate, setToThaiDate] = useState("");
+   //มี Plant 2 ที่ BPK WELL , มีประเภทแพทย์ , วัน เวลา แพทย์
   const [filteredCourses, setFilteredCourses] = useState(courses);
 
   const currentDay = currentDate.getDate();
@@ -178,39 +179,7 @@ export default function tr_admin_course() {
     days.push(dayElement);
   }
 
-  const countClickCheckHandler = async (course) => {
-    const db = getDatabase();
-    if (course.number < course.amount) {
-      const updatedCourses = courses.map((c) => {
-        if (c.id === course.id) {
-          return {
-            ...c,
-            number: c.number + 1,
-          };
-        }
-        return c;
-      });
-      setCourses(updatedCourses);
 
-      const postData = {
-        number: course.number + 1,
-      };
-
-      update(
-        ref(
-          db,
-          "courses/" +
-            course.course +
-            course.date +
-            course.timeStart +
-            course.onlineCode
-        ),
-        postData
-      );
-    } else {
-      alert("เต็มแล้วครับพ่อหนุ่ม");
-    }
-  };
 
   const increase = () => {
     setClick((count) => count + 1);
@@ -220,31 +189,54 @@ export default function tr_admin_course() {
 
   useEffect(() => {
     const db = getDatabase();
-    const courseRef = ref(db, "courses");
+    const healthRef = ref(db, "health");
     // Listen for changes in the 'users' reference
-    onValue(courseRef, (snapshot) => {
+    onValue(healthRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         // Convert the object of users into an array
-        const coursesArray = Object.keys(data).map((key) => ({
+        const healthArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
         }));
         // Set the users state with the retrieved data
-        setCourses(coursesArray);
+        setHealthCare(healthArray);
       }
     });
     // Clean up the listener when the component unmounts
     return () => {
       // Turn off the listener
-      off(courseRef);
+      off(healthRef);
     };
   }, []);
 
   const router = useRouter();
 
   const handleSubmit = () => {
-    alert("ยังไม่ได้ต่อ Database");
+    if (
+      docTypeOption.trim() === "" ||
+      timeStart.trim() === "" ||
+      timeEnd.trim() === "" ||
+      date.trim() === "" ||
+      plantOption.trim() === "" 
+     
+    ) {
+      alert("กรุณากรอกข้อมูล");
+      return;
+    }
+    const db = getDatabase();
+    const data = {
+      date: date,
+      timeStart:timeStart,
+      timeEnd:timeEnd,
+      plant: plantOption,
+      doctor:docTypeOption,
+      alreadyPicked : 0
+    };
+    set(ref(db, "health/" + docTypeOption + date + timeStart  ), data).then(() => {alert("เรียบร้อยแล้ว");}).catch((error) => {
+      console.error("Error inserting data:", error);
+    });
+   // alert("ยังไม่ได้ต่อ Database");
   };
 
   const docTypeOptionChange = (event) => {
@@ -313,8 +305,8 @@ export default function tr_admin_course() {
   };
 
   return (
-    <div className={`flex ${bai.className} bg-slate-100`}>
-      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl">
+    <div className={`flex ${bai.className} bg-slate-100 overflow-y-auto`}>
+      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl ">
         <div className="p-4 text-center">
           <Image
             src={DensoLogo}
@@ -581,7 +573,7 @@ export default function tr_admin_course() {
         </nav>
       </div>
 
-      <div className="flex-1 w-min drop-shadow-lg">
+      <div className="flex-1 w-min drop-shadow-lg h-screen">
         <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col">
           <h1 className="font-extrabold text-3xl p-3 ">ใส่ข้อมูลข้อมูลแพทย์</h1>
           <div className="border-b border-gray-800 mb-4"></div>
@@ -745,7 +737,7 @@ export default function tr_admin_course() {
                     </button>
                   </div>
                 </div>
-                <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg  mt-5">
+                <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg  mt-5 overflow-y-auto h-96">
                   <main className={`m-2   justify-center item-center `}>
                     <div className="mb-1">
                       <div className="border-b p-1 mb-2"></div>
@@ -848,45 +840,45 @@ export default function tr_admin_course() {
                     </div>
                     <div className="border-b p-1 mb-5"></div>
                     <div>
-                      {courses
+                      {healthCare
                         .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
-                        .filter((course) => {
-                          const courseDate = course.date;
-                          return dayMonthYear === courseDate;
+                        .filter((healthCare) => {
+                          const healthCareDate = healthCare.date;
+                          return dayMonthYear === healthCareDate;
                         })
-                        .map((courses) => (
+                        .map((healthCare) => (
                           <div
-                            key={courses.id}
-                            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+                            key={healthCare.id}
+                            className="border-2 m-3 p-2 rounded-xl bg-white drop-shadow-lg mb-5"
                           >
                             <div className="flex justify-between mb-2">
                               <h1>
-                                Date :{" "}
+                                ประเภท :{" "}
                                 <strong>
-                                  {courses.timeStart} - {courses.timeEnd}
+                                  {healthCare.doctor}
                                 </strong>
                               </h1>
-                              <p>
-                                Online : <strong>{courses.onlineCode}</strong>
-                              </p>
+                              
                             </div>
                             <div className="flex justify-between mb-2">
                               <p>
-                                Lecturer : <strong>{courses.lecturer}</strong>
+                                Plant : <strong>{healthCare.plant}</strong>
                               </p>
-                              <p>
-                                Onside :{" "}
-                                <strong>
-                                  {courses.number} / {courses.amount}
-                                </strong>
-                              </p>
+                              
                             </div>
                             <div className="flex justify-between mt-3">
                               <p>
-                                Place : <strong>{courses.hall}</strong>
+                                วันที่ : <strong>{healthCare.date}</strong>
                               </p>
-                              <button
-                                
+                              <p>
+                                จำนวน : <strong>{healthCare.alreadyPicked}</strong>
+                              </p>
+                              
+                            </div>
+                            <div className="flex justify-between mt-3">
+                              <p>เวลา : <strong>{healthCare.timeStart} - {healthCare.timeEnd}</strong></p>
+                            <button
+                                disabled
                                 className={
                                   courses.number >= courses.amount ? "" : ""
                                 }
@@ -894,11 +886,11 @@ export default function tr_admin_course() {
                                 <div className="">
                                   {courses.number >= courses.amount ? (
                                     <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
-                                      ที่นั่งเต็มแล้ว
+                                      จองแล้ว
                                     </span>
                                   ) : (
                                     <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
-                                      เลือก
+                                      ว่าง
                                     </span>
                                   )}
                                 </div>
