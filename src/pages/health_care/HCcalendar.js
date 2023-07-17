@@ -10,6 +10,7 @@ import {
   off,
   update,
 } from "firebase/database";
+import startFireBase from "../../firebase/firebase_conf";
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -24,6 +25,8 @@ export default function Calendar() {
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState(courses);
   //const incrementCounter = () => setCounterState(counterState + 1);
+  const [healthCare,setHealthCare] = useState([])
+  startFireBase();
 
   const scrollRef = useRef(null);
   StartFireBase();
@@ -32,24 +35,24 @@ export default function Calendar() {
 
   useEffect(() => {
     const db = getDatabase();
-    const courseRef = ref(db, "courses");
+    const healthRef = ref(db, "health");
     // Listen for changes in the 'users' reference
-    onValue(courseRef, (snapshot) => {
+    onValue(healthRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         // Convert the object of users into an array
-        const coursesArray = Object.keys(data).map((key) => ({
+        const healthArray = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
         }));
         // Set the users state with the retrieved data
-        setCourses(coursesArray);
+        setHealthCare(healthArray);
       }
     });
     // Clean up the listener when the component unmounts
     return () => {
       // Turn off the listener
-      off(courseRef);
+      off(healthRef);
     };
   }, []);
 
@@ -181,31 +184,43 @@ export default function Calendar() {
     days.push(dayElement);
   }
 
-  const countClickCheckHandler = async (course) => {
+  const pickedHandler = async (health) => {
     const db = getDatabase();
-    if (course.number < course.amount) {
-      const updatedCourses = courses.map((c) => {
-        if (c.id === course.id) {
+    var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`);
+
+    if(cnf) {
+    if (health.alreadyPicked < 1) {
+      const updatedHealth = healthCare.map((h) => {
+        if (h.id === health.id) {
           return {
-            ...c,
-            number: c.number + 1,
+            ...h,
+            alreadyPicked: h.alreadyPicked + 1,
           };
         }
-        return c;
+        return h;
       });
-      setCourses(updatedCourses);
+      setHealthCare(updatedHealth);
 
       const postData = {
-        number: course.number + 1,
+        alreadyPicked: health.alreadyPicked + 1,
+        whoPickedThis: employeeId
       };
+      const addToUser = {
+        date : health.date,
+        plant : health.plant,
+        time : health.timeStart,
+        type: health.doctor
+      }
 
       update(
-        ref(db, "courses/" + course.course + course.date + course.timeStart + course.onlineCode),
+        ref(db, "health/" + health.doctor + health.date + health.timeStart  ),
         postData
       );
+
+      update(ref(db, "users/" + employeeId + "/health"), addToUser);
     } else {
       alert("เต็มแล้วครับพ่อหนุ่ม");
-    }
+    }}
   };
 
   return (
@@ -309,78 +324,59 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-5"></div>
       <div>
-                      {courses
+                      {healthCare
                         .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
-                        .filter((course) => {
-                          const courseDate = course.date;
-                          return dayMonthYear === courseDate;
+                        .filter((healthCare) => {
+                          const healthCareDate = healthCare.date;
+                          return dayMonthYear === healthCareDate;
                         })
-                        .map((courses) => (
+                        .map((healthCare) => (
                           <div
-                            key={courses.id}
-                            className=" m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
-                          ><div className="flex justify-between mb-2">
-                          <p>
-                            Date :{" "}
-                            <strong>
-                            {new Date(courses.date).toLocaleDateString("th-TH", {
-                          dateStyle: "long",
-                        })}
-                            </strong>
-                          </p>
-                        
-                        </div>
-                           <div className="flex justify-between mb-2">
-                              <p>
-                                Course :{" "}
-                                <strong>
-                                  {courses.course}
-                                </strong>
-                              </p>
-                              <p>
-                                Plant : <strong>{courses.plant}</strong>
-                              </p>
-                            </div>
+                            key={healthCare.id}
+                            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+                          >
                             <div className="flex justify-between mb-2">
                               <h1>
-                                Time :{" "}
+                                ประเภท :{" "}
                                 <strong>
-                                  {courses.timeStart} - {courses.timeEnd}
+                                  {healthCare.doctor}
                                 </strong>
                               </h1>
-                              <p>
-                                Online : <strong>{courses.onlineCode}</strong>
-                              </p>
+                              
                             </div>
                             <div className="flex justify-between mb-2">
                               <p>
-                                Lecturer : <strong>{courses.lecturer}</strong>
+                                Plant : <strong>{healthCare.plant}</strong>
                               </p>
-                              <p>
-                                Onside :{" "}
-                                <strong>
-                                  {courses.number} / {courses.amount}
-                                </strong>
-                              </p>
+                              
                             </div>
                             <div className="flex justify-between mt-3">
                               <p>
-                                Place : <strong>{courses.hall}</strong>
+                                วันที่ : <strong>{new Date(healthCare.date).toLocaleDateString("th-TH", {
+                          dateStyle: "long",
+                        })}</strong>
                               </p>
-                              <button
-                                onClick={() => countClickCheckHandler(courses)}
+                              <p>
+                                จำนวน : <strong>{healthCare.alreadyPicked} / 1</strong>
+                              </p>
+                              
+                            </div>
+                            <div className="flex justify-between mt-3">
+                              <p>เวลา : <strong>{healthCare.timeStart} - {healthCare.timeEnd}</strong></p>
+                            <button
+                                onClick={() => pickedHandler(healthCare)}
                                 className={
-                                  courses.number >= courses.amount ? "" : ""
+                                  healthCare.alreadyPicked >= 1 ? "" : ""
                                 }
                               >
                                 <div className="">
-                                  {courses.number >= courses.amount ? (
+                                  {healthCare.alreadyPicked >= 1 ? (
                                     <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
-                                      ที่นั่งเต็มแล้ว
+                                      จองแล้ว
                                     </span>
                                   ) : (
                                     <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
-                                      เลือก
+                                      ว่าง
                                     </span>
                                   )}
                                 </div>

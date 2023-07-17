@@ -598,7 +598,7 @@ export default function tr_admin_course() {
           <div className="border-b border-gray-800 mb-4"></div>
           <div className="grid grid-cols-2">
             <div className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg  mt-5">
-            <div className="text-center mb-3 mt-5">
+            <div className="text-center mb-1 mt-2">
                 <FormControl>
                   <div>เลือกคอร์ส</div>
                   <RadioGroup
@@ -654,7 +654,7 @@ export default function tr_admin_course() {
               <div className="text-center">
               <div>ผู้บรรยาย</div>
                 <input
-                  className="px-10 py-3 rounded-xl m-2 "
+                  className="px-10 py-3 rounded-xl m-1 "
                   placeholder="ผู้บรรยาย"
                   type="text"
                   name="username"
@@ -666,7 +666,7 @@ export default function tr_admin_course() {
                 ></input>
                 <div>สถานที่</div>
                 <input
-                  className=" px-10 py-3 rounded-xl m-2 "
+                  className=" px-10 py-3 rounded-xl m-1 "
                   placeholder="สถานที่"
                   type="text"
                   name="username"
@@ -676,7 +676,7 @@ export default function tr_admin_course() {
                 ></input>
                 <div>Online Code</div>
                 <input
-                  className=" px-10 py-3 rounded-xl m-2 "
+                  className=" px-10 py-3 rounded-xl m-1 "
                   placeholder="Online Code"
                   type="text"
                   name="username"
@@ -689,7 +689,7 @@ export default function tr_admin_course() {
               <div className="text-center">
                   <div>จำนวนคน</div>
                   <input
-                  className=" px-10 py-3 rounded-xl m-2 "
+                  className=" px-10 py-3 rounded-xl m-1 "
                   placeholder="จำนวนคน"
                   type="number"
                   name="username"
@@ -698,7 +698,7 @@ export default function tr_admin_course() {
                   required="required"
                   onChange={(e) => setAmount(e.target.value)}
                 ></input>
-                <div className="mb-5"></div>
+                <div className="mb-3"></div>
                 <div className="mb-5">
                   <label htmlFor="datepicker-date" className="mx-2">
                     วันที่
@@ -707,9 +707,10 @@ export default function tr_admin_course() {
                     type="date"
                     id="datepicker-date"
                     name="datepicker-date"
-                    className="p-4 rounded-2xl px-4 py-3 mr-2"
+                    className="p-3 rounded-2xl px-4 py-2 mr-2"
                     onChange={(e) => setDate(e.target.value)}
                   />
+                  </div><div className="mb-3">
                   <label htmlFor="datepicker-date" className="mx-2">
                     เวลา :{" "}
                   </label>
@@ -717,7 +718,7 @@ export default function tr_admin_course() {
                     type="time"
                     id="datepicker-start"
                     name="datepicker-start"
-                    className="p-4 rounded-2xl px-4 py-3"
+                    className="p-3 rounded-2xl px-4 py-2"
                     onChange={(e) => setTimeStart(e.target.value)}
                   />
                   <label htmlFor="datepicker-end" className="mx-2">
@@ -727,7 +728,7 @@ export default function tr_admin_course() {
                     type="time"
                     id="datepicker-end"
                     name="datepicker-end"
-                    className="p-4 rounded-2xl px-4 py-3"
+                    className="p-3 rounded-2xl px-4 py-2"
                     onChange={(e) => setTimeEnd(e.target.value)}
                   />
                 </div>
@@ -927,10 +928,31 @@ export default function tr_admin_course() {
                           <div
                             key={courses.id}
                             className=" m-3 p-2 rounded-xl bg-white drop-shadow-lg mb-5"
-                          >
+                          ><div className="flex justify-between mb-2">
+                          <p>
+                            Date :{" "}
+                            <strong>
+                            {new Date(courses.date).toLocaleDateString("th-TH", {
+                          dateStyle: "long",
+                        })}
+                            </strong>
+                          </p>
+                        
+                        </div>
+                           <div className="flex justify-between mb-2">
+                              <p>
+                                Course :{" "}
+                                <strong>
+                                  {courses.course}
+                                </strong>
+                              </p>
+                              <p>
+                                Plant : <strong>{courses.plant}</strong>
+                              </p>
+                            </div>
                             <div className="flex justify-between mb-2">
                               <h1>
-                                Date :{" "}
+                                Time :{" "}
                                 <strong>
                                   {courses.timeStart} - {courses.timeEnd}
                                 </strong>

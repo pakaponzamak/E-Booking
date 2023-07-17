@@ -231,6 +231,7 @@ export default function tr_admin_course() {
       timeEnd:timeEnd,
       plant: plantOption,
       doctor:docTypeOption,
+      whoPickedThis: "",
       alreadyPicked : 0
     };
     set(ref(db, "health/" + docTypeOption + date + timeStart  ), data).then(() => {alert("เรียบร้อยแล้ว");}).catch((error) => {
@@ -870,7 +871,9 @@ export default function tr_admin_course() {
                             </div>
                             <div className="flex justify-between mt-3">
                               <p>
-                                วันที่ : <strong>{healthCare.date}</strong>
+                                วันที่ : <strong>{new Date(healthCare.date).toLocaleDateString("th-TH", {
+                          dateStyle: "long",
+                        })}</strong>
                               </p>
                               <p>
                                 จำนวน : <strong>{healthCare.alreadyPicked}</strong>
@@ -879,14 +882,14 @@ export default function tr_admin_course() {
                             </div>
                             <div className="flex justify-between mt-3">
                               <p>เวลา : <strong>{healthCare.timeStart} - {healthCare.timeEnd}</strong></p>
-                            <button
+                              <button
                                 disabled
                                 className={
-                                  courses.number >= courses.amount ? "" : ""
+                                  healthCare.alreadyPicked >= 1 ? "" : ""
                                 }
                               >
                                 <div className="">
-                                  {courses.number >= courses.amount ? (
+                                  {healthCare.alreadyPicked >= 1 ? (
                                     <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
                                       จองแล้ว
                                     </span>

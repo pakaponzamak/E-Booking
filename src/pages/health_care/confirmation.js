@@ -6,7 +6,7 @@ import {
   child,
   push,
   update,
-  remove,
+  set,
 } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import { useRouter } from "next/router";
@@ -24,38 +24,64 @@ export default function confirmation() {
   const router = useRouter();
   const { firstName, employeeId, checkIn } = router.query;
   const [users, setUsers] = useState([]);
+  const [healthCare,setHealthCare] = useState([]);
   const [showBtn, setShowBtn] = useState(false);
   const [name, setName] = useState("");
   const [emp, setEmp] = useState("");
   const [checkInStatus, setCheckInStatus] = useState("");
 
   var today = new Date();
-  var date =
-    today.getDate() + "-" + (today.getMonth() + 1) + "-" +today.getFullYear() ;
-  var time =
-    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  var options = { month: "short", day: "numeric" };
+  var date = today.toLocaleDateString("th-TH", options);
+  var time = today.getHours() + ":" + today.getMinutes();
   var dateTime = date + " " + time;
 
   useEffect(() => {
     const db = getDatabase();
+    const healthRef = ref(db, "health");
+
+    onValue(healthRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const healthArray = Object.keys(data).map((key) => {
+          const health = {
+            id: key,
+            ...data[key],
+            health: data[key]?.health || null,
+          };
+          return health;
+        });
+
+        setHealthCare(healthArray);
+      }
+    });
+
+    return () => {
+      off(healthRef);
+    };
+  }, []);
+
+  useEffect(() => {
+    const db = getDatabase();
     const usersRef = ref(db, "users");
-    // Listen for changes in the 'users' reference
+
     onValue(usersRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        // Convert the object of users into an array
-        const usersArray = Object.keys(data).map((key) => ({
-          id: key,
-          ...data[key],
-        }));
-        // Set the users state with the retrieved data
+        const usersArray = Object.keys(data).map((key) => {
+          const user = {
+            id: key,
+            ...data[key],
+            user: data[key]?.user || null,
+          };
+          return user;
+        });
+
         setUsers(usersArray);
       }
     });
 
-    // Clean up the listener when the component unmounts
     return () => {
-      // Turn off the listener
       off(usersRef);
     };
   }, []);
@@ -68,7 +94,13 @@ export default function confirmation() {
   const fetchCheckIn = async () => {
     let already = false;
     for (const user of users) {
-      if (fetchCheckInHandler(user.employeeId, user.firstName, user.checkIn)) {
+      if (
+        fetchCheckInHandler(
+          user.employeeId,
+          user.firstName,
+          user.health.checkIn
+        )
+      ) {
         already = true;
         break; // Exit the loop when a matching user is found
       }
@@ -97,9 +129,16 @@ export default function confirmation() {
       const buttonId = e.target.id;
       // Use the buttonId as needed
       let userFound = false;
-      
+
       for (const user of users) {
-        if (performConfirm(user.employeeId, user.firstName, user.checkIn)) {
+        if (
+          performConfirm(
+            user.employeeId,
+            user.firstName,
+            user.health.checkIn,
+            user.health.type
+          )
+        ) {
           userFound = true;
           break; // Exit the loop when a matching user is found
         }
@@ -120,62 +159,111 @@ export default function confirmation() {
           (user) => performDelete(user.employeeId, user.firstName)
           //user.checkIn = true
         );
+
       }
       router.push(`../`);
     }
   };
 
+  function performHealthCareRemovePerson(whoPickedParam, empParam, typeParam, dateParam, timeParam) {
+    if (whoPickedParam === empParam) {
+      const db = getDatabase();
+      const updates = {
+        ["health/" + typeParam + dateParam + timeParam + "/whoPickedThis"]: "",
+        ["health/" + typeParam + dateParam + timeParam + "/alreadyPicked"]: 0
+      };
+      update(ref(db), updates)
+        .then(() => {
+          alert("ByeBye");
+        })
+        .catch((error) => {
+          console.error("Error updating data:", error);
+        });
+      return true;
+    }
+  }
+  
+
   function performDelete(idParameter, nameParameter) {
     const anotherEmployeeId = employeeId;
     const anotherName = firstName;
-
     const db = getDatabase();
-
-    const updates = {};
-    const postData = {
-      firstName: anotherName,
-      employeeId: anotherEmployeeId,
-      checkIn: true,
-    };
-    const newPostKey = remove(ref(db, "users/" + anotherEmployeeId), postData);
-
+    let whoPickedFound = false;
     if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
-      console.log(
-        "Match found for employeeId:",
-        employeeId,
-        firstName,
-        newPostKey
-      );
-      //updates[newPostKey] = postData;
-      return remove(ref(db, "users/" + anotherEmployeeId), updates);
+      console.log("Match found for employeeId:", employeeId, firstName);
+      for (const health of healthCare) {
+        if(performHealthCareRemovePerson(health.whoPickedThis,employeeId,health.doctor,health.date,health.timeStart)){
+          whoPickedFound = true;
+          break;
+        }
+       if(!whoPickedFound){
+          break;
+        }
+      }
+
+      const updates = {
+        ["users/" + anotherEmployeeId + "/health"]: {
+          checkIn: false,
+          checkInTime: "N/A",
+          type: "N/A",
+          time: "N/A",
+          date: "N/A",
+          relationship: "N/A",
+          plant: "N/A",
+        },
+      };
+
+      return update(ref(db), updates);
     } else {
       console.log("No match found for employeeId:", employeeId);
     }
   }
 
-  function performConfirm(idParameter, nameParameter, checkinParameter) {
+  function performConfirm(
+    idParameter,
+    nameParameter,
+    checkinParameter,
+    typeParameter
+  ) {
     const anotherEmployeeId = employeeId;
     const anotherName = firstName;
     //const ifTrue = checkinParameter
     const db = getDatabase();
 
-    if (idParameter === anotherEmployeeId && nameParameter === anotherName && checkinParameter !== true) {
+    if (
+      idParameter === anotherEmployeeId &&
+      nameParameter === anotherName &&
+      checkinParameter !== true &&
+      typeParameter !== "N/A"
+    ) {
       const updates = {};
       const postData = {
         firstName: nameParameter,
         employeeId: idParameter,
-        checkIn: true,
+        health: {
+          checkIn: true,
+          checkInTime: dateTime,
+        },
       };
-      const newPostKey = update(
-        ref(db, "users/" + anotherEmployeeId),
-        postData
-      );
+      updates["users/" + anotherEmployeeId + "/health/checkIn"] = true;
+      updates["users/" + anotherEmployeeId + "/health/checkInTime"] = dateTime;
+
       return update(ref(db), updates);
-    }
-    else if(idParameter === anotherEmployeeId && nameParameter === anotherName && checkinParameter === true)
-    {
-        alert(`ท่านได้ทำการเช็คอินไปแล้ว`);
-        return true;
+    } else if (
+      idParameter === anotherEmployeeId &&
+      nameParameter === anotherName &&
+      checkinParameter === true
+    ) {
+      alert(`ท่านได้ทำการเช็คอินไปแล้ว`);
+      return true;
+    } else if (
+      idParameter === anotherEmployeeId &&
+      nameParameter === anotherName &&
+      checkinParameter !== true &&
+      typeParameter === "N/A"
+    ) {
+      alert("ยังไม่ได้เลือกเวลานัดหมาย");
+      return true;
     }
   }
 
@@ -186,46 +274,74 @@ export default function confirmation() {
           <div className="font-extrabold text-3xl mt-10 text-center">
             ประวัติการจอง
           </div>
-          <div className="border text-center p-10 my-20 mt-10 text-2xl rounded-3xl bg-slate-200 drop-shadow-3xl">
-            <div>
-              {" "}
-              <u className="font-extrabold">ชื่อ : {name}</u>
-            </div>
-            <div>
-              {" "}
-              <u className="font-bold">ID : {emp}</u>
-            </div>
-            <div className="">จองคิวแพทย์(ทดลอง)</div>
-            <div>Date :</div>
-            <div>Time :</div>
-            <div className="font-bold ">
-              สถานะ :{" "}
-              {checkInStatus === "เช็คอินเรียบร้อยแล้ว" ? (
-                <div className="text-green-600 flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-10 h-10"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <div className="flex flex-col">
-                    <div className="text-green-600">{checkInStatus}</div>
+          <div className="border  p-10 my-20 mt-10 text-2xl rounded-3xl bg-slate-200 drop-shadow-3xl">
+            {users.map((user) => {
+              if (user.employeeId === emp && user.firstName === name) {
+                return (
+                  <div>
+                    <div className="text-center mb-3">
+                      <u>
+                        <strong>{user.health.type}</strong>
+                      </u>
+                    </div>
+                    <div className="">
+                      รหัสพนักงาน : <strong>{user.employeeId}</strong>
+                    </div>
+                    <div className="">
+                      ชื่อ : <strong>{user.firstName}</strong>
+                    </div>
+                    {/* Render other user data */}
+                    {user.health && (
+                      <div>
+                        <div className="">
+                          วันที่ :{" "}
+                          <strong>
+                            {user.health.date &&
+                            !isNaN(new Date(user.health.date))
+                              ? new Date(user.health.date).toLocaleDateString(
+                                  "th-TH",
+                                  {
+                                    dateStyle: "long",
+                                  }
+                                )
+                              : " "}{" "}
+                          </strong>
+                        </div>
+                        <div className="">
+                          เวลา : <strong>{user.health.time}</strong>
+                        </div>
+                        <div className="mb-3">
+                          Plant : <strong>{user.health.plant}</strong>
+                        </div>
+                        
+                        <div
+                          className={`text-center p-5 rounded-3xl justify-center flex overflow-hidden text-white ${
+                            user.health.checkIn ? "bg-green-500" : "bg-red-500"
+                          }`}
+                        >
+                          <div className="flex items-center text-center">
+                            <u className="text-center">
+                              {user.health.checkIn ? (
+                                <>
+                                  เช็คอินแล้ว ณ วันที่{" "}
+                                  <span className="font-bold">
+                                    {user.health.checkInTime}
+                                  </span>
+                                </>
+                              ) : (
+                                "ยังไม่ได้เช็คอิน"
+                              )}
+                            </u>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ) : (
-                <span className="text-red-500 text-center">
-                  {checkInStatus}
-                </span>
-              )}
-            </div>
+                );
+              }
+              return null;
+            })}
+
             <div className="mt-5 p-2 flex flex-wrap justify-center space-x-4">
               <button
                 onClick={cancelHandler}

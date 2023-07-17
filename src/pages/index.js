@@ -61,11 +61,21 @@ const userIsNotCheckHandler = async (e) => {
       const data = {
         firstName: firstName,
         employeeId: employeeId,
-        time: "N/A",
-        plant: "N/A",
-        checkIn: false, 
         courses: {
-          
+          course: "N/A",
+          date: "N/A",
+          time: "N/A",
+          plant: "N/A",
+          hall: "N/A"
+          },
+          health: {
+            type: "N/A",
+             time: "N/A",
+             date: "N/A",
+             plant: "N/A",
+             relationship: "N/A",
+             checkInTime: "N/A",
+             checkIn: false
           }
       };
   
