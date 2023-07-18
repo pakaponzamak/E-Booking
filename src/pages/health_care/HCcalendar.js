@@ -20,17 +20,17 @@ const bai_jamjuree = Bai_Jamjuree({
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
-  const [dayMonthYear,setDayMonthYear] = useState(null);
+  const [dayMonthYear, setDayMonthYear] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState(courses);
   //const incrementCounter = () => setCounterState(counterState + 1);
-  const [healthCare,setHealthCare] = useState([])
+  const [healthCare, setHealthCare] = useState([]);
+  const [users, setUsers] = useState([]);
 
   startFireBase();
 
   const scrollRef = useRef(null);
-  StartFireBase();
   const router = useRouter();
   const { firstName, employeeId, checkIn } = router.query;
 
@@ -48,7 +48,6 @@ export default function Calendar() {
         }));
         // Set the users state with the retrieved data
         setHealthCare(healthArray);
-       
       }
     });
     // Clean up the listener when the component unmounts
@@ -56,7 +55,29 @@ export default function Calendar() {
       // Turn off the listener
       off(healthRef);
     };
-   
+  }, []);
+
+  useEffect(() => {
+    const db = getDatabase();
+    const userRef = ref(db, "users");
+    // Listen for changes in the 'users' reference
+    onValue(userRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Convert the object of users into an array
+        const userArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        // Set the users state with the retrieved data
+        setUsers(userArray);
+      }
+    });
+    // Clean up the listener when the component unmounts
+    return () => {
+      // Turn off the listener
+      off(userRef);
+    };
   }, []);
 
   //Auto go to current Date when entered
@@ -75,25 +96,29 @@ export default function Calendar() {
     setClickedDay(currentDate.getDate());
     setStartIndex(currentDate.getDate());
     const currentDay = currentDate.getDate();
-    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0")
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
     const currentYear = currentDate.getFullYear();
-    const date = currentYear + "-" + (currentMonth) + "-" + currentDay.toString().padStart(2, "0");
+    const date =
+      currentYear +
+      "-" +
+      currentMonth +
+      "-" +
+      currentDay.toString().padStart(2, "0");
     setDayMonthYear(date);
-    console.log(dayMonthYear)
+    console.log(dayMonthYear);
   }, []);
-
- 
 
   const handleNumberClick = (day) => {
     setClickedDay(day);
-    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0")
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
     const currentYear = currentDate.getFullYear();
     //const currentDay = currentDate.getDate();
     //const date = new Date(currentYear, currentMonth, day);
     //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
-    
-    const date = currentYear + "-" + (currentMonth) + "-" + day.toString().padStart(2, "0");
-    setDayMonthYear(date)
+
+    const date =
+      currentYear + "-" + currentMonth + "-" + day.toString().padStart(2, "0");
+    setDayMonthYear(date);
     console.log(dayMonthYear);
 
     const filteredCourses = courses.filter((course) => {
@@ -156,19 +181,26 @@ export default function Calendar() {
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
 
     const isCurrentDate = i === todayDate;
-    const isClickedDay = i === clickedDay && (currentYear === todayYear && currentMonth === todayMonth && i < todayDate);;
+    const isClickedDay =
+      i === clickedDay &&
+      currentYear === todayYear &&
+      currentMonth === todayMonth &&
+      i < todayDate;
 
     const isPastDate = date < today;
 
-    const isDisabled = isPastDate && !isCurrentDate ; // Set the disabled state based on whether it's a past date and not the current date
+    const isDisabled = isPastDate && !isCurrentDate; // Set the disabled state based on whether it's a past date and not the current date
 
     const dayButtonClass = isClickedDay
-    ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-    : isDisabled 
-    ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
-    : isCurrentDate && i === todayDate && todayMonth === currentMonth && todayYear === currentYear
-    ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
-    : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
+      ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+      : isDisabled
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+      : isCurrentDate &&
+        i === todayDate &&
+        todayMonth === currentMonth &&
+        todayYear === currentYear
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+      : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
 
     const dayElement = (
       <div key={i} className="flex-none">
@@ -181,7 +213,7 @@ export default function Calendar() {
             isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
           } // Change background color for past dates
         >
-          <div className="text-center">{i}</div>
+          <div className="text-center flex ">{i}</div>
         </button>
       </div>
     );
@@ -189,42 +221,54 @@ export default function Calendar() {
     days.push(dayElement);
   }
 
+ 
+
   const pickedHandler = async (health) => {
     const db = getDatabase();
     var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`);
-    if(cnf) {
-    if (health.alreadyPicked < 1) {
-      const updatedHealth = healthCare.map((h) => {
-        if (h.id === health.id) {
-          return {
-            ...h,
-            alreadyPicked: h.alreadyPicked + 1,
-          };
-        }
-        return h;
-      });
-      setHealthCare(updatedHealth);
-
-      const postData = {
-        alreadyPicked: health.alreadyPicked + 1,
-        whoPickedThis: employeeId
-      };
-      const addToUser = {
-        date : health.date,
-        plant : health.plant,
-        time : health.timeStart,
-        type: health.doctor
+    let isPick = false;
+    for(const user of users) {
+      if(user.employeeId === employeeId) {
+        if(user.health.pickedWhat !== "N/A" && user.employeeId === employeeId)
+        isPick = true;
+        break;
       }
+    }
+    if(isPick === true){alert(`รหัส "${employeeId}" ได้ทำจองพบแพทย์ไปแล้วกรุณายกเลิกก่อน`)}
+      if (cnf && !isPick) {
+        if (health.alreadyPicked < 1 ) {
+          const updatedHealth = healthCare.map((h) => {
+            if (h.id === health.id) {
+              return {
+                ...h,
+                alreadyPicked: h.alreadyPicked + 1,
+              };
+            }
+            return h;
+          });
+          setHealthCare(updatedHealth);
+          const postData = {
+            alreadyPicked: health.alreadyPicked + 1,
+            whoPickedThis: employeeId,
+          };
+          const addToUser = {
+            date: health.date,
+            plant: health.plant,
+            time: health.timeStart,
+            type: health.doctor,
+            pickedWhat: health.doctor + health.date + health.timeStart,
+          };
 
-      update(
-        ref(db, "health/" + health.doctor + health.date + health.timeStart  ),
-        postData
-      );
+          update(
+            ref(db, "health/" + health.doctor + health.date + health.timeStart),
+            postData
+          );
 
-      update(ref(db, "users/" + employeeId + "/health"), addToUser);
-    } else {
-      alert("เต็มแล้วครับพ่อหนุ่ม");
-    }}
+          update(ref(db, "users/" + employeeId + "/health"), addToUser);
+        } else {
+          alert("เต็มแล้ว");
+        }
+      }
   };
 
   return (
@@ -328,69 +372,68 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-5"></div>
       <div>
-                      {healthCare
-                        .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
-                        .filter((healthCare) => {
-                          const healthCareDate = healthCare.date;
-                          return dayMonthYear === healthCareDate;
-                        })
-                        .map((healthCare) => (
-                          <div
-                            key={healthCare.id}
-                            className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
-                          >
-                            <div className="flex justify-between mb-2">
-                              <h1>
-                                ประเภท :{" "}
-                                <strong>
-                                  {healthCare.doctor}
-                                </strong>
-                              </h1>
-                              
-                            </div>
-                            <div className="flex justify-between mb-2">
-                              <p>
-                                Plant : <strong>{healthCare.plant}</strong>
-                              </p>
-                              
-                            </div>
-                            <div className="flex justify-between mt-3">
-                              <p>
-                                วันที่ : <strong>{new Date(healthCare.date).toLocaleDateString("th-TH", {
-                          dateStyle: "long",
-                        })}</strong>
-                              </p>
-                              <p>
-                                จำนวน : <strong>{healthCare.alreadyPicked} / 1</strong>
-                              </p>
-                              
-                            </div>
-                            <div className="flex justify-between mt-3">
-                              <p>เวลา : <strong>{healthCare.timeStart} - {healthCare.timeEnd}</strong></p>
-                              
-                            <button
-                                onClick={() => pickedHandler(healthCare)}
-                                className={
-                                  healthCare.alreadyPicked >= 1 ? "" : ""
-                                }
-                              >
-                                <div className="">
-                                  {healthCare.alreadyPicked >= 1 ? (
-                                    <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
-                                      จองแล้ว
-                                    </span>
-                                  ) : (
-                                    <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
-                                      ว่าง
-                                    </span>
-                                  )}
-                                </div>
-                              </button>
-                              
-                            </div>
-                          </div>
-                        ))}
-                    </div>
+        {healthCare
+          .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
+          .filter((healthCare) => {
+            const healthCareDate = healthCare.date;
+            return dayMonthYear === healthCareDate;
+          })
+          .map((healthCare) => (
+            <div
+              key={healthCare.id}
+              className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+            >
+              <div className="flex justify-between mb-2">
+                <h1>
+                  ประเภท : <strong>{healthCare.doctor}</strong>
+                </h1>
+              </div>
+              <div className="flex justify-between mb-2">
+                <p>
+                  Plant : <strong>{healthCare.plant}</strong>
+                </p>
+              </div>
+              <div className="flex justify-between mt-3">
+                <p>
+                  วันที่ :{" "}
+                  <strong>
+                    {new Date(healthCare.date).toLocaleDateString("th-TH", {
+                      dateStyle: "long",
+                    })}
+                  </strong>
+                </p>
+                <p>
+                  จำนวน : <strong>{healthCare.alreadyPicked} / 1</strong>
+                </p>
+              </div>
+              <div className="flex justify-between mt-3">
+                <p>
+                  เวลา :{" "}
+                  <strong>
+                    {healthCare.timeStart} - {healthCare.timeEnd}
+                  </strong>
+                </p>
+
+                <button
+                  onClick={() => pickedHandler(healthCare)}
+                  className={healthCare.alreadyPicked >= 1 ? "" : ""}
+                >
+                  <div className="">
+                    {healthCare.alreadyPicked >= 1 ? (
+                      <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
+                        จองแล้ว
+                      </span>
+                    ) : (
+                      <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                        ว่าง
+                      </span>
+                    )}
+                  </div>
+                </button>
+              </div>
+            </div>
+          ))}
+      </div>
     </main>
   );
 }

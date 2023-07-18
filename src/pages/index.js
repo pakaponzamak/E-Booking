@@ -63,7 +63,7 @@ const userIsNotCheckHandler = async (e) => {
         employeeId: employeeId,
         courses: {
           firstName: firstName,
-        employeeId: employeeId,
+          employeeId: employeeId,
           course: "N/A",
           date: "N/A",
           time: "N/A",
@@ -74,11 +74,12 @@ const userIsNotCheckHandler = async (e) => {
             firstName: firstName,
             employeeId: employeeId,
             type: "N/A",
-             time: "N/A",
+             time: "N/a",
              date: "N/A",
              plant: "N/A",
              relationship: "N/A",
              checkInTime: "N/A",
+             pickedWhat: "N/A",
              checkIn: false
             },
       };
@@ -109,10 +110,9 @@ const userIsNotCheckHandler = async (e) => {
       
       const db = getDatabase();
       set(ref(db, "users/" + employeeId), data)
-      set(ref(db, "usersHealth/" + employeeId), healthData)
-      set(ref(db, "usersCourse/" + employeeId), courseData)
-      //db.ref("users/").push(data)
-      //delay(1000)
+      //set(ref(db, "usersHealth/" + employeeId), healthData)
+     // set(ref(db, "usersCourse/" + employeeId), courseData)
+     
         .then(() => {
           //console.log(key)
           router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);

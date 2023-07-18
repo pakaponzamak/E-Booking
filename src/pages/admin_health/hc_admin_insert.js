@@ -592,9 +592,9 @@ export default function tr_admin_course() {
                     onChange={plantOptionChange}
                   >
                     <FormControlLabel
-                      value="WELL"
+                      value="WGR"
                       control={<Radio />}
-                      label="WELL"
+                      label="WGR"
                     />
                     <FormControlLabel
                       value="BPK"

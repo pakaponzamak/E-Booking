@@ -37,7 +37,6 @@ export default function confirmation() {
   var minutes = today.getMinutes().toString().padStart(2, "0");
   var time = hours + ":" + minutes;
   var dateTime = date + " " + time;
-  
 
   useEffect(() => {
     const db = getDatabase();
@@ -225,6 +224,7 @@ export default function confirmation() {
           date: "N/A",
           relationship: "N/A",
           plant: "N/A",
+          pickedWhat: "N/A"
         },
       };
 
@@ -286,32 +286,31 @@ export default function confirmation() {
     <div className={`${bai_jamjuree.className} bg-slate-100 h-screen`}>
       <div className="flex justify-center item-center">
         <div>
-          <div className="border p-8   mt-36  rounded-xl bg-white drop-shadow-md">
+          <div className="border p-8   mt-32  rounded-xl bg-white drop-shadow-md">
             {users.map((user) => {
               if (user.employeeId === emp && user.firstName === name) {
                 return (
                   <div className="">
-                    <div className="font text mb-3 text-left ">
+                    <div className="text mb-3 text-left ">
                       ประวัติการจอง
                     </div>
                     <div className="border-b mb-3"></div>
-                    <div className="text-center mb-3 text-xl">
+                    <div className="text-center mb-4 text-2xl ">
                       
-                      <u>
                         <strong>{user.health.type}</strong>
-                      </u>
+                      
                     </div>
-                    <div className="">
+                    <div className="mb-1">
                       ID : <strong>{user.employeeId}</strong>
                     </div>
-                    <div className=" ">
+                    <div className="mb-1">
                       ชื่อ : <strong>{user.firstName}</strong>
                     </div>
                     {/* Render other user data */}
-                    
+
                     {user.health && (
                       <div>
-                        <div className="">
+                        <div className="mb-1">
                           วันที่ :{" "}
                           <strong>
                             {user.health.date &&
@@ -325,7 +324,7 @@ export default function confirmation() {
                               : " "}{" "}
                           </strong>
                         </div>
-                        <div className="">
+                        <div className="mb-1">
                           เวลา : <strong>{user.health.time}</strong>
                         </div>
                         <div className="mb-3">
@@ -338,7 +337,6 @@ export default function confirmation() {
                           }`}
                         >
                           <div className="flex items-center text-center">
-                          
                             <div className="text-center">
                               {user.health.checkIn ? (
                                 <>
@@ -355,24 +353,23 @@ export default function confirmation() {
                         </div>
                       </div>
                     )}
-                    </div>
-                  
+                  </div>
                 );
               }
               return null;
             })}
-
-            <div className="mt-5 p-2 flex flex-wrap justify-center space-x-4">
+            <div className="border-b mt-8 mb-6"></div>
+            <div className="mt-5 p-2 flex flex-wrap justify-between space-x-4">
               <button
                 onClick={cancelHandler}
-                className="text-white bg-[#D43732] rounded-3xl text-xl text-center  px-8 py-3 "
+                className="text-white bg-[#D43732] rounded-3xl text-xl text-center  px-10 py-3 "
               >
                 ยกเลิก
               </button>
               <button
                 onClick={confirmHandler}
                 id="confirm-btn"
-                className="text-white bg-[#16a34a] rounded-3xl  text-xl text-center  px-8 py-3 "
+                className="text-white bg-[#16a34a] rounded-3xl  text-xl text-center  px-10 py-3 "
               >
                 เช็คอิน
               </button>

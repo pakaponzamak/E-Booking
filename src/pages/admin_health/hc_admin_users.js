@@ -390,11 +390,13 @@ export default function TRusers() {
             {users
               .filter(
                 (user) =>
-                  user.health.type !== "N/A" 
+                  user.health.type !== "N/A" &&
+                  user.health.firstName &&
+                  user.health.employeeId
               )
               .map((user) => (
                 <div
-                  className="grid grid-cols-7 gap-3 mx-5 my-5"
+                  className="grid grid-cols-7 gap-3 mx-5 my-5 "
                   key={user.health.id}
                 >
                   <div className="col-span-1">{user.health.employeeId}</div>
@@ -418,6 +420,7 @@ export default function TRusers() {
                           : " "}{" "}
                         {user.health.time}
                       </div>
+
                       <div className="col-span-1">{user.health.plant}</div>
                       <div
                         className={`text-center p-1 rounded-3xl justify-center flex overflow-hidden text-white ${
@@ -441,6 +444,7 @@ export default function TRusers() {
                       </div>
                     </>
                   )}
+                  
                 </div>
               ))}
           </div>

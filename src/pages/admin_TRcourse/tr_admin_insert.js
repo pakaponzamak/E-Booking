@@ -639,9 +639,9 @@ export default function tr_admin_course() {
                       label="SRG"
                     />
                     <FormControlLabel
-                      value="WELL"
+                      value="WGR"
                       control={<Radio />}
-                      label="WELL"
+                      label="WGR"
                     />
                     <FormControlLabel
                       value="BPK"
