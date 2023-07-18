@@ -390,9 +390,7 @@ export default function TRusers() {
             {users
               .filter(
                 (user) =>
-                  user.health.type !== "N/A" &&
-                  user.health.firstName &&
-                  user.health.employeeId
+                  user.health.type !== "N/A" 
               )
               .map((user) => (
                 <div

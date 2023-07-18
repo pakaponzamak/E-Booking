@@ -74,7 +74,7 @@ const userIsNotCheckHandler = async (e) => {
             firstName: firstName,
             employeeId: employeeId,
             type: "N/A",
-             time: "N/a",
+             time: "N/A",
              date: "N/A",
              plant: "N/A",
              relationship: "N/A",

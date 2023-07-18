@@ -174,6 +174,7 @@ export default function confirmation() {
     timeParam
   ) {
     if (whoPickedParam === empParam) {
+      console.log("performHealthCareRemovePerson")
       const db = getDatabase();
       const updates = {
         ["health/" + typeParam + dateParam + timeParam + "/whoPickedThis"]: "",
@@ -195,44 +196,60 @@ export default function confirmation() {
     const anotherName = firstName;
     const db = getDatabase();
     let whoPickedFound = false;
+  
     if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
-      console.log("Match found for employeeId:", employeeId, firstName);
       for (const health of healthCare) {
-        if (
-          performHealthCareRemovePerson(
-            health.whoPickedThis,
-            employeeId,
-            health.doctor,
-            health.date,
-            health.timeStart
-          )
-        ) {
+        console.log("Match found for employeeId in for:", health.whoPickedThis, anotherEmployeeId);
+        if (health.whoPickedThis === anotherEmployeeId) {
+          const updates = {
+            ["health/" + health.doctor + health.date + health.timeStart + "/whoPickedThis"]: "",
+            ["health/" + health.doctor + health.date + health.timeStart + "/alreadyPicked"]: 0,
+            ["users/" + anotherEmployeeId + "/health"]: {
+              checkIn: false,
+              checkInTime: "N/A",
+              type: "N/A",
+              time: "N/A",
+              date: "N/A",
+              relationship: "N/A",
+              plant: "N/A",
+              pickedWhat: "N/A",
+              employeeId:anotherEmployeeId,
+              firstName:anotherName
+            },
+          };
+          update(ref(db), updates)
+            .then(() => {
+              alert("ByeBye");
+            })
+            .catch((error) => {
+              console.error("Error updating data:", error);
+            });
           whoPickedFound = true;
           break;
         }
-        if (!whoPickedFound) {
-          break;
-        }
       }
-
-      const updates = {
-        ["users/" + anotherEmployeeId + "/health"]: {
-          checkIn: false,
-          checkInTime: "N/A",
-          type: "N/A",
-          time: "N/A",
-          date: "N/A",
-          relationship: "N/A",
-          plant: "N/A",
-          pickedWhat: "N/A"
-        },
-      };
-
-      return update(ref(db), updates);
+  
+      if (!whoPickedFound) {
+        const updates = {
+          ["users/" + anotherEmployeeId + "/health"]: {
+            checkIn: false,
+            checkInTime: "N/A",
+            type: "N/A",
+            time: "N/A",
+            date: "N/A",
+            relationship: "N/A",
+            plant: "N/A",
+            pickedWhat: "N/A"
+          },
+        };
+  
+        return update(ref(db), updates);
+      }
     } else {
       console.log("No match found for employeeId:", employeeId);
     }
   }
+  
 
   function performConfirm(
     idParameter,
