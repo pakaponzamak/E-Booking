@@ -24,7 +24,7 @@ export default function confirmation() {
   const router = useRouter();
   const { firstName, employeeId, checkIn } = router.query;
   const [users, setUsers] = useState([]);
-  const [healthCare,setHealthCare] = useState([]);
+  const [healthCare, setHealthCare] = useState([]);
   const [showBtn, setShowBtn] = useState(false);
   const [name, setName] = useState("");
   const [emp, setEmp] = useState("");
@@ -159,18 +159,23 @@ export default function confirmation() {
           (user) => performDelete(user.employeeId, user.firstName)
           //user.checkIn = true
         );
-
       }
       router.push(`../`);
     }
   };
 
-  function performHealthCareRemovePerson(whoPickedParam, empParam, typeParam, dateParam, timeParam) {
+  function performHealthCareRemovePerson(
+    whoPickedParam,
+    empParam,
+    typeParam,
+    dateParam,
+    timeParam
+  ) {
     if (whoPickedParam === empParam) {
       const db = getDatabase();
       const updates = {
         ["health/" + typeParam + dateParam + timeParam + "/whoPickedThis"]: "",
-        ["health/" + typeParam + dateParam + timeParam + "/alreadyPicked"]: 0
+        ["health/" + typeParam + dateParam + timeParam + "/alreadyPicked"]: 0,
       };
       update(ref(db), updates)
         .then(() => {
@@ -182,7 +187,6 @@ export default function confirmation() {
       return true;
     }
   }
-  
 
   function performDelete(idParameter, nameParameter) {
     const anotherEmployeeId = employeeId;
@@ -192,11 +196,19 @@ export default function confirmation() {
     if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
       console.log("Match found for employeeId:", employeeId, firstName);
       for (const health of healthCare) {
-        if(performHealthCareRemovePerson(health.whoPickedThis,employeeId,health.doctor,health.date,health.timeStart)){
+        if (
+          performHealthCareRemovePerson(
+            health.whoPickedThis,
+            employeeId,
+            health.doctor,
+            health.date,
+            health.timeStart
+          )
+        ) {
           whoPickedFound = true;
           break;
         }
-       if(!whoPickedFound){
+        if (!whoPickedFound) {
           break;
         }
       }
@@ -268,29 +280,31 @@ export default function confirmation() {
   }
 
   return (
-    <div className={bai_jamjuree.className}>
-      <div className="flex justify-center item-center m-5 drop-shadow-lg mt-14 my-10">
+    <div className={`${bai_jamjuree.className} bg-slate-100 h-screen`}>
+      <div className="flex justify-center item-center">
         <div>
-          <div className="font-extrabold text-3xl mt-10 text-center">
-            ประวัติการจอง
-          </div>
-          <div className="border  p-10 my-20 mt-10 text-2xl rounded-3xl bg-slate-200 drop-shadow-3xl">
+          <div className="border  p-5  mt-20  rounded-xl bg-white drop-shadow-md">
             {users.map((user) => {
               if (user.employeeId === emp && user.firstName === name) {
                 return (
                   <div>
-                    <div className="text-center mb-3">
+                    <div className="font text mb-2 text-left ">
+                      ประวัติการจอง
+                    </div>
+                    <div className="border-b mb-2"></div>
+                    <div className="text-center mb-3 text-lg">
                       <u>
                         <strong>{user.health.type}</strong>
                       </u>
                     </div>
                     <div className="">
-                      รหัสพนักงาน : <strong>{user.employeeId}</strong>
+                      ID : <strong>{user.employeeId}</strong>
                     </div>
                     <div className="">
                       ชื่อ : <strong>{user.firstName}</strong>
                     </div>
                     {/* Render other user data */}
+                    
                     {user.health && (
                       <div>
                         <div className="">
@@ -313,14 +327,14 @@ export default function confirmation() {
                         <div className="mb-3">
                           Plant : <strong>{user.health.plant}</strong>
                         </div>
-                        
+
                         <div
-                          className={`text-center p-5 rounded-3xl justify-center flex overflow-hidden text-white ${
+                          className={`text-center p-3 rounded-xl justify-center flex overflow-hidden text-white ${
                             user.health.checkIn ? "bg-green-500" : "bg-red-500"
                           }`}
                         >
                           <div className="flex items-center text-center">
-                            <u className="text-center">
+                            <div className="text-center">
                               {user.health.checkIn ? (
                                 <>
                                   เช็คอินแล้ว ณ วันที่{" "}
@@ -331,12 +345,13 @@ export default function confirmation() {
                               ) : (
                                 "ยังไม่ได้เช็คอิน"
                               )}
-                            </u>
+                            </div>
                           </div>
                         </div>
                       </div>
                     )}
-                  </div>
+                    </div>
+                  
                 );
               }
               return null;
@@ -345,14 +360,14 @@ export default function confirmation() {
             <div className="mt-5 p-2 flex flex-wrap justify-center space-x-4">
               <button
                 onClick={cancelHandler}
-                className="text-white bg-[#D43732] rounded-full text-xl text-center font-bold px-6 py-3 "
+                className="text-white bg-[#D43732] rounded-3xl text-xl text-center font-bold px-6 py-3 "
               >
                 ยกเลิก
               </button>
               <button
                 onClick={confirmHandler}
                 id="confirm-btn"
-                className="text-white bg-[#16a34a] rounded-full text-xl text-center font-bold px-6 py-3 "
+                className="text-white bg-[#16a34a] rounded-3xl text-xl text-center font-bold px-6 py-3 "
               >
                 เช็คอิน
               </button>
