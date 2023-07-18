@@ -387,53 +387,62 @@ export default function TRusers() {
               <div>Plant</div>
               <div>สถานะ</div>
             </div>
-            {users.map((user) => (
-              <div className="grid grid-cols-7 gap-3 mx-5 my-5" key={user.id}>
-                <div className="col-span-1">{user.employeeId}</div>
-                <div className="col-span-1">{user.firstName}</div>
-                {user.health && (
-                  <>
-                    <div className="col-span-1">{user.health.relationship}</div>
-                    <div className="col-span-1">
-                      <strong>{user.health.type}</strong>
-                    </div>
-                    <div className="col-span-1">
-                      {user.health.date && !isNaN(new Date(user.health.date))
-                        ? new Date(user.health.date).toLocaleDateString(
-                            "th-TH",
-                            {
-                              dateStyle: "long",
-                            }
-                          )
-                        : " "}{" "}
-                      {user.health.time}
-                    </div>
-
-                    <div className="col-span-1">{user.health.plant}</div>
-                    <div
-                          className={`text-center p-1 rounded-3xl justify-center flex overflow-hidden text-white ${
-                            user.health.checkIn ? "bg-green-500" : "bg-red-500"
-                          }`}
-                        >
-                          <div className="flex items-center text-center">
-                            <div className="text-center">
-                              {user.health.checkIn ? (
-                                <>
-                                  เช็คอินแล้ว{" "}
-                                  <span className="font-bold">
-                                    {user.health.checkInTime}
-                                  </span>
-                                </>
-                              ) : (
-                                "ยังไม่ได้เช็คอิน"
-                              )}
-                            </div>
+            {users
+              .filter(
+                (user) =>
+                  user.health.type !== "N/A" 
+              )
+              .map((user) => (
+                <div
+                  className="grid grid-cols-7 gap-3 mx-5 my-5"
+                  key={user.health.id}
+                >
+                  <div className="col-span-1">{user.health.employeeId}</div>
+                  <div className="col-span-1">{user.health.firstName}</div>
+                  {user.health && (
+                    <>
+                      <div className="col-span-1">
+                        {user.health.relationship}
+                      </div>
+                      <div className="col-span-1">
+                        <strong>{user.health.type}</strong>
+                      </div>
+                      <div className="col-span-1">
+                        {user.health.date && !isNaN(new Date(user.health.date))
+                          ? new Date(user.health.date).toLocaleDateString(
+                              "th-TH",
+                              {
+                                dateStyle: "long",
+                              }
+                            )
+                          : " "}{" "}
+                        {user.health.time}
+                      </div>
+                      <div className="col-span-1">{user.health.plant}</div>
+                      <div
+                        className={`text-center p-1 rounded-3xl justify-center flex overflow-hidden text-white ${
+                          user.health.checkIn ? "bg-green-500" : "bg-red-500"
+                        }`}
+                      >
+                        <div className="flex items-center text-center">
+                          <div className="text-center">
+                            {user.health.checkIn ? (
+                              <>
+                                เช็คอินแล้ว{" "}
+                                <span className="font-bold">
+                                  {user.health.checkInTime}
+                                </span>
+                              </>
+                            ) : (
+                              "ยังไม่ได้เช็คอิน"
+                            )}
                           </div>
                         </div>
-                  </>
-                )}
-              </div>
-            ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
           </div>
         </div>
       </div>

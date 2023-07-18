@@ -33,8 +33,11 @@ export default function confirmation() {
   var today = new Date();
   var options = { month: "short", day: "numeric" };
   var date = today.toLocaleDateString("th-TH", options);
-  var time = today.getHours() + ":" + today.getMinutes();
+  var hours = today.getHours().toString().padStart(2, "0");
+  var minutes = today.getMinutes().toString().padStart(2, "0");
+  var time = hours + ":" + minutes;
   var dateTime = date + " " + time;
+  
 
   useEffect(() => {
     const db = getDatabase();
@@ -124,7 +127,7 @@ export default function confirmation() {
   }
 
   const confirmHandler = async (e) => {
-    var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`);
+    var cnf = confirm(`ต้องการจะ "เช็คอิน" หรือไม่`);
     if (cnf) {
       const buttonId = e.target.id;
       // Use the buttonId as needed
@@ -283,16 +286,17 @@ export default function confirmation() {
     <div className={`${bai_jamjuree.className} bg-slate-100 h-screen`}>
       <div className="flex justify-center item-center">
         <div>
-          <div className="border  p-5  mt-20  rounded-xl bg-white drop-shadow-md">
+          <div className="border p-8   mt-36  rounded-xl bg-white drop-shadow-md">
             {users.map((user) => {
               if (user.employeeId === emp && user.firstName === name) {
                 return (
-                  <div>
-                    <div className="font text mb-2 text-left ">
+                  <div className="">
+                    <div className="font text mb-3 text-left ">
                       ประวัติการจอง
                     </div>
-                    <div className="border-b mb-2"></div>
-                    <div className="text-center mb-3 text-lg">
+                    <div className="border-b mb-3"></div>
+                    <div className="text-center mb-3 text-xl">
+                      
                       <u>
                         <strong>{user.health.type}</strong>
                       </u>
@@ -300,7 +304,7 @@ export default function confirmation() {
                     <div className="">
                       ID : <strong>{user.employeeId}</strong>
                     </div>
-                    <div className="">
+                    <div className=" ">
                       ชื่อ : <strong>{user.firstName}</strong>
                     </div>
                     {/* Render other user data */}
@@ -329,11 +333,12 @@ export default function confirmation() {
                         </div>
 
                         <div
-                          className={`text-center p-3 rounded-xl justify-center flex overflow-hidden text-white ${
+                          className={`text-center p-3 px-10 rounded-xl justify-center flex overflow-hidden text-white ${
                             user.health.checkIn ? "bg-green-500" : "bg-red-500"
                           }`}
                         >
                           <div className="flex items-center text-center">
+                          
                             <div className="text-center">
                               {user.health.checkIn ? (
                                 <>
@@ -360,14 +365,14 @@ export default function confirmation() {
             <div className="mt-5 p-2 flex flex-wrap justify-center space-x-4">
               <button
                 onClick={cancelHandler}
-                className="text-white bg-[#D43732] rounded-3xl text-xl text-center font-bold px-6 py-3 "
+                className="text-white bg-[#D43732] rounded-3xl text-xl text-center  px-8 py-3 "
               >
                 ยกเลิก
               </button>
               <button
                 onClick={confirmHandler}
                 id="confirm-btn"
-                className="text-white bg-[#16a34a] rounded-3xl text-xl text-center font-bold px-6 py-3 "
+                className="text-white bg-[#16a34a] rounded-3xl  text-xl text-center  px-8 py-3 "
               >
                 เช็คอิน
               </button>

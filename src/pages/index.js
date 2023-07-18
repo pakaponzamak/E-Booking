@@ -62,6 +62,8 @@ const userIsNotCheckHandler = async (e) => {
         firstName: firstName,
         employeeId: employeeId,
         courses: {
+          firstName: firstName,
+        employeeId: employeeId,
           course: "N/A",
           date: "N/A",
           time: "N/A",
@@ -69,6 +71,8 @@ const userIsNotCheckHandler = async (e) => {
           hall: "N/A"
           },
           health: {
+            firstName: firstName,
+            employeeId: employeeId,
             type: "N/A",
              time: "N/A",
              date: "N/A",
@@ -76,8 +80,28 @@ const userIsNotCheckHandler = async (e) => {
              relationship: "N/A",
              checkInTime: "N/A",
              checkIn: false
-          }
+            },
       };
+      const healthData = {
+        firstName: firstName,
+            employeeId: employeeId,
+            type: "N/A",
+             time: "N/A",
+             date: "N/A",
+             plant: "N/A",
+             relationship: "N/A",
+             checkInTime: "N/A",
+             checkIn: false
+      }
+      const courseData = {
+        firstName: firstName,
+        employeeId: employeeId,
+          course: "N/A",
+          date: "N/A",
+          time: "N/A",
+          plant: "N/A",
+          hall: "N/A"
+      }
   
       function delay(time) {
         return new Promise((resolve) => setTimeout(resolve, time));
@@ -85,6 +109,8 @@ const userIsNotCheckHandler = async (e) => {
       
       const db = getDatabase();
       set(ref(db, "users/" + employeeId), data)
+      set(ref(db, "usersHealth/" + employeeId), healthData)
+      set(ref(db, "usersCourse/" + employeeId), courseData)
       //db.ref("users/").push(data)
       //delay(1000)
         .then(() => {
@@ -122,7 +148,7 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
   };
 
   return (
-    <main className={`flex justify-center items-center m-7 drop-shadow-lg mt-14 ${bai_jamjuree.className}`}>
+    <main className={`flex justify-center items-center m-7  mt-16 ${bai_jamjuree.className}`}>
       <form
         className="place-content-center text-center p-10 "
         onSubmit={handleSubmit}
@@ -131,13 +157,13 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
         <div className="font-extrabold text-[#D43732] italic">
           DNTH Electronic Form
         </div>
-        <div className="mb-8 font-extrabold text-[#D43732] italicv">
+        <div className="mb-8 font-extrabold text-[#D43732] italic">
           (ระบบฟอร์มออนไลน์)
         </div>
-        <div>
+        <div className="drop-shadow-lg">
           <div>
             <input
-              className="border-2 px-5 py-3 rounded-full mb-5 "
+              className="border px-5 py-3 rounded-2xl mb-6 "
               placeholder="ชื่อ"
               type="text"
               name="username"
@@ -148,7 +174,7 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
           </div>
           <div>
             <input
-              className="border-2 px-5 py-3 rounded-full mb-5 "
+              className="border px-5 py-3 rounded-2xl mb-10 "
               placeholder="รหัสพนักงาน"
               type="text"
               name="employee_id"
@@ -161,8 +187,8 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
 
         <button
           type="submit"
-          class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-xl px-14 py-2.5 text-center 
-                                mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold"
+          class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-2xl text-xl px-16 py-3 text-center 
+                                 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 "
         >
           เข้าสู่ระบบ
         </button>

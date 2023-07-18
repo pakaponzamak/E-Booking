@@ -26,6 +26,7 @@ export default function Calendar() {
   const [filteredCourses, setFilteredCourses] = useState(courses);
   //const incrementCounter = () => setCounterState(counterState + 1);
   const [healthCare,setHealthCare] = useState([])
+
   startFireBase();
 
   const scrollRef = useRef(null);
@@ -47,6 +48,7 @@ export default function Calendar() {
         }));
         // Set the users state with the retrieved data
         setHealthCare(healthArray);
+       
       }
     });
     // Clean up the listener when the component unmounts
@@ -54,6 +56,7 @@ export default function Calendar() {
       // Turn off the listener
       off(healthRef);
     };
+   
   }, []);
 
   //Auto go to current Date when entered
@@ -78,6 +81,8 @@ export default function Calendar() {
     setDayMonthYear(date);
     console.log(dayMonthYear)
   }, []);
+
+ 
 
   const handleNumberClick = (day) => {
     setClickedDay(day);
@@ -187,7 +192,6 @@ export default function Calendar() {
   const pickedHandler = async (health) => {
     const db = getDatabase();
     var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`);
-
     if(cnf) {
     if (health.alreadyPicked < 1) {
       const updatedHealth = healthCare.map((h) => {
@@ -363,6 +367,7 @@ export default function Calendar() {
                             </div>
                             <div className="flex justify-between mt-3">
                               <p>เวลา : <strong>{healthCare.timeStart} - {healthCare.timeEnd}</strong></p>
+                              
                             <button
                                 onClick={() => pickedHandler(healthCare)}
                                 className={
@@ -381,6 +386,7 @@ export default function Calendar() {
                                   )}
                                 </div>
                               </button>
+                              
                             </div>
                           </div>
                         ))}
