@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import Image from "next/image";
 import { Bai_Jamjuree } from "next/font/google";
 import { useRouter } from "next/router";
@@ -16,6 +16,12 @@ export default function tr_admin_course() {
   const [isCourseExpanded, setIsCourseExpanded] = useState(false);
   const [course, setCourses] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [clickedDay, setClickedDay] = useState(null);
+  const [dayMonthYear, setDayMonthYear] = useState(null);
+  const [startIndex, setStartIndex] = useState(1);
+  const scrollRef = useRef(null);
+  const [filteredCourses, setFilteredCourses] = useState(course);
 
   StartFireBase();
 
@@ -42,6 +48,34 @@ export default function tr_admin_course() {
     };
   }, []);
 
+
+      //Auto go to current Date when entered
+      useEffect(() => {
+        // Scroll to current date section
+        if (scrollRef.current) {
+          const currentDateElement =
+            scrollRef.current.querySelector(".current-date");
+          if (currentDateElement) {
+            currentDateElement.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        }
+        setClickedDay(currentDate.getDate());
+        setStartIndex(currentDate.getDate());
+        const currentDay = currentDate.getDate();
+        const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
+        const currentYear = currentDate.getFullYear();
+        const date =
+          currentYear +
+          "-" +
+          currentMonth +
+          "-" +
+          currentDay.toString().padStart(2, "0");
+        setDayMonthYear(date);
+        console.log(dayMonthYear);
+      }, []);
   const router = useRouter();
   const toggleForm = (user) => {
     if (
@@ -127,9 +161,122 @@ export default function tr_admin_course() {
     }
   };
 
+  const handleNumberClick = (day) => {
+    setClickedDay(day);
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
+    const currentYear = currentDate.getFullYear();
+    //const currentDay = currentDate.getDate();
+    //const date = new Date(currentYear, currentMonth, day);
+    //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
+
+    const date =
+      currentYear + "-" + currentMonth + "-" + day.toString().padStart(2, "0");
+    setDayMonthYear(date);
+    console.log(dayMonthYear);
+
+    const filteredCourses = course.filter((course) => {
+      const courseDate = course.date;
+
+      //console.log(courseDate)
+      return courseDate === date;
+    });
+
+    setFilteredCourses(filteredCourses);
+  };
+
+  const previous7Days = () => {
+    setStartIndex((prevStartIndex) => Math.max(1, prevStartIndex - 7));
+  };
+
+  const next7Days = () => {
+    const daysInMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    ).getDate();
+    setStartIndex((prevStartIndex) =>
+      Math.min(prevStartIndex + 7, daysInMonth - 6)
+    );
+  };
+
+  const previousMonth = () => {
+    const previousDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1
+    );
+    setCurrentDate(previousDate);
+    setStartIndex(1);
+  };
+
+  const nextMonth = () => {
+    const nextDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1
+    );
+    setCurrentDate(nextDate);
+    setStartIndex(1);
+  };
+
+  const currentDay = currentDate.getDate();
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const today = new Date();
+  const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
+
+  const days = [];
+  for (let i = startIndex; i < startIndex + 7; i++) {
+    if (i > daysInMonth) break;
+    const date = new Date(currentYear, currentMonth, i);
+    const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
+
+    const isCurrentDate = i === todayDate;
+    const isClickedDay =
+      i === clickedDay &&
+      currentYear === todayYear &&
+      currentMonth === todayMonth &&
+      i < todayDate;
+
+    const isPastDate = date < today;
+
+    const isDisabled = isPastDate && !isCurrentDate; // Set the disabled state based on whether it's a past date and not the current date
+
+    const dayButtonClass = isClickedDay
+      ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+      : isDisabled
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+      : isCurrentDate &&
+        i === todayDate &&
+        todayMonth === currentMonth &&
+        todayYear === currentYear
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+      : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
+
+    const dayElement = (
+      <div key={i} className="flex-none ">
+        <div className="text-center text-xs">{dayOfWeek}</div>
+        <button
+          onClick={() => handleNumberClick(i)}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
+          disabled={isDisabled} // Disable the button for past dates
+          style={
+            isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
+          } // Change background color for past dates
+        >
+          <div className="text-center flex ">{i}</div>
+        </button>
+      </div>
+    );
+
+    days.push(dayElement);
+  }
+
   return (
-    <div className={`flex h-screen ${bai.className} bg-slate-100`}>
-      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl">
+    <div className={`${bai.className} bg-slate-100 flex h-screen `}>
+      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 h-full overflow-y-auto">
         <div className="p-4 text-center">
           <Image
             src={DensoLogo}
@@ -399,9 +546,98 @@ export default function tr_admin_course() {
       </div>
 
       <div className="flex-1 w-min drop-shadow-lg">
-        <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col">
+        <div className="rounded-3xl m-2 bg-slate-300 p-3 h-full overflow-y-auto">
           <h1 className="font-extrabold text-3xl p-3 ">ตารางคอร์สอบรม</h1>
           <div className="border-b border-gray-800 mb-4"></div>
+          <div className="flex justify-between text-center">
+        <button onClick={previousMonth}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-8 h-8"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5"
+            />
+          </svg>
+        </button>
+        <h2 className="flex text-center justify-center font-bold text-2xl">
+          {clickedDay ? (
+            <>
+              {clickedDay}&nbsp;
+              {currentDate.toLocaleDateString("th-TH", {
+                month: "long",
+                year: "numeric",
+              })}
+            </>
+          ) : (
+            currentDate.toLocaleDateString("th-TH", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            })
+          )}
+        </h2>
+        <button onClick={nextMonth}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-8 h-8"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </button>
+      </div>
+      
+
+      <div ref={scrollRef} className=" flex justify-between text-center mb-4">
+        <button onClick={previous7Days} disabled={startIndex === 1}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-8 h-8"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M15.75 19.5L8.25 12l7.5-7.5"
+            />
+          </svg>
+        </button>
+        <div className="flex text-center justify-center gap-2">{days}</div>
+        <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="w-8 h-8"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            />
+          </svg>
+        </button>
+      </div>
+      <div className="border-b mb-3 border-b-gray-800"></div>
           <div className="text-center items-center">
             <div className="grid grid-cols-10 gap-3 mx-0 text-center font-bold">
               <div>หัวเรื่อง</div>

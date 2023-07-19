@@ -171,14 +171,26 @@ export default function confirmation() {
     const anotherName = firstName;
     const db = getDatabase();
     let whoPickedFound = false;
-  
+
     if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
       for (const health of healthCare) {
-        console.log("Match found for employeeId in for:", health.whoPickedThis, anotherEmployeeId);
+        console.log(
+          "Match found for employeeId in for:",
+          health.whoPickedThis,
+          anotherEmployeeId
+        );
         if (health.whoPickedThis === anotherEmployeeId) {
           const updates = {
-            ["health/" + health.doctor + health.date + health.timeStart + "/whoPickedThis"]: "",
-            ["health/" + health.doctor + health.date + health.timeStart + "/alreadyPicked"]: 0,
+            ["health/" +
+            health.doctor +
+            health.date +
+            health.timeStart +
+            "/whoPickedThis"]: "",
+            ["health/" +
+            health.doctor +
+            health.date +
+            health.timeStart +
+            "/alreadyPicked"]: 0,
             ["users/" + anotherEmployeeId + "/health"]: {
               checkIn: false,
               checkInTime: "N/A",
@@ -188,8 +200,8 @@ export default function confirmation() {
               relationship: "N/A",
               plant: "N/A",
               pickedWhat: "N/A",
-              employeeId:anotherEmployeeId,
-              firstName:anotherName
+              employeeId: anotherEmployeeId,
+              firstName: anotherName,
             },
           };
           update(ref(db), updates)
@@ -203,7 +215,7 @@ export default function confirmation() {
           break;
         }
       }
-  
+
       if (!whoPickedFound) {
         const updates = {
           ["users/" + anotherEmployeeId + "/health"]: {
@@ -214,17 +226,16 @@ export default function confirmation() {
             date: "N/A",
             relationship: "N/A",
             plant: "N/A",
-            pickedWhat: "N/A"
+            pickedWhat: "N/A",
           },
         };
-  
+
         return update(ref(db), updates);
       }
     } else {
       console.log("No match found for employeeId:", employeeId);
     }
   }
-  
 
   function performConfirm(
     idParameter,
@@ -283,46 +294,41 @@ export default function confirmation() {
               if (user.employeeId === emp && user.firstName === name) {
                 return (
                   <div className=" mx-2">
-                    <div className="text mb-3 text-left ">
-                      ประวัติการจอง
-                    </div>
+                    <div className="text mb-3 text-left ">ประวัติการจอง</div>
                     <div className="border-b mb-3"></div>
                     <div className="text-center mb-4 text-2xl ">
-                      
-                        <strong>{user.health.type}</strong>
-                      
+                      <strong>{user.health.type}</strong>
                     </div>
                     <div className="flex justify-between mt-3">
-                    <p className="mb-1">
-                      ชื่อ : <strong>{user.firstName}</strong>
-                    </p>
-                    <p className="mb-1">
-                    ID : <strong>{user.employeeId.toUpperCase()}</strong>
-
-                    </p>
-                    
+                      <div className="mb-1">
+                        วันที่ :{" "}
+                        <strong>
+                          {user.health.date &&
+                          !isNaN(new Date(user.health.date))
+                            ? new Date(user.health.date).toLocaleDateString(
+                                "th-TH",
+                                {
+                                  dateStyle: "long",
+                                }
+                              )
+                            : " "}{" "}
+                        </strong>
+                      </div>
+                      <div className="mb-1">
+                        เวลา : <strong>{user.health.time}</strong>
+                      </div>
                     </div>
                     {/* Render other user data */}
 
                     {user.health && (
                       <div>
-                        <div className="mb-1">
-                          วันที่ :{" "}
-                          <strong>
-                            {user.health.date &&
-                            !isNaN(new Date(user.health.date))
-                              ? new Date(user.health.date).toLocaleDateString(
-                                  "th-TH",
-                                  {
-                                    dateStyle: "long",
-                                  }
-                                )
-                              : " "}{" "}
-                          </strong>
-                        </div>
-                        <div className="mb-1">
-                          เวลา : <strong>{user.health.time}</strong>
-                        </div>
+                        <p className="mb-1">
+                          ชื่อ : <strong>{user.firstName}</strong>
+                        </p>
+                        <p className="mb-1">
+                          ID : <strong>{user.employeeId.toUpperCase()}</strong>
+                        </p>
+
                         <div className="mb-3">
                           Plant : <strong>{user.health.plant}</strong>
                         </div>

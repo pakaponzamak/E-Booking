@@ -103,8 +103,8 @@ export default function TRusers() {
   };
 
   return (
-    <div className={`flex h-screen ${bai.className} bg-slate-100`}>
-      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl">
+    <div className={`${bai.className} bg-slate-100 flex h-screen `}>
+      <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 h-full overflow-y-auto">
         <div className="p-4 text-center">
           <Image
             src={DensoLogo}
@@ -372,7 +372,7 @@ export default function TRusers() {
       </div>
 
       <div className="flex-1 w-min drop-shadow-lg">
-        <div className="w-58 bg-slate-300 rounded-3xl p-3 m-2 flex flex-col">
+        <div className="rounded-3xl m-2 bg-slate-300 p-3 h-full overflow-y-auto">
           <h1 className="font-extrabold text-3xl p-3 ">
             ข้อมูลผู้ใช้งานระบบรักษาพยาบาล
           </h1>
@@ -392,6 +392,7 @@ export default function TRusers() {
                 (user) =>
                   user.health.type !== "N/A" 
               )
+              .sort((a, b) => (a.health.checkInTime < b.health.checkInTime ? 1 : -1))
               .map((user) => (
                 <div
                   className="grid grid-cols-7 gap-3 mx-5 my-5 "

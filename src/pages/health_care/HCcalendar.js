@@ -221,54 +221,54 @@ export default function Calendar() {
     days.push(dayElement);
   }
 
- 
-
   const pickedHandler = async (health) => {
     const db = getDatabase();
     var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`);
     let isPick = false;
-    for(const user of users) {
-      if(user.employeeId === employeeId) {
-        if(user.health.pickedWhat !== "N/A" && user.employeeId === employeeId)
-        isPick = true;
+    for (const user of users) {
+      if (user.employeeId === employeeId) {
+        if (user.health.pickedWhat !== "N/A" && user.employeeId === employeeId)
+          isPick = true;
         break;
       }
     }
-    if(isPick === true){alert(`รหัส "${employeeId}" ได้ทำจองพบแพทย์ไปแล้วกรุณายกเลิกก่อน`)}
-      if (cnf && !isPick) {
-        if (health.alreadyPicked < 1 ) {
-          const updatedHealth = healthCare.map((h) => {
-            if (h.id === health.id) {
-              return {
-                ...h,
-                alreadyPicked: h.alreadyPicked + 1,
-              };
-            }
-            return h;
-          });
-          setHealthCare(updatedHealth);
-          const postData = {
-            alreadyPicked: health.alreadyPicked + 1,
-            whoPickedThis: employeeId,
-          };
-          const addToUser = {
-            date: health.date,
-            plant: health.plant,
-            time: health.timeStart,
-            type: health.doctor,
-            pickedWhat: health.doctor + health.date + health.timeStart,
-          };
+    if (isPick === true) {
+      alert(`รหัส "${employeeId}" ได้ทำจองพบแพทย์ไปแล้วกรุณายกเลิกก่อน`);
+    }
+    if (cnf && !isPick) {
+      if (health.alreadyPicked < 1) {
+        const updatedHealth = healthCare.map((h) => {
+          if (h.id === health.id) {
+            return {
+              ...h,
+              alreadyPicked: h.alreadyPicked + 1,
+            };
+          }
+          return h;
+        });
+        setHealthCare(updatedHealth);
+        const postData = {
+          alreadyPicked: health.alreadyPicked + 1,
+          whoPickedThis: employeeId,
+        };
+        const addToUser = {
+          date: health.date,
+          plant: health.plant,
+          time: health.timeStart,
+          type: health.doctor,
+          pickedWhat: health.doctor + health.date + health.timeStart,
+        };
 
-          update(
-            ref(db, "health/" + health.doctor + health.date + health.timeStart),
-            postData
-          );
+        update(
+          ref(db, "health/" + health.doctor + health.date + health.timeStart),
+          postData
+        );
 
-          update(ref(db, "users/" + employeeId + "/health"), addToUser);
-        } else {
-          alert("เต็มแล้ว");
-        }
+        update(ref(db, "users/" + employeeId + "/health"), addToUser);
+      } else {
+        alert("เต็มแล้ว");
       }
+    }
   };
 
   return (
@@ -417,10 +417,11 @@ export default function Calendar() {
                 <button
                   onClick={() => pickedHandler(healthCare)}
                   className={healthCare.alreadyPicked >= 1 ? "" : ""}
+                  disabled={healthCare.alreadyPicked >= 1}
                 >
                   <div className="">
                     {healthCare.alreadyPicked >= 1 ? (
-                      <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
+                      <span className="text-white bg-red-600 p-2 px-2 rounded-2xl font-semibold">
                         จองแล้ว
                       </span>
                     ) : (
