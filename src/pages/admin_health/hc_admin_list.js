@@ -187,19 +187,22 @@ export default function tr_admin_course() {
   };
 
   const previous7Days = () => {
-    setStartIndex((prevStartIndex) => Math.max(1, prevStartIndex - 7));
+    setStartIndex((prevStartIndex) => Math.max(1, prevStartIndex - 15));
   };
-
+  
   const next7Days = () => {
     const daysInMonth = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + 1,
       0
     ).getDate();
+    const maxStartIndex = daysInMonth - 14; // Maximum start index to prevent exceeding the total number of days
+  
     setStartIndex((prevStartIndex) =>
-      Math.min(prevStartIndex + 7, daysInMonth - 6)
+      Math.min(prevStartIndex + 15, maxStartIndex)
     );
   };
+  
 
   const previousMonth = () => {
     const previousDate = new Date(
@@ -230,7 +233,7 @@ export default function tr_admin_course() {
   const todayYear = today.getFullYear();
 
   const days = [];
-  for (let i = startIndex; i < startIndex + 7; i++) {
+  for (let i = startIndex; i < startIndex + 15; i++) {
     if (i > daysInMonth) break;
     const date = new Date(currentYear, currentMonth, i);
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
@@ -249,7 +252,7 @@ export default function tr_admin_course() {
     const dayButtonClass = isClickedDay
       ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
       : isDisabled
-      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10  text-white"
       : isCurrentDate &&
         i === todayDate &&
         todayMonth === currentMonth &&
@@ -263,7 +266,7 @@ export default function tr_admin_course() {
         <button
           onClick={() => handleNumberClick(i)}
           className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
-          disabled={isDisabled} // Disable the button for past dates
+           // Disable the button for past dates
           style={
             isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
           } // Change background color for past dates
@@ -623,9 +626,9 @@ const exportSpecificDate = () => {
                   </div>
         </div>
           
-          <div className="border-b border-gray-800 mb-2"></div>
-          <div className="flex justify-between text-center">
-        <button onClick={previousMonth}>
+          <div className="border-b border-gray-800 mb-5 "></div>
+          <div className="flex justify-between text-center mb-1">
+        <button onClick={previousMonth} className="border rounded-full p-2 bg-slate-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -658,7 +661,7 @@ const exportSpecificDate = () => {
             })
           )}
         </h2>
-        <button onClick={nextMonth}>
+        <button onClick={nextMonth} className="border rounded-full p-2 bg-slate-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -678,7 +681,7 @@ const exportSpecificDate = () => {
       
 
       <div ref={scrollRef} className=" flex justify-between text-center mb-2">
-        <button onClick={previous7Days} disabled={startIndex === 1}>
+        <button onClick={previous7Days} disabled={startIndex === 1} className="border rounded-full p-2 bg-slate-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -695,7 +698,7 @@ const exportSpecificDate = () => {
           </svg>
         </button>
         <div className="flex text-center justify-center gap-2">{days}</div>
-        <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth}>
+        <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth} className="border rounded-full p-2 bg-slate-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -712,7 +715,7 @@ const exportSpecificDate = () => {
           </svg>
         </button>
       </div>
-      <div className="border-b mb-3 border-b-gray-800"></div>
+      <div className="border-b mb-3 mt-3 border-b-gray-800"></div>
           <div className="text-center items-center">
             <div className="grid grid-cols-7 gap-2 mx-0 text-center font-bold">
               <div>แพทย์</div>
