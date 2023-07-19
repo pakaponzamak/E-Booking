@@ -166,31 +166,6 @@ export default function confirmation() {
     }
   };
 
-  function performHealthCareRemovePerson(
-    whoPickedParam,
-    empParam,
-    typeParam,
-    dateParam,
-    timeParam
-  ) {
-    if (whoPickedParam === empParam) {
-      console.log("performHealthCareRemovePerson")
-      const db = getDatabase();
-      const updates = {
-        ["health/" + typeParam + dateParam + timeParam + "/whoPickedThis"]: "",
-        ["health/" + typeParam + dateParam + timeParam + "/alreadyPicked"]: 0,
-      };
-      update(ref(db), updates)
-        .then(() => {
-          alert("ByeBye");
-        })
-        .catch((error) => {
-          console.error("Error updating data:", error);
-        });
-      return true;
-    }
-  }
-
   function performDelete(idParameter, nameParameter) {
     const anotherEmployeeId = employeeId;
     const anotherName = firstName;
@@ -307,7 +282,7 @@ export default function confirmation() {
             {users.map((user) => {
               if (user.employeeId === emp && user.firstName === name) {
                 return (
-                  <div className="">
+                  <div className=" mx-2">
                     <div className="text mb-3 text-left ">
                       ประวัติการจอง
                     </div>
@@ -317,11 +292,15 @@ export default function confirmation() {
                         <strong>{user.health.type}</strong>
                       
                     </div>
-                    <div className="mb-1">
-                      ID : <strong>{user.employeeId}</strong>
-                    </div>
-                    <div className="mb-1">
+                    <div className="flex justify-between mt-3">
+                    <p className="mb-1">
                       ชื่อ : <strong>{user.firstName}</strong>
+                    </p>
+                    <p className="mb-1">
+                    ID : <strong>{user.employeeId.toUpperCase()}</strong>
+
+                    </p>
+                    
                     </div>
                     {/* Render other user data */}
 
@@ -354,7 +333,7 @@ export default function confirmation() {
                           }`}
                         >
                           <div className="flex items-center text-center">
-                            <div className="text-center">
+                            <div className="text-center ">
                               {user.health.checkIn ? (
                                 <>
                                   เช็คอินแล้ว ณ วันที่{" "}
