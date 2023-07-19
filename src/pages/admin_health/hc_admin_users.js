@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import DensoLogo from "../images/Denso_logo.png";
 import { getDatabase, ref, child, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
+import * as XLSX from 'xlsx';
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "700"],
@@ -101,6 +102,40 @@ export default function TRusers() {
         break;
     }
   };
+
+  // Function to export data to Excel
+  const exportAllToExcel = () => {
+    const workbook = XLSX.utils.book_new();
+  
+    const worksheetData = users
+      .filter((user) => user.health.type !== 'N/A')
+      .sort((a, b) => (a.health.checkInTime < b.health.checkInTime ? 1 : -1))
+      .map((user) => [
+        user.health.employeeId,
+        user.health.firstName,
+        user.health.relationship,
+        user.health.type,
+        user.health.date && !isNaN(new Date(user.health.date))
+          ? new Date(user.health.date).toLocaleDateString('th-TH', {
+              dateStyle: 'long',
+            })
+          : '',
+        user.health.time,
+        user.health.plant,
+        user.health.checkIn ? 'เช็คอินแล้ว' : 'ยังไม่ได้เช็คอิน',
+        user.health.checkIn ? user.health.checkInTime.toString() : '',
+      ]);
+  
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ['Employee ID', 'First Name', 'Relationship', 'Type', 'Date', 'Time', 'Plant', 'Check-In Status', 'Check-In Time'],
+      ...worksheetData,
+    ]);
+  
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Users Data');
+  
+    XLSX.writeFile(workbook, 'users_data.xlsx');
+  };
+
 
   return (
     <div className={`${bai.className} bg-slate-100 flex h-screen `}>
@@ -373,9 +408,15 @@ export default function TRusers() {
 
       <div className="flex-1 w-min drop-shadow-lg">
         <div className="rounded-3xl m-2 bg-slate-300 p-3 h-full overflow-y-auto">
+        <div className="flex justify-between">
           <h1 className="font-extrabold text-3xl p-3 ">
             ข้อมูลผู้ใช้งานระบบรักษาพยาบาล
           </h1>
+          <div><button className="text-green-700  border bg-white p-1 px-2 rounded-3xl mr-3"
+                  onClick={exportAllToExcel}>Export All</button>
+                  
+                  </div>
+                  </div>
           <div className="border-b border-gray-800 mb-4"></div>
           <div className="text-center items-center">
             <div className="grid grid-cols-7 gap-3 mx-5 text-center font-bold">

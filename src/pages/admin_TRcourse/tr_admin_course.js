@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import DensoLogo from "../images/Denso_logo.png";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
+import * as XLSX from 'xlsx';
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "700"],
@@ -273,6 +274,68 @@ export default function tr_admin_course() {
 
     days.push(dayElement);
   }
+
+  const exportAllCoursesToExcel = () => {
+    const workbook = XLSX.utils.book_new();
+  
+    const worksheetData = course
+    .sort((a, b) => {
+      // Compare dates
+      if (a.date === b.date) {
+        // If dates are equal, compare times
+        return a.timeStart > b.timeStart ? 1 : -1;
+      }
+      return a.date > b.date ? 1 : -1;
+    })
+    .map((course) => [
+      course.course,
+      course.lecturer,
+      new Date(course.date).toLocaleDateString('en-GB'),
+      `${course.timeStart} - ${course.timeEnd}`,
+      course.plant,
+      course.hall,
+      course.onlineCode,
+      `${course.number} / ${course.amount}`,
+    ]);
+  
+  
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ['Course', 'Lecturer', 'Date', 'Time', 'Plant', 'Hall', 'Online Code', 'Attendance'],
+      ...worksheetData,
+    ]);
+  
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Courses Data');
+  
+    XLSX.writeFile(workbook, 'courses_data.xlsx');
+  };
+  const exportSpecificDateCoursesToExcel = () => {
+    const workbook = XLSX.utils.book_new();
+  
+    const worksheetData = course
+    .sort((a, b) => a.timeStart > b.timeStart ? 1 : -1).filter((course) => {
+      const courseDate = course.date;
+      return dayMonthYear === courseDate;
+    })
+      .map((course) => [
+        course.course,
+        course.lecturer,
+        new Date(course.date).toLocaleDateString('en-GB'),
+        `${course.timeStart} - ${course.timeEnd}`,
+        course.plant,
+        course.hall,
+        course.onlineCode,
+        `${course.number} / ${course.amount}`,
+      ]);
+  
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ['Course', 'Lecturer', 'Date', 'Time', 'Plant', 'Hall', 'Online Code', 'Attendance'],
+      ...worksheetData,
+    ]);
+  
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Courses Data');
+  
+    XLSX.writeFile(workbook, 'courses_data.xlsx');
+  };
 
   return (
     <div className={`${bai.className} bg-slate-100 flex h-screen `}>
@@ -547,7 +610,16 @@ export default function tr_admin_course() {
 
       <div className="flex-1 w-min drop-shadow-lg">
         <div className="rounded-3xl m-2 bg-slate-300 p-3 h-full overflow-y-auto">
+
+        <div className="flex justify-between">
           <h1 className="font-extrabold text-3xl p-3 ">ตารางคอร์สอบรม</h1>
+          <div><button className="text-green-700  border bg-white p-1 px-2 rounded-3xl mr-3"
+                  onClick={exportAllCoursesToExcel}>Export All</button>
+                  <button className="text-green-700  border bg-white p-1 px-2 rounded-3xl mr-3"
+                  onClick={exportSpecificDateCoursesToExcel}>Export Only In Date Selected</button>
+                  </div>
+          </div>
+
           <div className="border-b border-gray-800 mb-4"></div>
           <div className="flex justify-between text-center">
         <button onClick={previousMonth}>
@@ -639,7 +711,7 @@ export default function tr_admin_course() {
       </div>
       <div className="border-b mb-3 border-b-gray-800"></div>
           <div className="text-center items-center">
-            <div className="grid grid-cols-10 gap-3 mx-0 text-center font-bold">
+            <div className="grid grid-cols-9 gap-3 mx-0 text-center font-bold">
               <div>หัวเรื่อง</div>
               <div>ผู้บรรยาย</div>
               <div>วันที่</div>
@@ -649,8 +721,11 @@ export default function tr_admin_course() {
               <div>Online Code</div>
               <div>จำนวน</div>
             </div>
-            {course.sort((a, b) => a.date > b.date ? 1 : -1).map((course) => (
-              <div className="grid grid-cols-10 gap-3 mx-0 my-5 ">
+            {course.sort((a, b) => a.timeStart > b.timeStart ? 1 : -1).filter((course) => {
+            const courseDate = course.date;
+            return dayMonthYear === courseDate;
+          }).map((course) => (
+              <div className="grid grid-cols-9 gap-3 mx-0 my-5 ">
                 <div>{course.course}</div>
                 <div>{course.lecturer}</div>
                 <div>{new Date(course.date).toLocaleDateString('en-GB')}</div>
@@ -671,110 +746,7 @@ export default function tr_admin_course() {
                   {course.number} / {course.amount}
                 </div>
 
-                <div>
-                  {showForm === course ? (
-                    <form className="items-center text-center">
-                      {
-                        /* Your form content goes here */
-                        <div className="gap-1">
-                          <div>
-                            <input
-                              className="p-1 rounded-full w-32 mb-1"
-                              placeholder="จำนวน"
-                              type="number"
-                              name="employee_id"
-                              id="employee_id"
-                              required="required"
-                              onChange={(e) => setEmployee_id(e.target.value)}
-                            ></input>
-                          </div>
-                          <div>
-                            
-                            <input
-                              className="p-1 rounded-full w-32 mb-1"
-                              placeholder="วันที่"
-                              type="date"
-                              name="employee_id"
-                              id="employee_id"
-                              required="required"
-                              onChange={(e) => setEmployee_id(e.target.value)}
-                            />
-                          </div>
-                          <div className="flex justify-between">
-                          
-                            <input
-                              className="w-28 rounded-full"
-                              placeholder="เวลาตั้งแต่"
-                              type="time"
-                              name="timeFrom"
-                              id="timeFrom"
-                              required="required"
-                              onChange={(e) => setEmployee_id(e.target.value)}
-                            />
-                            -
-                            <input
-                              className="w-28 rounded-full"
-                              placeholder="เวลาจนถึง"
-                              type="time"
-                              name="timeEnd"
-                              id="timeEnd"
-                              required="required"
-                              onChange={(e) => setEmployee_id(e.target.value)}
-                            />
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => updateSingleUserHandler(course)}
-                            className="text-center ml-2 p-1 text-white bg-green-500 rounded-full justify-center "
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-6 h-6 "
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M4.5 12.75l6 6 9-13.5"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => toggleForm(false)}
-                            className="text-center ml-2 p-1 text-white bg-red-500 rounded-full justify-center"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-6 h-6"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      }
-                    </form>
-                  ) : (
-                    <button
-                      onClick={() => toggleForm(course)}
-                      className=" text-center p-1 px-3 ml-2 text-white bg-orange-500 rounded-3xl"
-                    >
-                      แก้ไข
-                    </button>
-                  )}
-                </div>
+                
                 <div>
                   <button
                     onClick={() => deleteSingleUserHandler(course)}

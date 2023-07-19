@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import DensoLogo from "../images/Denso_logo.png";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
+import * as XLSX from 'xlsx';
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "700"],
@@ -274,9 +275,71 @@ export default function tr_admin_course() {
 
     days.push(dayElement);
   }
+// Function to export data to Excel
+const exportAllToExcel = () => {
+  // Create a new workbook
+  const workbook = XLSX.utils.book_new();
 
- 
+  // Define the worksheet data
+  const worksheetData = health
+  .sort((a, b) => {
+    if (a.date === b.date) {
+      // Sort by time if dates are equal
+      return a.timeStart > b.timeStart ? 1 : -1;
+    }
+    // Sort by date
+    return a.date > b.date ? 1 : -1;
+  })
+  .map((health) => [
+    health.doctor,
+    health.plant,
+    new Date(health.date).toLocaleDateString('en-GB'),
+    `${health.timeStart} - ${health.timeEnd}`,
+    health.whoPickedThis,
+    `${health.alreadyPicked} / 1`,
+  ]);
 
+  // Create a new worksheet
+  const worksheet = XLSX.utils.aoa_to_sheet([
+    ['Doctor', 'Plant', 'Date', 'Time', 'Who Picked This', 'Already Picked'],
+    ...worksheetData,
+  ]);
+
+  // Add the worksheet to the workbook
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Health Data');
+
+  // Generate an Excel file
+  XLSX.writeFile(workbook, 'health_data.xlsx');
+};
+const exportSpecificDate = () => {
+  // Create a new workbook
+  const workbook = XLSX.utils.book_new();
+
+  // Define the worksheet data
+  const worksheetData = health
+    .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
+    .filter((healthCare) => dayMonthYear === healthCare.date)
+    .map((health) => [
+      health.doctor,
+      health.plant,
+      new Date(health.date).toLocaleDateString('en-GB'),
+      `${health.timeStart} - ${health.timeEnd}`,
+      health.whoPickedThis,
+      `${health.alreadyPicked} / 1`,
+    ]);
+
+  // Create a new worksheet
+  const worksheet = XLSX.utils.aoa_to_sheet([
+    ['Doctor', 'Plant', 'Date', 'Time', 'Who Picked This', 'Already Picked'],
+    ...worksheetData,
+  ]);
+
+  // Add the worksheet to the workbook
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Health Data');
+
+  // Generate an Excel file
+  XLSX.writeFile(workbook, 'health_data.xlsx');
+};
 
   return (
     <div className={`${bai.className} bg-slate-100 flex h-screen `}>
@@ -551,7 +614,15 @@ export default function tr_admin_course() {
 
       <div className="flex-1 w-min drop-shadow-lg">
       <div className="rounded-3xl m-2 bg-slate-300 p-3 h-full overflow-y-auto">
+        <div className="flex justify-between">
           <h1 className="font-extrabold text-3xl p-3 ">ตารางแพทย์</h1>
+          <div><button className="text-green-700  border bg-white p-1 px-2 rounded-3xl mr-3"
+                  onClick={exportAllToExcel}>Export All</button>
+                  <button className="text-green-700  border bg-white p-1 px-2 rounded-3xl"
+                  onClick={exportSpecificDate}>Export Only In Date Selected</button>
+                  </div>
+        </div>
+          
           <div className="border-b border-gray-800 mb-2"></div>
           <div className="flex justify-between text-center">
         <button onClick={previousMonth}>
