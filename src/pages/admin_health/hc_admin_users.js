@@ -412,7 +412,7 @@ export default function TRusers() {
           <h1 className="font-extrabold text-3xl p-3 ">
             ข้อมูลผู้ใช้งานระบบรักษาพยาบาล
           </h1>
-          <div><button className="text-green-700  border bg-white p-1 px-2 rounded-3xl mr-3"
+          <div><button className="text-green-700  bg-white p-1 px-2 rounded-3xl mr-3"
                   onClick={exportAllToExcel}>Export All</button>
                   
                   </div>

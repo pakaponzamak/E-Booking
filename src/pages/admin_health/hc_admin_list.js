@@ -265,7 +265,7 @@ export default function tr_admin_course() {
         <div className="text-center text-xs">{dayOfWeek}</div>
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
+          className={`${dayButtonClass} rounded-xl mx-1 text-center justify-center items-center flex flex-col`}
            // Disable the button for past dates
           style={
             isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
@@ -619,9 +619,9 @@ const exportSpecificDate = () => {
       <div className="rounded-3xl m-2 bg-slate-300 p-3 h-full overflow-y-auto">
         <div className="flex justify-between">
           <h1 className="font-extrabold text-3xl p-3 ">ตารางแพทย์</h1>
-          <div><button className="text-green-700  border bg-white p-1 px-2 rounded-3xl mr-3"
+          <div><button className="text-green-700   bg-white p-1 px-2 rounded-3xl mr-3"
                   onClick={exportAllToExcel}>Export All</button>
-                  <button className="text-green-700  border bg-white p-1 px-2 rounded-3xl"
+                  <button className="text-green-700   bg-white p-1 px-2 rounded-3xl"
                   onClick={exportSpecificDate}>Export Only In Date Selected</button>
                   </div>
         </div>
