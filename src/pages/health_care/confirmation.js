@@ -289,7 +289,7 @@ export default function confirmation() {
     <div className={`${bai_jamjuree.className} bg-slate-100 h-screen`}>
       <div className="flex justify-center item-center">
         <div>
-          <div className="border p-8   mt-32  rounded-xl bg-white drop-shadow-md">
+          <div className="border p-6  mb-10 mt-32  rounded-t-xl bg-white drop-shadow-md">
             {users.map((user) => {
               if (user.employeeId === emp && user.firstName === name) {
                 return (
@@ -322,16 +322,15 @@ export default function confirmation() {
 
                     {user.health && (
                       <div>
+                        <div className="mb-1">
+                          Plant : <strong>{user.health.plant}</strong>
+                        </div>
                         <p className="mb-1">
                           ชื่อ : <strong>{user.firstName}</strong>
                         </p>
-                        <p className="mb-1">
+                        <p className="mb-3">
                           ID : <strong>{user.employeeId.toUpperCase()}</strong>
                         </p>
-
-                        <div className="mb-3">
-                          Plant : <strong>{user.health.plant}</strong>
-                        </div>
 
                         <div
                           className={`text-center p-3 px-10 rounded-xl justify-center flex overflow-hidden text-white ${
@@ -360,22 +359,22 @@ export default function confirmation() {
               }
               return null;
             })}
-            <div className="border-b mt-8 mb-6"></div>
-            <div className="mt-5 p-2 flex flex-wrap justify-between space-x-4">
-              <button
-                onClick={cancelHandler}
-                className="text-white bg-[#D43732] rounded-3xl text-xl text-center  px-10 py-3 "
-              >
-                ยกเลิก
-              </button>
-              <button
-                onClick={confirmHandler}
-                id="confirm-btn"
-                className="text-white bg-[#16a34a] rounded-3xl  text-xl text-center  px-10 py-3 "
-              >
-                เช็คอิน
-              </button>
-            </div>
+            <div className="mb-8"></div>
+          </div>
+          <div className="justify-between flex -translate-y-12 drop-shadow-md">
+            <button
+              onClick={cancelHandler}
+              className="flex-grow text-white bg-[#D43732] text-xl text-center px-16 py-3 rounded-bl-xl font-bold"
+            >
+              ยกเลิก
+            </button>
+            <button
+              onClick={confirmHandler}
+              id="confirm-btn"
+              className="flex-grow text-white bg-[#16a34a] text-xl text-center px-16 py-3 rounded-br-xl font-bold"
+            >
+              เช็คอิน
+            </button>
           </div>
         </div>
       </div>

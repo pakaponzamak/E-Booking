@@ -724,8 +724,6 @@ const exportSpecificDate = () => {
               <div>เวลา</div>
               <div>ผู้จอง</div>
               <div>จำนวน</div>
-              
-              
             </div>
             {health.sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1)).filter((healthCare) => {
             const healthCareDate = healthCare.date;
@@ -742,8 +740,8 @@ const exportSpecificDate = () => {
                 <div
                   className={
                     health.alreadyPicked >= 1
-                      ? "text-white rounded-3xl bg-red-500 font-bold"
-                      : "text-white rounded-3xl bg-green-500 font-bold"
+                      ? "text-white rounded-2xl bg-red-500 font-bold"
+                      : "text-white rounded-2xl bg-green-500 font-bold"
                   }
                 >
                   {health.alreadyPicked} / 1

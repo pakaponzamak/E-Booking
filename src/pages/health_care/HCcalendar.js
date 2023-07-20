@@ -27,6 +27,9 @@ export default function Calendar() {
   //const incrementCounter = () => setCounterState(counterState + 1);
   const [healthCare, setHealthCare] = useState([]);
   const [users, setUsers] = useState([]);
+  const [showContent, setShowContent] = useState(false);
+  const [selectedNumber, setSelectedNumber] = useState(null);
+  const [filterHeader, setFilterHeader] = useState("ประเภทหมอ");
 
   startFireBase();
 
@@ -207,13 +210,13 @@ export default function Calendar() {
         <div className="text-center text-xs">{dayOfWeek}</div>
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col`}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col overflow-x-auto`}
           disabled={isDisabled} // Disable the button for past dates
           style={
             isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
           } // Change background color for past dates
         >
-          <div className="text-center flex ">{i}</div>
+          <div className="text-center flex  overflow-x-auto">{i}</div>
         </button>
       </div>
     );
@@ -268,6 +271,25 @@ export default function Calendar() {
       } else {
         alert("เต็มแล้ว");
       }
+    }
+  };
+
+  const handleToggleContent = () => {
+    setShowContent(!showContent);
+  };
+  const handleContentClick = () => {
+    setShowContent(false); // Sets showContent to false when content is clicked
+  };
+  const handleFilterClick = (number) => {
+    setSelectedNumber(number);
+    if (number === 1) {
+      setFilterHeader("แพทย์โรคทั่วไป");
+    } else if (number === 2) {
+      setFilterHeader("แพทย์เฉพาะทางอายุรกรรม");
+    } else if (number === 3) {
+      setFilterHeader("แพทย์เฉพาะทางกระดูกและข้อ");
+    } else {
+      setFilterHeader("ทั้งหมด");
     }
   };
 
@@ -335,7 +357,7 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-2"></div>
 
-      <div ref={scrollRef} className="flex justify-between ">
+      <div ref={scrollRef} className="flex justify-between text-center">
         <button onClick={previous7Days} disabled={startIndex === 1}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -343,7 +365,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-8 h-8"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"
@@ -352,7 +374,9 @@ export default function Calendar() {
             />
           </svg>
         </button>
-        <div className="flex text-center justify-center gap-2">{days}</div>
+        <div className="flex text-center justify-center gap-2  overflow-x-auto">
+          {days}
+        </div>
         <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -360,7 +384,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-8 h-8"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"
@@ -370,18 +394,88 @@ export default function Calendar() {
           </svg>
         </button>
       </div>
-      <div className="border-b p-1 mb-5"></div>
+      <div className="border-b p-1"></div>
+      <div className="flex justify-end p-1 relative mb-2">
+        <div
+          className="w-max px-2 mb- cursor-pointer flex mt-2 text-sm font-bold"
+          onClick={handleToggleContent}
+        >
+          {" "}
+          <u>{filterHeader}</u>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 ml-1"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            />
+          </svg>
+        </div>
+        {showContent && (
+          <div
+            className="absolute bg-white p-5 border rounded-xl  top-9 z-10 border-slate-400"
+            onClick={handleContentClick}
+          >
+            <div className="space-y-2">
+              <div
+                onClick={() => handleFilterClick(null)}
+                className="border rounded-xl p-1"
+              >
+                <p>ทั้งหมด</p>
+              </div>
+              <div
+                onClick={() => handleFilterClick(1)}
+                className="border rounded-xl p-1 "
+              >
+                <p>แพทย์โรคทั่วไป</p>
+              </div>
+              <div
+                onClick={() => handleFilterClick(2)}
+                className="border rounded-xl p-1"
+              >
+                <p>แพทย์เฉพาะทางอายุรกรรม</p>
+              </div>
+              <div
+                onClick={() => handleFilterClick(3)}
+                className="border rounded-xl p-1"
+              >
+                <p>แพทย์เฉพาะทางกระดูกและข้อ</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div>
         {healthCare
           .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
           .filter((healthCare) => {
             const healthCareDate = healthCare.date;
-            return dayMonthYear === healthCareDate;
+            let doctor = "";
+            if (selectedNumber === null) {
+              doctor = healthCare.doctor;
+            }
+            if (selectedNumber === 1) {
+              doctor = "แพทย์โรคทั่วไป";
+            } else if (selectedNumber === 2) {
+              doctor = "แพทย์เฉพาะทางอายุรกรรม";
+            } else if (selectedNumber === 3) {
+              doctor = "แพทย์เฉพาะทางกระดูกและข้อ";
+            }
+            return (
+              dayMonthYear === healthCareDate && doctor === healthCare.doctor
+            );
           })
           .map((healthCare) => (
             <div
               key={healthCare.id}
-              className="border-2 m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+              className="border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 "
             >
               <div className="flex justify-between mb-2">
                 <h1>

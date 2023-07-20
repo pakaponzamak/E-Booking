@@ -304,7 +304,7 @@ export default function tr_admin_course() {
         router.push("../admin_health/hc_admin_users");
         break;
         case "Option 3":
-        router.push("./hc_admin_list");
+        router.push("../admin_health/hc_admin_list");
         break;
         case "tr insert":
           router.push("../admin_TRcourse/tr_admin_insert");

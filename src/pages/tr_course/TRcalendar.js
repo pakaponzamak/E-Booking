@@ -280,7 +280,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-8 h-8"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"
@@ -289,7 +289,7 @@ export default function Calendar() {
             />
           </svg>
         </button>
-        <div className="flex text-center justify-center gap-2">{days}</div>
+        <div className="flex text-center justify-center gap-2 overflow-x-auto">{days}</div>
         <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -297,7 +297,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             strokeWidth="1.5"
             stroke="currentColor"
-            className="w-8 h-8"
+            className="w-5 h-5"
           >
             <path
               strokeLinecap="round"

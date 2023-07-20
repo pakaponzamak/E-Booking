@@ -463,7 +463,7 @@ export default function TRusers() {
 
                       <div className="col-span-1">{user.health.plant}</div>
                       <div
-                        className={`text-center p-1 rounded-3xl justify-center flex overflow-hidden text-white ${
+                        className={`text-center p-1 rounded-xl justify-center flex overflow-hidden text-white ${
                           user.health.checkIn ? "bg-green-500" : "bg-red-500"
                         }`}
                       >
