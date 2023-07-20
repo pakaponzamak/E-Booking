@@ -462,7 +462,6 @@ export default function Calendar() {
         
       </div>
       
-
       <div>
         {healthCare
           .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))

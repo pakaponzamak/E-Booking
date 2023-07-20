@@ -312,7 +312,7 @@ const exportAllToExcel = () => {
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Health Data');
 
   // Generate an Excel file
-  XLSX.writeFile(workbook, 'health_data.xlsx');
+  XLSX.writeFile(workbook, `All date health_data.xlsx`);
 };
 const exportSpecificDate = () => {
   // Create a new workbook
@@ -341,7 +341,7 @@ const exportSpecificDate = () => {
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Health Data');
 
   // Generate an Excel file
-  XLSX.writeFile(workbook, 'health_data.xlsx');
+  XLSX.writeFile(workbook, `${dayMonthYear} health_data.xlsx`);
 };
 
   return (

@@ -309,7 +309,7 @@ export default function tr_admin_course() {
   
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Courses Data');
   
-    XLSX.writeFile(workbook, 'courses_data.xlsx');
+    XLSX.writeFile(workbook, 'All date courses_data.xlsx');
   };
   const exportSpecificDateCoursesToExcel = () => {
     const workbook = XLSX.utils.book_new();
@@ -337,7 +337,7 @@ export default function tr_admin_course() {
   
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Courses Data');
   
-    XLSX.writeFile(workbook, 'courses_data.xlsx');
+    XLSX.writeFile(workbook, `${dayMonthYear} courses_data.xlsx`);
   };
 
   return (

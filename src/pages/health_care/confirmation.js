@@ -206,7 +206,7 @@ export default function confirmation() {
           };
           update(ref(db), updates)
             .then(() => {
-              alert("ByeBye");
+              alert("Bye Bye");
             })
             .catch((error) => {
               console.error("Error updating data:", error);
