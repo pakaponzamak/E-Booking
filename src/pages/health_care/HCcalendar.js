@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Bai_Jamjuree } from "next/font/google";
+
 import StartFireBase from "../../firebase/firebase_conf";
 import {
   getDatabase,
@@ -260,6 +261,7 @@ export default function Calendar() {
           time: health.timeStart,
           type: health.doctor,
           pickedWhat: health.doctor + health.date + health.timeStart,
+          
         };
 
         update(
@@ -291,6 +293,13 @@ export default function Calendar() {
     } else {
       setFilterHeader("ทั้งหมด");
     }
+  };
+  const getTimeFromString = (timeString) => {
+    const [hours, minutes] = timeString.split(":");
+    const currentTime = new Date();
+    currentTime.setHours(parseInt(hours));
+    currentTime.setMinutes(parseInt(minutes));
+    return currentTime;
   };
 
   return (
@@ -450,7 +459,9 @@ export default function Calendar() {
             </div>
           </div>
         )}
+        
       </div>
+      
 
       <div>
         {healthCare
@@ -472,14 +483,15 @@ export default function Calendar() {
               dayMonthYear === healthCareDate && doctor === healthCare.doctor
             );
           })
-          .map((healthCare) => (
+          .map((healthCare) => {const timeStart = getTimeFromString(healthCare.timeStart);return(
+            
             <div
               key={healthCare.id}
               className="border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 "
             >
               <div className="flex justify-between mb-2">
                 <h1>
-                  ประเภท : <strong>{healthCare.doctor}</strong>
+                  ประเภท : <strong>{healthCare.doctor} </strong>
                 </h1>
               </div>
               <div className="flex justify-between mb-2">
@@ -527,7 +539,7 @@ export default function Calendar() {
                 </button>
               </div>
             </div>
-          ))}
+          )})}
       </div>
     </main>
   );

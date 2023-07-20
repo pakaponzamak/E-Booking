@@ -15,8 +15,8 @@ export default function option_select() {
   return (
     <div className={bai_jamjuree.className}>
       <div>
-        <p className="mr-3 mt-2 flex justify-end text-sm">ชื่อ : {firstName}</p>
-        <p className="mr-3 flex justify-end text-sm">ID : {employeeId}</p>
+        <p className="mr-3 mt-2 flex justify-end text-sm">ชื่อ : <strong>&nbsp;{firstName}</strong></p>
+        <p className="mr-3 flex justify-end text-sm">ID : <strong>&nbsp;{employeeId}</strong></p>
       </div>
     <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14 ">
       <div>

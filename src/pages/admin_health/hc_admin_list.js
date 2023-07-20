@@ -730,13 +730,13 @@ const exportSpecificDate = () => {
             return dayMonthYear === healthCareDate;
           }).map((health) => (
               <div className="grid grid-cols-7 gap-2 mx-0 my-5 ">
-                <div>{health.doctor}</div>
+                <div><strong>{health.doctor}</strong></div>
                 <div>{health.plant}</div>
                 <div>{new Date(health.date).toLocaleDateString('en-GB')}</div>
                 <div>
                   {health.timeStart} - {health.timeEnd}
                 </div>
-                <div>{health.whoPickedThis}</div>
+                <div><strong>{health.whoPickedThis.toUpperCase()}</strong></div>
                 <div
                   className={
                     health.alreadyPicked >= 1

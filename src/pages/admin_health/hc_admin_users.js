@@ -135,7 +135,13 @@ export default function TRusers() {
   
     XLSX.writeFile(workbook, 'users_data.xlsx');
   };
-
+  const getTimeFromString = (timeString) => {
+    const [hours, minutes] = timeString.split(":");
+    const currentTime = new Date();
+    currentTime.setHours(parseInt(hours));
+    currentTime.setMinutes(parseInt(minutes));
+    return currentTime;
+  };
 
   return (
     <div className={`${bai.className} bg-slate-100 flex h-screen `}>
@@ -439,7 +445,7 @@ export default function TRusers() {
                   className="grid grid-cols-7 gap-3 mx-5 my-5 "
                   key={user.health.id}
                 >
-                  <div className="col-span-1">{user.health.employeeId}</div>
+                  <div className="col-span-1"><strong>{user.health.employeeId.toUpperCase()}</strong></div>
                   <div className="col-span-1">{user.health.firstName}</div>
                   {user.health && (
                     <>

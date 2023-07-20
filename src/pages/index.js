@@ -53,8 +53,7 @@ const userIsNotCheckHandler = async (e) => {
     }
   }
   if (!userFound) {
-    // Execute the else statement
-    // ...
+
     var checkIn = false
     console.log("Insert New One")
       //let checkIn = false
@@ -130,14 +129,15 @@ function checkUser(idParameter,nameParameter,checkinParameter) {
     const name = firstName
     let numberForCheck = 0 //If have data then not enter else if Statement
     console.log(numberForCheck)
-    if(idParameter === emp_id && nameParameter === name) {
-      
+    if(idParameter === emp_id && nameParameter === name) {      
        let checkIn = checkinParameter
        numberForCheck = 1;
        console.log("Have it yeahhhh",checkIn)
        router.push(`/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`);
        return true;
-      
+    }if(idParameter === emp_id && nameParameter !== name){
+        alert("ชื่อกับรหัสพนักงานที่เคยลงทะเบียนไม่ตรงกัน")
+        return true;
     }
    
 }
