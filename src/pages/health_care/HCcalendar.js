@@ -28,9 +28,14 @@ export default function Calendar() {
   //const incrementCounter = () => setCounterState(counterState + 1);
   const [healthCare, setHealthCare] = useState([]);
   const [users, setUsers] = useState([]);
+  //////////////////////////////////////////////////////////////
   const [showContent, setShowContent] = useState(false);
   const [selectedNumber, setSelectedNumber] = useState(null);
   const [filterHeader, setFilterHeader] = useState("ประเภทหมอ");
+  //////////////////////////////////////////////////////////////
+  const [plantFilter, setPlantFilter] = useState("เลือก Plant");
+  const [showPlant, setShowPlant] = useState(false);
+  const [plantNumber, setPlantNumber] = useState(null);
 
   startFireBase();
 
@@ -261,7 +266,6 @@ export default function Calendar() {
           time: health.timeStart,
           type: health.doctor,
           pickedWhat: health.doctor + health.date + health.timeStart,
-          
         };
 
         update(
@@ -279,9 +283,14 @@ export default function Calendar() {
   const handleToggleContent = () => {
     setShowContent(!showContent);
   };
+  const handlePlantToggleContent = () => {
+    setShowPlant(!showPlant);
+  };
   const handleContentClick = () => {
     setShowContent(false); // Sets showContent to false when content is clicked
+    setShowPlant(false);
   };
+
   const handleFilterClick = (number) => {
     setSelectedNumber(number);
     if (number === 1) {
@@ -294,6 +303,18 @@ export default function Calendar() {
       setFilterHeader("ทั้งหมด");
     }
   };
+
+  const plantFilterClick = (e) => {
+    setPlantNumber(e);
+    if (e === 1) {
+      setPlantFilter("BPK");
+    } else if (e === 2) {
+      setPlantFilter("WGR");
+    } else {
+      setPlantFilter("ทั้งหมด");
+    }
+  };
+
   const getTimeFromString = (timeString) => {
     const [hours, minutes] = timeString.split(":");
     const currentTime = new Date();
@@ -410,14 +431,14 @@ export default function Calendar() {
           onClick={handleToggleContent}
         >
           {" "}
-          <u>{filterHeader}</u>
+          <u className="text-[#9ca3af]">{filterHeader}</u>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-5 h-5 ml-1"
+            class="w-5 h-5 ml-1 text-[#9ca3af]"
           >
             <path
               stroke-linecap="round"
@@ -459,86 +480,145 @@ export default function Calendar() {
             </div>
           </div>
         )}
-        
+        <div
+          className="w-max px-2 mb- cursor-pointer flex mt-2 text-sm font-bold"
+          onClick={handlePlantToggleContent}
+        >
+          {" "}
+          <u className="text-[#9ca3af]">{plantFilter}</u>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 ml-1 text-[#9ca3af]"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+            />
+          </svg>
+        </div>
+        {showPlant && (
+          <div
+            className="absolute bg-white p-5 border rounded-xl  top-9 z-10 border-slate-400"
+            onClick={handleContentClick}
+          >
+            <div className="space-y-2">
+              <div
+                onClick={() => plantFilterClick(null)}
+                className="border rounded-xl p-1"
+              >
+                <p>ทั้งหมด</p>
+              </div>
+              <div
+                onClick={() => plantFilterClick(1)}
+                className="border rounded-xl p-1 "
+              >
+                <p>BPK</p>
+              </div>
+              <div
+                onClick={() => plantFilterClick(2)}
+                className="border rounded-xl p-1"
+              >
+                <p>WGR</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      
+
       <div>
         {healthCare
           .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
           .filter((healthCare) => {
             const healthCareDate = healthCare.date;
-            let doctor = "";
-            if (selectedNumber === null) {
-              doctor = healthCare.doctor;
-            }
-            if (selectedNumber === 1) {
-              doctor = "แพทย์โรคทั่วไป";
-            } else if (selectedNumber === 2) {
-              doctor = "แพทย์เฉพาะทางอายุรกรรม";
-            } else if (selectedNumber === 3) {
-              doctor = "แพทย์เฉพาะทางกระดูกและข้อ";
-            }
+            const doctor =
+              selectedNumber === null
+                ? healthCare.doctor
+                : selectedNumber === 1
+                ? "แพทย์โรคทั่วไป"
+                : selectedNumber === 2
+                ? "แพทย์เฉพาะทางอายุรกรรม"
+                : selectedNumber === 3
+                ? "แพทย์เฉพาะทางกระดูกและข้อ"
+                : "";
+
+            const plant =
+              plantNumber === null
+                ? healthCare.plant
+                : plantNumber === 1
+                ? "BPK"
+                : plantNumber === 2
+                ? "WGR"
+                : "";
             return (
-              dayMonthYear === healthCareDate && doctor === healthCare.doctor
+              dayMonthYear === healthCareDate &&
+              doctor === healthCare.doctor &&
+              plant === healthCare.plant
             );
           })
-          .map((healthCare) => {const timeStart = getTimeFromString(healthCare.timeStart);return(
-            
-            <div
-              key={healthCare.id}
-              className="border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 "
-            >
-              <div className="flex justify-between mb-2">
-                <h1>
-                  ประเภท : <strong>{healthCare.doctor} </strong>
-                </h1>
-              </div>
-              <div className="flex justify-between mb-2">
-                <p>
-                  Plant : <strong>{healthCare.plant}</strong>
-                </p>
-              </div>
-              <div className="flex justify-between mt-3">
-                <p>
-                  วันที่ :{" "}
-                  <strong>
-                    {new Date(healthCare.date).toLocaleDateString("th-TH", {
-                      dateStyle: "long",
-                    })}
-                  </strong>
-                </p>
-                <p>
-                  จำนวน : <strong>{healthCare.alreadyPicked} / 1</strong>
-                </p>
-              </div>
-              <div className="flex justify-between mt-3">
-                <p>
-                  เวลา :{" "}
-                  <strong>
-                    {healthCare.timeStart} - {healthCare.timeEnd}
-                  </strong>
-                </p>
+          .map((healthCare) => {
+            const timeStart = getTimeFromString(healthCare.timeStart);
+            return (
+              <div
+                key={healthCare.id}
+                className="border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 "
+              >
+                <div className="flex justify-between mb-2">
+                  <h1>
+                    ประเภท : <u><strong>{healthCare.doctor} </strong></u>
+                  </h1>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <p>
+                    Plant : <strong>{healthCare.plant}</strong>
+                  </p>
+                </div>
+                <div className="flex justify-between mt-3">
+                  <p>
+                    วันที่ :{" "}
+                    <strong>
+                      {new Date(healthCare.date).toLocaleDateString("th-TH", {
+                        dateStyle: "long",
+                      })}
+                    </strong>
+                  </p>
+                  <p>
+                    จำนวน : <strong>{healthCare.alreadyPicked} / 1</strong>
+                  </p>
+                </div>
+                <div className="flex justify-between mt-3">
+                  <p>
+                    เวลา :{" "}
+                    <strong>
+                      {healthCare.timeStart} - {healthCare.timeEnd}
+                    </strong>
+                  </p>
 
-                <button
-                  onClick={() => pickedHandler(healthCare)}
-                  className={healthCare.alreadyPicked >= 1 ? "" : ""}
-                  disabled={healthCare.alreadyPicked >= 1}
-                >
-                  <div className="">
-                    {healthCare.alreadyPicked >= 1 ? (
-                      <span className="text-white bg-red-600 p-2 px-2 rounded-2xl font-semibold">
-                        จองแล้ว
-                      </span>
-                    ) : (
-                      <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
-                        ว่าง
-                      </span>
-                    )}
-                  </div>
-                </button>
+                  <button
+                    onClick={() => pickedHandler(healthCare)}
+                    className={healthCare.alreadyPicked >= 1 ? "" : ""}
+                    disabled={healthCare.alreadyPicked >= 1}
+                  >
+                    <div className="">
+                      {healthCare.alreadyPicked >= 1 ? (
+                        <span className="text-white bg-red-600 p-2 px-2 rounded-2xl font-semibold">
+                          จองแล้ว
+                        </span>
+                      ) : (
+                        <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                          ว่าง
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                </div>
               </div>
-            </div>
-          )})}
+            );
+          })}
       </div>
     </main>
   );

@@ -19,8 +19,7 @@ export default function Home() {
   const [employeeId, setEmployee_id] = useState("");
   const router = useRouter();
   const [showContent, setShowContent] = useState(false);
-  const [selectedNumber, setSelectedNumber] = useState(null);
-  const [filterHeader, setFilterHeader] = useState("ประเภทหมอ");
+
 
   useEffect(() => {
     const db = getDatabase();
