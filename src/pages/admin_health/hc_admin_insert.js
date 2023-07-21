@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect,  useRef } from "react";
 import Image from "next/image";
 import { Bai_Jamjuree } from "next/font/google";
 import { useRouter } from "next/router";
@@ -9,6 +9,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
+
 
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function tr_admin_course() {
   const todayDate = today.getDate();
   const todayMonth = today.getMonth();
   const todayYear = today.getFullYear();
+
   useEffect(() => {
     // Scroll to current date section
     if (scrollRef.current) {
