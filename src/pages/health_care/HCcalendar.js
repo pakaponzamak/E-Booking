@@ -438,7 +438,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-5 h-5 ml-1 text-[#9ca3af]"
+            class="w-5 h-5 ml- text-[#9ca3af]"
           >
             <path
               stroke-linecap="round"
@@ -492,7 +492,7 @@ export default function Calendar() {
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-5 h-5 ml-1 text-[#9ca3af]"
+            class="w-5 h-5 ml- text-[#9ca3af]"
           >
             <path
               stroke-linecap="round"
@@ -506,10 +506,10 @@ export default function Calendar() {
             className="absolute bg-white p-5 border rounded-xl  top-9 z-10 border-slate-400"
             onClick={handleContentClick}
           >
-            <div className="space-y-2">
+            <div className="space-y-2 text-center">
               <div
                 onClick={() => plantFilterClick(null)}
-                className="border rounded-xl p-1"
+                className="border rounded-xl p-1 px-4"
               >
                 <p>ทั้งหมด</p>
               </div>

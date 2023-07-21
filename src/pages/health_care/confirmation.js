@@ -372,16 +372,17 @@ export default function confirmation() {
             <div className="mb-16 border-b mt-6"></div>
           </div>
           <div className="justify-between flex -translate-y-28  gap-10 mx-10">
+            
             <button
               onClick={cancelHandler}
-              className="flex-grow text-white bg-[#D43732] text-xl text-center px-8 py-3 rounded-xl font-bold"
+              className="flex-grow text-white bg-[#D43732] text-lg text-center px-8 py-3 rounded-xl font-semibold"
             >
               ยกเลิก
             </button>
             <button
               onClick={confirmHandler}
               id="confirm-btn"
-              className="flex-grow text-white bg-[#16a34a] text-xl text-center px-8 py-3 rounded-xl font-bold"
+              className="flex-grow text-white bg-[#16a34a] text-lg text-center px-8 py-3 rounded-xl font-semibold"
             >
               เช็คอิน
             </button>
