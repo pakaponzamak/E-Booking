@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Bai_Jamjuree } from "next/font/google";
-
-import StartFireBase from "../../firebase/firebase_conf";
 import {
   getDatabase,
   ref,
@@ -427,7 +425,7 @@ export default function Calendar() {
       <div className="border-b p-1"></div>
       <div className="flex justify-end p-1 relative mb-2">
         <div
-          className="w-max px-2 mb- cursor-pointer flex mt-2 text-sm font-bold"
+          className="w-max px-2 mb- cursor-pointer flex mt-2 text-sm font-semibold"
           onClick={handleToggleContent}
         >
           {" "}
@@ -481,7 +479,7 @@ export default function Calendar() {
           </div>
         )}
         <div
-          className="w-max px-2 mb- cursor-pointer flex mt-2 text-sm font-bold"
+          className="w-max px-2 mb- cursor-pointer flex mt-2 text-sm font-semibold"
           onClick={handlePlantToggleContent}
         >
           {" "}
@@ -609,7 +607,7 @@ export default function Calendar() {
                           จองแล้ว
                         </span>
                       ) : (
-                        <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
+                        <span className="text-white bg-green-600 p-2 px-8 rounded-2xl font-semibold">
                           ว่าง
                         </span>
                       )}
