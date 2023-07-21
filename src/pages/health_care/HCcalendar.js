@@ -10,6 +10,7 @@ import {
   update,
 } from "firebase/database";
 import startFireBase from "../../firebase/firebase_conf";
+import { Analytics } from '@vercel/analytics/react';
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -325,6 +326,7 @@ export default function Calendar() {
     <main
       className={`m-2  ${bai_jamjuree.className} justify-center item-center `}
     >
+      <Analytics />
       <div className="mb-1">
         <p className="mr-5  flex justify-end text-sm">
           ชื่อ :&nbsp; <strong>{firstName}</strong>&nbsp; ID : &nbsp;
@@ -621,3 +623,4 @@ export default function Calendar() {
     </main>
   );
 }
+
