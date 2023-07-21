@@ -297,6 +297,7 @@ export default function confirmation() {
 
   return (
     <div className={`${bai_jamjuree.className} bg-slate-100 h-screen`}>
+      <Analytics />
       <div className="flex justify-center item-center">
         <div>
           <div className="border p-6  mb-10 mt-32  rounded-xl bg-white drop-shadow-md">

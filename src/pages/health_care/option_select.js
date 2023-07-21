@@ -15,6 +15,7 @@ export default function option_select() {
   const { firstName, employeeId,checkIn } = router.query;
   return (
     <div className={bai_jamjuree.className}>
+      <Analytics />
       <div>
         <p className="mr-3 mt-2 flex justify-end text-sm">ชื่อ : <strong>&nbsp;{firstName}</strong></p>
         <p className="mr-3 flex justify-end text-sm">ID : <strong>&nbsp;{employeeId}</strong></p>

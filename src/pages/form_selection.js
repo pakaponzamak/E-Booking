@@ -20,7 +20,7 @@ export default function selectionPage() {
         <p className="mr-3 mt-2 flex justify-end text-sm">ชื่อ : <strong>&nbsp;{firstName}</strong></p>
            <p className="mr-3 flex justify-end text-sm">ID : <strong>&nbsp;{employeeId}</strong></p>
       </div>
-      
+      <Analytics />
       <div className="flex justify-center item-center m-7 drop-shadow-lg mt-8">
       <div className="place-content-center text-center p-10">
         <Image

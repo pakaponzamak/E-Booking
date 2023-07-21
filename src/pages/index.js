@@ -120,6 +120,7 @@ export default function Home() {
     <main
       className={`flex justify-center items-center m-7  mt-16 ${bai_jamjuree.className}`}
     >
+      <Analytics />
       <div className="relative flex flex-col items-center">
         {" "}
         {/* Add flex flex-col items-center class */}

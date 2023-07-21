@@ -8,6 +8,7 @@ export default function course_selection()
    return(
      
     <div className="flex justify-center item-center m-7 drop-shadow-lg mt-14">
+      <Analytics />
         <div className="place-content-center text-center p-10">
           <h1 className="text-3xl font-bold mb-10">ตัวเลือกหลักสูตร</h1>
           <button

@@ -4,7 +4,7 @@ export default function appointment(){
     return(
         <main>
             <div>
-                
+            <Analytics />
             </div>
         </main>
     );
