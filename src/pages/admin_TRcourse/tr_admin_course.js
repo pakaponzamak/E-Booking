@@ -6,6 +6,7 @@ import DensoLogo from "../images/Denso_logo.png";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import * as XLSX from 'xlsx';
+
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "700"],

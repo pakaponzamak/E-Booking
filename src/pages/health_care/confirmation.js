@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { Bai_Jamjuree } from "next/font/google";
+import { Analytics } from '@vercel/analytics/react';
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],

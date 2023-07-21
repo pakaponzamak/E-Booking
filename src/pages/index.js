@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import StartFireBase from "../firebase/firebase_conf";
 import { getDatabase, ref, onValue, off,set } from "firebase/database";
 import { useRouter } from "next/router";
+import { Analytics } from '@vercel/analytics/react';
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],

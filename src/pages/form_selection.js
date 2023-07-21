@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import { Bai_Jamjuree } from "next/font/google";
+import { Analytics } from '@vercel/analytics/react';
 
 const bai_jamjuree = Bai_Jamjuree({
     subsets: ["latin"],

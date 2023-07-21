@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Bai_Jamjuree } from "next/font/google";
 import StartFireBase from "../../firebase/firebase_conf";
+import { Analytics } from '@vercel/analytics/react';
 import {
   getDatabase,
   ref,
