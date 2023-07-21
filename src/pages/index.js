@@ -3,7 +3,7 @@ import { Bai_Jamjuree } from "next/font/google";
 import DensoLogo from "./images/Denso_logo.png";
 import { useState, useEffect } from "react";
 import StartFireBase from "../firebase/firebase_conf";
-import { getDatabase, ref, onValue, off } from "firebase/database";
+import { getDatabase, ref, onValue, off,set } from "firebase/database";
 import { useRouter } from "next/router";
 
 const bai_jamjuree = Bai_Jamjuree({
@@ -75,8 +75,7 @@ export default function Home() {
         },
       };
       const db = getDatabase();
-      ref(db, "users/" + employeeId)
-        .set(data)
+      set(ref(db, "users/" + employeeId), data)
         .then(() => {
           router.push(
             `/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`
