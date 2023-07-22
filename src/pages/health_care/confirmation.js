@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import { Bai_Jamjuree } from "next/font/google";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -163,7 +163,7 @@ export default function confirmation() {
           //user.checkIn = true
         );
       }
-      router.push(`../`);
+      //router.push(`../`);
     }
   };
 
@@ -293,15 +293,14 @@ export default function confirmation() {
     return currentTime;
   };
 
-
-
   return (
     <div className={`${bai_jamjuree.className} bg-slate-100 h-screen`}>
       <Analytics />
       <div className="flex justify-center item-center">
         <div>
           <div className="border p-6  mb-10 mt-32  rounded-xl bg-white drop-shadow-md">
-            {users.map((user) => {const timeStart = getTimeFromString(user.health.time);
+            {users.map((user) => {
+              const timeStart = getTimeFromString(user.health.time);
               if (user.employeeId === emp && user.firstName === name) {
                 return (
                   <div className=" mx-2">
@@ -345,7 +344,9 @@ export default function confirmation() {
 
                         <div
                           className={`text-center p-3 px-10 rounded-xl justify-center flex overflow-hidden  ${
-                            user.health.checkIn ? "bg-green-500 text-white" : "border-red-500 text-red-500 border"
+                            user.health.checkIn
+                              ? "bg-green-500 text-white"
+                              : "border-red-500 text-red-500 border"
                           }`}
                         >
                           <div className="flex items-center text-center">
@@ -363,7 +364,6 @@ export default function confirmation() {
                             </div>
                           </div>
                         </div>
-                        
                       </div>
                     )}
                   </div>
@@ -373,22 +373,21 @@ export default function confirmation() {
             })}
             <div className="mb-16 border-b mt-6"></div>
           </div>
-          <div className="justify-between flex -translate-y-28 gap-10 mx-10">
-  <button
-    onClick={cancelHandler}
-    className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
-  >
-    ยกเลิก
-  </button>
-  <button
-    onClick={confirmHandler}
-    id="confirm-btn"
-    className="flex-grow text-white bg-[#16a34a] hover:bg-[#0E8A37] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
-  >
-    เช็คอิน
-  </button>
-</div>
-
+          <div className="justify-between flex -translate-y-28 gap-10 mx-10 ">
+            <button
+              onClick={cancelHandler}
+              className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+            >
+              ยกเลิก
+            </button>
+            <button
+              onClick={confirmHandler}
+              id="confirm-btn"
+              className="flex-grow text-white bg-[#16a34a] hover:bg-[#0E8A37] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+            >
+              เช็คอิน
+            </button>
+          </div>
         </div>
       </div>
     </div>

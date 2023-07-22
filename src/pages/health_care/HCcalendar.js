@@ -229,6 +229,7 @@ export default function Calendar() {
     days.push(dayElement);
   }
 
+
   const pickedHandler = async (health) => {
     const db = getDatabase();
     var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`);
@@ -314,13 +315,12 @@ export default function Calendar() {
     }
   };
 
-  const getTimeFromString = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
-    const currentTime = new Date();
-    currentTime.setHours(parseInt(hours));
-    currentTime.setMinutes(parseInt(minutes));
-    return currentTime;
-  };
+ 
+  
+  const currentTime = new Date(); // Get the current time
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  
 
   return (
     <main
@@ -559,14 +559,31 @@ export default function Calendar() {
               doctor === healthCare.doctor &&
               plant === healthCare.plant
             );
-          })
+          }).filter((healthCare) => {
+            const startTime = healthCare.timeStart.split(":"); 
+            const startHour = parseInt(startTime[0]); 
+            const startMinute = parseInt(startTime[1]);
+            const date = currentTime.toISOString().split('T')[0];
+            const isTimePassed =
+            date === healthCare.date &&
+            (currentHour > startHour ||
+              (currentHour === startHour && currentMinute >= startMinute)); return  !isTimePassed;})
           .map((healthCare) => {
-            const timeStart = getTimeFromString(healthCare.timeStart);
+            const startTime = healthCare.timeStart.split(":"); //09 : 05
+            const startHour = parseInt(startTime[0]); // 09
+            const startMinute = parseInt(startTime[1]);// 05
+            const date = currentTime.toISOString().split('T')[0];
+            const isTimePassed =
+            date === healthCare.date &&
+            (currentHour > startHour ||
+              (currentHour === startHour && currentMinute >= startMinute));
             return (
               <div
-                key={healthCare.id}
-                className="border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 "
-              >
+              key={healthCare.id}
+              className={`border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 ${
+                isTimePassed ? "opacity-50 pointer-events-none" : ""
+              }`}
+            >
                 <div className="flex justify-between mb-2">
                   <h1>
                     ประเภท : <u><strong>{healthCare.doctor} </strong></u>
@@ -599,10 +616,10 @@ export default function Calendar() {
                   </p>
 
                   <button
-                    onClick={() => pickedHandler(healthCare)}
-                    className={healthCare.alreadyPicked >= 1 ? "" : ""}
-                    disabled={healthCare.alreadyPicked >= 1}
-                  >
+                onClick={() => pickedHandler(healthCare)}
+                className={healthCare.alreadyPicked >= 1 ? "" : ""}
+                disabled={healthCare.alreadyPicked >= 1 || isTimePassed}
+              >
                     <div className="">
                       {healthCare.alreadyPicked >= 1 ? (
                         <span className="text-white bg-red-600 p-2 px-2 rounded-2xl font-semibold">

@@ -236,7 +236,7 @@ export default function tr_admin_course() {
       whoPickedThis: "",
       alreadyPicked : 0
     };
-    set(ref(db, "health/" + docTypeOption + date + timeStart  ), data).then(() => {alert("เรียบร้อยแล้ว");}).catch((error) => {
+    set(ref(db, "health/" + plantOption +docTypeOption + date + timeStart  ), data).then(() => {alert("เรียบร้อยแล้ว");}).catch((error) => {
       console.error("Error inserting data:", error);
     });
    // alert("ยังไม่ได้ต่อ Database");
@@ -307,6 +307,9 @@ export default function tr_admin_course() {
     }
   };
 
+  const currentTime = new Date(); // Get the current time
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
   return (
     <div className={`flex ${bai.className} bg-slate-100 overflow-y-auto`}>
       <div className="w-58 bg-gray-800 rounded-3xl p-3 m-2 flex flex-col drop-shadow-xl ">
@@ -851,60 +854,74 @@ export default function tr_admin_course() {
                           const healthCareDate = healthCare.date;
                           return dayMonthYear === healthCareDate;
                         })
-                        .map((healthCare) => (
-                          <div
+                        .map((healthCare) => {
+                          const startTime = healthCare.timeStart.split(":"); //09 : 05
+                          const startHour = parseInt(startTime[0]); // 09
+                          const startMinute = parseInt(startTime[1]);// 05
+                          const date = currentTime.toISOString().split('T')[0];
+                          const isTimePassed =
+                          date === healthCare.date &&
+                          (currentHour > startHour ||
+                            (currentHour === startHour && currentMinute >= startMinute));
+                          return (
+                            <div
                             key={healthCare.id}
-                            className="border-2 m-3 p-2 rounded-xl bg-white drop-shadow-lg mb-5"
+                            className={`border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 ${
+                              isTimePassed ? "opacity-50 pointer-events-none" : ""
+                            }`}
                           >
-                            <div className="flex justify-between mb-2">
-                              <h1>
-                                ประเภท :{" "}
-                                <strong>
-                                  {healthCare.doctor}
-                                </strong>
-                              </h1>
-                              
+                              <div className="flex justify-between mb-2">
+                                <h1>
+                                  ประเภท : <u><strong>{healthCare.doctor} </strong></u>
+                                </h1>
+                              </div>
+                              <div className="flex justify-between mb-2">
+                                <p>
+                                  Plant : <strong>{healthCare.plant}</strong>
+                                </p>
+                              </div>
+                              <div className="flex justify-between mt-3">
+                                <p>
+                                  วันที่ :{" "}
+                                  <strong>
+                                    {new Date(healthCare.date).toLocaleDateString("th-TH", {
+                                      dateStyle: "long",
+                                    })}
+                                  </strong>
+                                </p>
+                                <p>
+                                  จำนวน : <strong>{healthCare.alreadyPicked} / 1</strong>
+                                </p>
+                              </div>
+                              <div className="flex justify-between mt-3">
+                                <p>
+                                  เวลา :{" "}
+                                  <strong>
+                                    {healthCare.timeStart} - {healthCare.timeEnd}
+                                  </strong>
+                                </p>
+              
+                                <button
+                              onClick={() => pickedHandler(healthCare)}
+                              className={healthCare.alreadyPicked >= 1 ? "" : ""}
+                              disabled={healthCare.alreadyPicked >= 1 || isTimePassed}
+                            >
+                                  <div className="">
+                                    {healthCare.alreadyPicked >= 1 ? (
+                                      <span className="text-white bg-red-600 p-2 px-2 rounded-2xl font-semibold">
+                                        จองแล้ว
+                                      </span>
+                                    ) : (
+                                      <span className="text-white bg-green-600 p-2 px-8 rounded-2xl font-semibold">
+                                        ว่าง
+                                      </span>
+                                    )}
+                                  </div>
+                                </button>
+                              </div>
                             </div>
-                            <div className="flex justify-between mb-2">
-                              <p>
-                                Plant : <strong>{healthCare.plant}</strong>
-                              </p>
-                              
-                            </div>
-                            <div className="flex justify-between mt-3">
-                              <p>
-                                วันที่ : <strong>{new Date(healthCare.date).toLocaleDateString("th-TH", {
-                          dateStyle: "long",
-                        })}</strong>
-                              </p>
-                              <p>
-                                จำนวน : <strong>{healthCare.alreadyPicked}</strong>
-                              </p>
-                              
-                            </div>
-                            <div className="flex justify-between mt-3">
-                              <p>เวลา : <strong>{healthCare.timeStart} - {healthCare.timeEnd}</strong></p>
-                              <button
-                                disabled
-                                className={
-                                  healthCare.alreadyPicked >= 1 ? "" : ""
-                                }
-                              >
-                                <div className="">
-                                  {healthCare.alreadyPicked >= 1 ? (
-                                    <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
-                                      จองแล้ว
-                                    </span>
-                                  ) : (
-                                    <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
-                                      ว่าง
-                                    </span>
-                                  )}
-                                </div>
-                              </button>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                     </div>
                   </main>
                 </div>
