@@ -12,6 +12,7 @@ import {
 import startFireBase from "../../firebase/firebase_conf";
 import { Analytics } from '@vercel/analytics/react';
 
+import Swal from "sweetalert2"
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
@@ -232,53 +233,75 @@ export default function Calendar() {
 
   const pickedHandler = async (health) => {
     const db = getDatabase();
-    var cnf = confirm(`ต้องการจะ "ยืนยัน" การจองหรือไม่`);
+  
     let isPick = false;
     for (const user of users) {
       if (user.employeeId === employeeId) {
-        if (user.health.pickedWhat !== "N/A" && user.employeeId === employeeId)
+        if (user.health.pickedWhat !== "N/A" && user.employeeId === employeeId) {
           isPick = true;
-        break;
+          break;
+        }
       }
     }
+  
     if (isPick === true) {
       alert(`รหัส "${employeeId}" ได้ทำจองพบแพทย์ไปแล้วกรุณายกเลิกก่อน`);
-    }
-    if (cnf && !isPick) {
-      if (health.alreadyPicked < 1) {
-        const updatedHealth = healthCare.map((h) => {
-          if (h.id === health.id) {
-            return {
-              ...h,
-              alreadyPicked: h.alreadyPicked + 1,
+    } else {
+      Swal.fire({
+        title: `${health.doctor}`,
+        html: `วันที่ : <b>${new Date(health.date).toLocaleDateString("th-TH", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}</b><br>เวลา : <b>${health.timeStart}</b><br>สถานที่ : <b>${health.plant}</b>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#D43732',
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed && !isPick) {
+          if (health.alreadyPicked < 1) {
+            const updatedHealth = healthCare.map((h) => {
+              if (h.id === health.id) {
+                return {
+                  ...h,
+                  alreadyPicked: h.alreadyPicked + 1,
+                };
+              }
+              return h;
+            });
+            setHealthCare(updatedHealth);
+            const postData = {
+              alreadyPicked: health.alreadyPicked + 1,
+              whoPickedThis: employeeId,
             };
+            const addToUser = {
+              date: health.date,
+              plant: health.plant,
+              time: health.timeStart,
+              type: health.doctor,
+              pickedWhat: health.doctor + health.date + health.timeStart,
+            };
+  
+            update(
+              ref(
+                db,
+                "health/" + health.plant + health.doctor + health.date + health.timeStart
+              ),
+              postData
+            );
+  
+            update(ref(db, "users/" + employeeId + "/health"), addToUser);
+          } else {
+            alert('เต็มแล้ว');
           }
-          return h;
-        });
-        setHealthCare(updatedHealth);
-        const postData = {
-          alreadyPicked: health.alreadyPicked + 1,
-          whoPickedThis: employeeId,
-        };
-        const addToUser = {
-          date: health.date,
-          plant: health.plant,
-          time: health.timeStart,
-          type: health.doctor,
-          pickedWhat: health.doctor + health.date + health.timeStart,
-        };
-
-        update(
-          ref(db, "health/" + health.plant +health.doctor + health.date + health.timeStart),
-          postData
-        );
-
-        update(ref(db, "users/" + employeeId + "/health"), addToUser);
-      } else {
-        alert("เต็มแล้ว");
-      }
+        }
+      });
     }
   };
+  
 
   const handleToggleContent = () => {
     setShowContent(!showContent);

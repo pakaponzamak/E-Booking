@@ -132,7 +132,7 @@ export default function confirmation() {
     Swal.fire({
       title: 'ท่านต้องการจะ "เช็คอิน" หรือไม่',
       text: "",
-      icon: 'warning',
+      icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#16a34a',
       cancelButtonColor: '#D43732',
@@ -170,7 +170,7 @@ export default function confirmation() {
     Swal.fire({
       title: 'ท่านต้องการจะ "ยกเลิก" การจองหรือไม่',
       text: "",
-      icon: 'warning',
+      icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#16a34a',
       cancelButtonColor: '#D43732',
@@ -204,11 +204,13 @@ export default function confirmation() {
         if (health.whoPickedThis === anotherEmployeeId) {
           const updates = {
             ["health/" +
+            health.plant +
             health.doctor +
             health.date +
             health.timeStart +
             "/whoPickedThis"]: "",
             ["health/" +
+            health.plant +
             health.doctor +
             health.date +
             health.timeStart +
@@ -291,14 +293,23 @@ export default function confirmation() {
       };
       updates["users/" + anotherEmployeeId + "/health/checkIn"] = true;
       updates["users/" + anotherEmployeeId + "/health/checkInTime"] = dateTime;
-
+      Swal.fire(
+        'เช็คอินสำเร็จ',
+        '',
+        'success',
+        
+      )
       return update(ref(db), updates);
     } else if (
       idParameter === anotherEmployeeId &&
       nameParameter === anotherName &&
       checkinParameter === true
     ) {
-      alert(`ท่านได้ทำการเช็คอินไปแล้ว`);
+      Swal.fire(
+        'ท่านได้ทำการเช็คอินไปแล้ว',
+        '',
+        'warning'
+      )
       return true;
     } else if (
       idParameter === anotherEmployeeId &&
