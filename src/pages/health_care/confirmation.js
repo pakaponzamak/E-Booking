@@ -132,7 +132,7 @@ export default function confirmation() {
     Swal.fire({
       title: 'ท่านต้องการจะ "เช็คอิน" หรือไม่',
       text: "",
-      icon: 'question',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#16a34a',
       cancelButtonColor: '#D43732',
@@ -170,7 +170,7 @@ export default function confirmation() {
     Swal.fire({
       title: 'ท่านต้องการจะ "ยกเลิก" การจองหรือไม่',
       text: "",
-      icon: 'question',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#16a34a',
       cancelButtonColor: '#D43732',

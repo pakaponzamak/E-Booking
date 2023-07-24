@@ -6,7 +6,7 @@ import StartFireBase from "../firebase/firebase_conf";
 import { getDatabase, ref, onValue, off,set } from "firebase/database";
 import { useRouter } from "next/router";
 import { Analytics } from '@vercel/analytics/react';
-
+import Swal from 'sweetalert2'
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
@@ -82,6 +82,10 @@ export default function Home() {
       const db = getDatabase();
       set(ref(db, "users/" + employeeId), data)
         .then(() => {
+          Toast.fire({
+            icon: 'success',
+            title: `ยินดีต้อนรับครั้งแรก ${firstName}`
+          })
           router.push(
             `/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`
           );
@@ -97,13 +101,20 @@ export default function Home() {
     const name = firstName;
     if (idParameter === emp_id && nameParameter === name) {
       let checkIn = checkinParameter;
+      Toast.fire({
+        icon: 'success',
+        title: `ยินดีต้อนรับ ${firstName}`
+      })
       router.push(
         `/form_selection?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`
       );
       return true;
     }
     if (idParameter === emp_id && nameParameter !== name) {
-      alert("ชื่อไม่ตรงกับรหัสพนักงานที่เคยเข้าสู่ระบบในครั้งแรก");
+      Toast.fire({
+        icon: 'error',
+        title: `รหัสพนักงานไม่ตรงกับชื่อ`
+      })
       return true;
     }
   }
@@ -119,6 +130,18 @@ export default function Home() {
   const handleContentClick = (e) => {
     e.stopPropagation();
   };
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
 
   return (
     <main
