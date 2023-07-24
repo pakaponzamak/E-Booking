@@ -11,9 +11,10 @@ import {
 import StartFireBase from "../../firebase/firebase_conf";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import { redirect } from "next/navigation";
+
 import { Bai_Jamjuree } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import Swal from "sweetalert2"
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -127,8 +128,18 @@ export default function confirmation() {
   }
 
   const confirmHandler = async (e) => {
-    var cnf = confirm(`ต้องการจะ "เช็คอิน" หรือไม่`);
-    if (cnf) {
+    //var cnf = confirm(`ต้องการจะ "เช็คอิน" หรือไม่`);
+    Swal.fire({
+      title: 'ท่านต้องการจะ "เช็คอิน" หรือไม่',
+      text: "",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#D43732',
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+    if (result.isConfirmed) {
       const buttonId = e.target.id;
       // Use the buttonId as needed
       let userFound = false;
@@ -151,12 +162,22 @@ export default function confirmation() {
         alert("Account Not Found");
         router.push(`../`);
       }
-    }
+    }})
   };
 
   const cancelHandler = async (e) => {
-    var cnf = confirm(`ต้องการจะ "ยกเลิก" การจองหรือไม่`);
-    if (cnf) {
+    
+    Swal.fire({
+      title: 'ท่านต้องการจะ "ยกเลิก" การจองหรือไม่',
+      text: "",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#16a34a',
+      cancelButtonColor: '#D43732',
+      confirmButtonText: 'ยืนยัน',
+      cancelButtonText: 'ยกเลิก'
+    }).then((result) => {
+    if (result.isConfirmed) {
       {
         users.map(
           (user) => performDelete(user.employeeId, user.firstName)
@@ -164,7 +185,7 @@ export default function confirmation() {
         );
       }
       //router.push(`../`);
-    }
+    }})
   };
 
   function performDelete(idParameter, nameParameter) {
@@ -207,7 +228,11 @@ export default function confirmation() {
           };
           update(ref(db), updates)
             .then(() => {
-              alert("Bye Bye");
+              Swal.fire(
+                'ยกเลิกสำเร็จ',
+                '',
+                'success'
+              )
             })
             .catch((error) => {
               console.error("Error updating data:", error);
@@ -281,7 +306,13 @@ export default function confirmation() {
       checkinParameter !== true &&
       typeParameter === "N/A"
     ) {
-      alert("ยังไม่ได้เลือกเวลานัดหมาย");
+      Swal.fire({
+        title: 'ท่านยังไม่ได้ทำการเลือกเวลานัดหมาย',
+        text: '',
+        icon: 'warning',
+        confirmButtonText: 'ปิด',
+        confirmButtonColor: '#D43732'
+      })
       return true;
     }
   }

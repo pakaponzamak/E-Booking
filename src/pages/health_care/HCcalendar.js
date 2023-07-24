@@ -269,7 +269,7 @@ export default function Calendar() {
         };
 
         update(
-          ref(db, "health/" + health.doctor + health.date + health.timeStart),
+          ref(db, "health/" + health.plant +health.doctor + health.date + health.timeStart),
           postData
         );
 
@@ -316,7 +316,7 @@ export default function Calendar() {
   };
 
  
-  
+
   const currentTime = new Date(); // Get the current time
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
