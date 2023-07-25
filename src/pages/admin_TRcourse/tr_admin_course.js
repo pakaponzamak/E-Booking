@@ -79,16 +79,7 @@ export default function tr_admin_course() {
         console.log(dayMonthYear);
       }, []);
   const router = useRouter();
-  const toggleForm = (user) => {
-    if (
-      user.id !== "!!Do no delete!!" &&
-      user.employeeId !== "!!`~Do no delete~`!!"
-    ) {
-      setShowForm(user);
-    } else {
-      alert("Cannot perform this action");
-    }
-  };
+
   function deleteSingleUserHandler(course) {
     // Access the user object and perform actions
     console.log("Delete Button clicked for user:", course);
@@ -99,10 +90,7 @@ export default function tr_admin_course() {
     }
     // Other actions...
   }
-  function updateSingleUserHandler(course) {}
-  const courseOptionChange = (event) => {
-    setCourses(event.target.value);
-  };
+
 
   const toggleHealthCareMenu = () => {
     setIsHealthCareExpanded(!isHealthCareExpanded);

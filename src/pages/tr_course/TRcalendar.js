@@ -2,16 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Bai_Jamjuree } from "next/font/google";
 import StartFireBase from "../../firebase/firebase_conf";
-import { Analytics } from '@vercel/analytics/react';
-import {
-  getDatabase,
-  ref,
-  remove,
-  onValue,
-  off,
-  update,
-} from "firebase/database";
-
+import { Analytics } from "@vercel/analytics/react";
+import { getDatabase, ref, get, onValue, off, update } from "firebase/database";
+import Swal from "sweetalert2";
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
@@ -20,7 +13,7 @@ const bai_jamjuree = Bai_Jamjuree({
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [clickedDay, setClickedDay] = useState(null);
-  const [dayMonthYear,setDayMonthYear] = useState(null);
+  const [dayMonthYear, setDayMonthYear] = useState(null);
   const [startIndex, setStartIndex] = useState(1);
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState(courses);
@@ -70,23 +63,29 @@ export default function Calendar() {
     setClickedDay(currentDate.getDate());
     setStartIndex(currentDate.getDate());
     const currentDay = currentDate.getDate();
-    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0")
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
     const currentYear = currentDate.getFullYear();
-    const date = currentYear + "-" + (currentMonth) + "-" + currentDay.toString().padStart(2, "0");
+    const date =
+      currentYear +
+      "-" +
+      currentMonth +
+      "-" +
+      currentDay.toString().padStart(2, "0");
     setDayMonthYear(date);
-    console.log(dayMonthYear)
+    console.log(dayMonthYear);
   }, []);
 
   const handleNumberClick = (day) => {
     setClickedDay(day);
-    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0")
+    const currentMonth = `${currentDate.getMonth() + 1}`.padStart(2, "0");
     const currentYear = currentDate.getFullYear();
     //const currentDay = currentDate.getDate();
     //const date = new Date(currentYear, currentMonth, day);
     //const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "long" });
-    
-    const date = currentYear + "-" + (currentMonth) + "-" + day.toString().padStart(2, "0");
-    setDayMonthYear(date)
+
+    const date =
+      currentYear + "-" + currentMonth + "-" + day.toString().padStart(2, "0");
+    setDayMonthYear(date);
     console.log(dayMonthYear);
 
     const filteredCourses = courses.filter((course) => {
@@ -149,19 +148,26 @@ export default function Calendar() {
     const dayOfWeek = date.toLocaleDateString("th-TH", { weekday: "short" });
 
     const isCurrentDate = i === todayDate;
-    const isClickedDay = i === clickedDay && (currentYear === todayYear && currentMonth === todayMonth && i < todayDate);;
+    const isClickedDay =
+      i === clickedDay &&
+      currentYear === todayYear &&
+      currentMonth === todayMonth &&
+      i < todayDate;
 
     const isPastDate = date < today;
 
-    const isDisabled = isPastDate && !isCurrentDate ; // Set the disabled state based on whether it's a past date and not the current date
+    const isDisabled = isPastDate && !isCurrentDate; // Set the disabled state based on whether it's a past date and not the current date
 
     const dayButtonClass = isClickedDay
-    ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
-    : isDisabled 
-    ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
-    : isCurrentDate && i === todayDate && todayMonth === currentMonth && todayYear === currentYear
-    ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
-    : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
+      ? "rounded-xl text-right p-2 bg-blue-500 w-10 h-10 hover:bg-blue-600 text-white"
+      : isDisabled
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 cursor-not-allowed text-white"
+      : isCurrentDate &&
+        i === todayDate &&
+        todayMonth === currentMonth &&
+        todayYear === currentYear
+      ? "rounded-xl text-right p-2 bg-red-500 w-10 h-10 current-date text-white"
+      : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
 
     const dayElement = (
       <div key={i} className="flex-none">
@@ -184,12 +190,22 @@ export default function Calendar() {
 
   const countClickCheckHandler = async (course) => {
     const db = getDatabase();
-    if (course.number < course.amount) {
+    const userPickedCourse = courses.find((c) => c.id === course.id);
+
+    if (!userPickedCourse.whoPickedThisCourse) {
+      userPickedCourse.whoPickedThisCourse = []; // Ensure that it's an array when not present
+    }
+
+    if (userPickedCourse.whoPickedThisCourse.includes(employeeId)) {
+      // The user has already picked the course, so we want to allow them to remove it
       const updatedCourses = courses.map((c) => {
         if (c.id === course.id) {
           return {
             ...c,
-            number: c.number + 1,
+            number: c.number - 1,
+            whoPickedThisCourse: c.whoPickedThisCourse.filter(
+              (id) => id !== employeeId
+            ),
           };
         }
         return c;
@@ -197,15 +213,60 @@ export default function Calendar() {
       setCourses(updatedCourses);
 
       const postData = {
-        number: course.number + 1,
+        number: userPickedCourse.number - 1,
+        whoPickedThisCourse: userPickedCourse.whoPickedThisCourse.filter(
+          (id) => id !== employeeId
+        ),
       };
-
-      update(
-        ref(db, "courses/" + course.course + course.date + course.timeStart + course.onlineCode),
+      await update(
+        ref(
+          db,
+          "courses/" +
+            course.course +
+            course.date +
+            course.timeStart +
+            course.onlineCode
+        ),
         postData
       );
     } else {
-      alert("เต็มแล้วครับพ่อหนุ่ม");
+      // The user has not picked the course, so we want to allow them to add it
+      if (userPickedCourse.number + 1 > userPickedCourse.amount) {
+        alert("เต็มแล้วครับพ่อหนุ่ม");
+        return;
+      }
+
+      const updatedCourses = courses.map((c) => {
+        if (c.id === course.id) {
+          return {
+            ...c,
+            number: c.number + 1,
+            whoPickedThisCourse: [...c.whoPickedThisCourse, employeeId],
+          };
+        }
+        return c;
+      });
+      setCourses(updatedCourses);
+
+      const postData = {
+        number: userPickedCourse.number + 1,
+        whoPickedThisCourse: [
+          ...userPickedCourse.whoPickedThisCourse,
+          employeeId,
+        ],
+      };
+
+      await update(
+        ref(
+          db,
+          "courses/" +
+            course.course +
+            course.date +
+            course.timeStart +
+            course.onlineCode
+        ),
+        postData
+      );
     }
   };
 
@@ -291,7 +352,9 @@ export default function Calendar() {
             />
           </svg>
         </button>
-        <div className="flex text-center justify-center gap-2 overflow-x-auto">{days}</div>
+        <div className="flex text-center justify-center gap-2 overflow-x-auto">
+          {days}
+        </div>
         <button onClick={next7Days} disabled={startIndex + 7 > daysInMonth}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -311,86 +374,92 @@ export default function Calendar() {
       </div>
       <div className="border-b p-1 mb-5"></div>
       <div>
-                      {courses
-                        .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
-                        .filter((course) => {
-                          const courseDate = course.date;
-                          return dayMonthYear === courseDate;
-                        })
-                        .map((courses) => (
-                          <div
-                            key={courses.id}
-                            className=" m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
-                          ><div className="flex justify-between mb-2">
-                          <p>
-                            Date :{" "}
-                            <strong>
-                            {new Date(courses.date).toLocaleDateString("th-TH", {
-                          dateStyle: "long",
-                        })}
-                            </strong>
-                          </p>
-                        
-                        </div>
-                           <div className="flex justify-between mb-2">
-                              <p>
-                                Course :{" "}
-                                <strong>
-                                  {courses.course}
-                                </strong>
-                              </p>
-                              <p>
-                                Plant : <strong>{courses.plant}</strong>
-                              </p>
-                            </div>
-                            <div className="flex justify-between mb-2">
-                              <h1>
-                                Time :{" "}
-                                <strong>
-                                  {courses.timeStart} - {courses.timeEnd}
-                                </strong>
-                              </h1>
-                              <p>
-                                Online : <strong>{courses.onlineCode}</strong>
-                              </p>
-                            </div>
-                            <div className="flex justify-between mb-2">
-                              <p>
-                                Lecturer : <strong>{courses.lecturer}</strong>
-                              </p>
-                              <p>
-                                Onside :{" "}
-                                <strong>
-                                  {courses.number} / {courses.amount}
-                                </strong>
-                              </p>
-                            </div>
-                            <div className="flex justify-between mt-3">
-                              <p>
-                                Place : <strong>{courses.hall}</strong>
-                              </p>
-                              <button
-                                onClick={() => countClickCheckHandler(courses)}
-                                className={
-                                  courses.number >= courses.amount ? "" : ""
-                                }
-                              >
-                                <div className="">
-                                  {courses.number >= courses.amount ? (
-                                    <span className="text-white bg-red-600 p-2 px-2  rounded-2xl font-semibold">
-                                      ที่นั่งเต็มแล้ว
-                                    </span>
-                                  ) : (
-                                    <span className="text-white bg-green-600 p-2 px-4 rounded-2xl font-semibold">
-                                      เลือก
-                                    </span>
-                                  )}
-                                </div>
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
+        {courses
+          .sort((a, b) => (a.timeStart > b.timeStart ? 1 : -1))
+          .filter((course) => {
+            const courseDate = course.date;
+            return dayMonthYear === courseDate;
+          })
+          .map((courses) => (
+            <div
+              key={courses.id}
+              className=" m-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5"
+            >
+              <div className="flex justify-between mb-2">
+                <p>
+                  Date :{" "}
+                  <strong>
+                    {new Date(courses.date).toLocaleDateString("th-TH", {
+                      dateStyle: "long",
+                    })}
+                  </strong>
+                </p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <p>
+                  Course : <strong>{courses.course}</strong>
+                </p>
+                <p>
+                  Plant : <strong>{courses.plant}</strong>
+                </p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <h1>
+                  Time :{" "}
+                  <strong>
+                    {courses.timeStart} - {courses.timeEnd}
+                  </strong>
+                </h1>
+                <p>
+                  Online : <strong>{courses.onlineCode}</strong>
+                </p>
+              </div>
+              <div className="flex justify-between mb-2">
+                <p>
+                  Lecturer : <strong>{courses.lecturer}</strong>
+                </p>
+                <p>
+                  Onside :{" "}
+                  <strong>
+                    {courses.number} / {courses.amount}
+                  </strong>
+                </p>
+              </div>
+              <div className="flex justify-between mt-3">
+                <p>
+                  Place: <strong>{courses.hall}</strong>
+                </p>
+                {courses.number >= courses.amount && !courses.whoPickedThisCourse.includes(employeeId) ? (
+                  <button
+                    onClick={() => countClickCheckHandler(courses)}
+                    className="bg-gray-400 text-white p-2 px-4 rounded-2xl font-semibold"
+                  >
+                    ที่นั่งเต็มแล้ว
+                  </button>
+                ) : (
+                  <>
+                    {courses.whoPickedThisCourse &&
+                    courses.whoPickedThisCourse.includes(employeeId) ? (
+                      <button
+                        onClick={() => countClickCheckHandler(courses)}
+                        className="bg-red-600 text-white p-2 px-4 rounded-2xl font-semibold"
+                      >
+                        ยกเลิก
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => countClickCheckHandler(courses)}
+                        className="bg-green-600 text-white p-2 px-4 rounded-2xl font-semibold"
+                      >
+                        เลือก
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+      </div>
     </main>
   );
 }

@@ -241,7 +241,8 @@ export default function tr_admin_course() {
       hall: place,
       plant: plantOption,
       onlineCode: onlineCode,
-      number:0
+      number:0,
+      whoPickedThisCourse: []
     };
     set(ref(db, "courses/" + courseOption + date + timeStart + onlineCode ), data).then(() => {alert("เรียบร้อยแล้ว");}).catch((error) => {
       console.error("Error inserting data:", error);
