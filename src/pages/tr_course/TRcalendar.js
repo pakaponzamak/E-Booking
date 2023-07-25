@@ -218,6 +218,13 @@ export default function Calendar() {
           (id) => id !== employeeId
         ),
       };
+      const userData = {
+        course: "N/A",
+        date: "N/A",
+        hall: "N/A",
+        time:"N/A",
+        plant:"N/A"
+      }
       await update(
         ref(
           db,
@@ -228,6 +235,15 @@ export default function Calendar() {
             course.onlineCode
         ),
         postData
+      );
+      await update(
+        ref(
+          db,
+          "users/" +
+            employeeId +
+            "/courses"
+        ),
+        userData
       );
     } else {
       // The user has not picked the course, so we want to allow them to add it
@@ -255,6 +271,13 @@ export default function Calendar() {
           employeeId,
         ],
       };
+      const userData = {
+        course: course.course,
+        date: course.date,
+        hall: course.hall,
+        time:course.timeStart,
+        plant:course.plant
+      }
 
       await update(
         ref(
@@ -266,6 +289,15 @@ export default function Calendar() {
             course.onlineCode
         ),
         postData
+      );
+      await update(
+        ref(
+          db,
+          "users/" +
+            employeeId +
+            "/courses"
+        ),
+        userData
       );
     }
   };

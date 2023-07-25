@@ -15,6 +15,4 @@ export default function appointment(){
             </div>
         </main>
     );
-
-
 }

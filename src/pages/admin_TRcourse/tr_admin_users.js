@@ -391,8 +391,8 @@ export default function TRusers() {
               <div className="grid grid-cols-7 gap-3 mx-10 my-5 ">
                 <div>{user.employeeId}</div>
                 <div>{user.firstName}</div>
-                <div>พ่อ</div>
-                <div>หมอสมอง</div>
+                <div>-</div>
+                <div>-</div>
                 <div>{user.time}</div>
                 <div>{user.plant}</div>
                 <div
