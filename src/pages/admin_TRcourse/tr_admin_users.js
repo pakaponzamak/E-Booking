@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import DensoLogo from "../images/Denso_logo.png";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
+import Swal from "sweetalert2";
 
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
@@ -16,6 +17,8 @@ export default function TRusers() {
   const [isHealthCareExpanded, setIsHealthCareExpanded] = useState(false);
   const [isCourseExpanded, setIsCourseExpanded] = useState(false);
   const [users, setUsers] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [courseCount, setCourseCount] = useState(0);
 
   StartFireBase();
 
@@ -39,6 +42,29 @@ export default function TRusers() {
     return () => {
       // Turn off the listener
       off(usersRef);
+    };
+  }, []);
+
+  useEffect(() => {
+    const db = getDatabase();
+    const courseRef = ref(db, "courses");
+    // Listen for changes in the 'users' reference
+    onValue(courseRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Convert the object of users into an array
+        const courseArray = Object.keys(data).map((key) => ({
+          id: key,
+          ...data[key],
+        }));
+        // Set the users state with the retrieved data
+        setCourses(courseArray);
+      }
+    });
+    // Clean up the listener when the component unmounts
+    return () => {
+      // Turn off the listener
+      off(courseRef);
     };
   }, []);
 
@@ -74,33 +100,78 @@ export default function TRusers() {
 
   const navigateToSection = (menu) => {
     switch (menu) {
-      
       case "about":
         router.push("../admin_TRcourse/admin_insert");
         break;
       case "Option 4":
         router.push("./tr_admin_users");
         break;
-        case "Option 5":
+      case "Option 5":
         router.push("./tr_admin_course");
         break;
-        case "Option 1":
-          router.push("../admin_health/hc_admin_insert");
-          break;
-        case "Option 2":
+      case "Option 1":
+        router.push("../admin_health/hc_admin_insert");
+        break;
+      case "Option 2":
         router.push("../admin_health/hc_admin_users");
         break;
-        case "Option 3":
-          router.push("../admin_health/hc_admin_list");
-          break;
-          case "tr insert":
-          router.push("./tr_admin_insert");
-          break;
+      case "Option 3":
+        router.push("../admin_health/hc_admin_list");
+        break;
+      case "tr insert":
+        router.push("./tr_admin_insert");
+        break;
       // Add more cases for other menu items and corresponding routes
       default:
         break;
     }
   };
+
+  // Create a new array 'matchedData' to store the matched users
+  const matchedData = users.filter((user) => {
+    const userEmployeeId = user.courses.employeeId;
+
+    // Check if any course's 'whoPickedThisCourse' includes the user's employeeId
+    const userPickedCourses = Object.values(courses).some(
+      (course) =>
+        course.whoPickedThisCourse &&
+        Array.isArray(course.whoPickedThisCourse) &&
+        course.whoPickedThisCourse.includes(userEmployeeId)
+    );
+
+    // Include the user in the matchedData array if they have any picked courses
+    return userPickedCourses;
+  });
+
+  // Add this function to handle the onClick event
+  function handleCourseClick(course, employeeId) {
+    const pickedCourses = Object.values(courses)
+      .filter(
+        (course) =>
+          course.whoPickedThisCourse &&
+          Array.isArray(course.whoPickedThisCourse) &&
+          course.whoPickedThisCourse.includes(employeeId)
+      )
+      .map((course) => ({
+        course: course.course,
+        date: new Date(course.date).toLocaleDateString("th-TH", {
+          dateStyle: "long",
+        }),
+        time: `${course.timeStart} - ${course.timeEnd}`,
+      }));
+    setCourseCount(pickedCourses.length);
+
+    Swal.fire({
+      title: "คอร์สที่เลือก :",
+      html: `<ul>${pickedCourses
+        .map(
+          (course) =>
+            `<li>${course.course} <b>วันที่ : </b>${course.date} <b>เวลา : </b> ${course.time}</li> <br>`
+        )
+        .join("")}</ul>`,
+      icon: "info",
+    });
+  }
 
   return (
     <div className={`${bai.className} bg-slate-100 flex h-screen `}>
@@ -119,8 +190,6 @@ export default function TRusers() {
 
         <nav className="text-gray-300 flex-1 drop-shadow-lg">
           <ul className="space-y-2 py-4 mx-2">
-            
-
             <li>
               <a
                 href="#"
@@ -375,35 +444,44 @@ export default function TRusers() {
 
       <div className="flex-1 w-min drop-shadow-lg">
         <div className="rounded-3xl m-2 bg-slate-300 p-3 h-full overflow-y-auto">
-          <h1 className="font-extrabold text-3xl p-3 ">ข้อมูลผู้ใช้งานคอร์สอบรม</h1>
+          <h1 className="font-extrabold text-3xl p-3 ">
+            ข้อมูลผู้ใช้งานคอร์สอบรม
+          </h1>
           <div className="border-b border-gray-800 mb-4"></div>
           <div className="text-center items-center">
             <div className="grid grid-cols-7 gap-3 mx-10 text-center font-bold">
               <div>รหัสพนักงาน</div>
               <div>ชื่อ - นามสกุล</div>
-              <div>สถานะเกี่ยวข้อง</div>
-              <div>ประเภทหมอ</div>
-              <div>เวลา</div>
+              <div>Company</div>
               <div>Plant</div>
-              <div>สถานะ</div>
+              <div>Division</div>
+              <div>Department</div>
             </div>
-            {users.map((user) => (
-              <div className="grid grid-cols-7 gap-3 mx-10 my-5 ">
-                <div>{user.employeeId}</div>
+            {matchedData.map((user) => (
+              <div className="grid grid-cols-7 gap-3 mx-10 my-5 " key={user.id}>
+                <div>
+                  <strong>{user.employeeId.toUpperCase()}</strong>
+                </div>
                 <div>{user.firstName}</div>
-                <div>-</div>
-                <div>-</div>
-                <div>{user.time}</div>
-                <div>{user.plant}</div>
-                <div
-                  className={`text-center p-1 rounded-3xl font-bold overflow-hidden text-white ${
-                    user.checkIn ? "bg-green-500" : "bg-red-500"
-                  }`}
-                >
+                <div>DNTH</div>
+                <div>WGR</div>
+                <div>
                   <div className="whitespace-nowrap overflow-ellipsis">
-                    {user.checkIn ? "เช็คอินแล้ว" : "ยังไม่ได้เช็คอิน"}
+                    Auto CAD
                   </div>
                 </div>
+                <div>AR</div>
+                <button
+                  className="border border-orange-500 rounded-3xl bg-orange-500 text-white font-semibold"
+                  onClick={() =>
+                    handleCourseClick(
+                      user.courses.course,
+                      user.courses.employeeId
+                    )
+                  }
+                >
+                  ดูคอร์สที่เลือก
+                </button>
               </div>
             ))}
           </div>

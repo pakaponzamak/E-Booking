@@ -3,7 +3,7 @@ import {
   ref,
   onValue,
   off,
-  child,
+  remove,
   push,
   update,
   set,
@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 
 import { Bai_Jamjuree } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
@@ -94,6 +94,66 @@ export default function confirmation() {
     // Perform an effect for data
     fetchCheckIn();
   }, [users]);
+  
+  function isAppointmentWithin15Minutes(appointmentTime,appointmentDate,checkIn) {
+    const currentTime = new Date(); // Get the current time
+  const date = currentTime.toISOString().split('T')[0];
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+
+  const startTime = appointmentTime.split(":"); 
+  const appointmentHour = parseInt(startTime[0]); 
+  const appointmentMinute = parseInt(startTime[1]);
+
+  // Compare the date of the appointment and the current date
+  if (date === appointmentDate.split('T')[0]) {
+    // If the date is the same, check the time
+    const timeDiffInMinutes = (appointmentHour - currentHour) * 60 + (appointmentMinute - currentMinute);
+    
+    // Check if the appointment time is within 15 minutes of the current time
+    if (timeDiffInMinutes > 15 && timeDiffInMinutes >= 0) {
+      console.log("The user can check in. It's within 15 minutes of the appointment.");
+      return true;
+    } else {
+      console.log("The appointment time has passed. The user cannot check in.");
+      return false;
+    }
+  } else return true;
+  }
+  
+// Function to update the appointment data to "N/A" if the user didn't come within 15 minutes before the appointment
+function updateAppointmentToNAIfNotComing(user, currentTime) {
+  if (user?.health?.time) {
+    const isNotWithin15Minutes = !isAppointmentWithin15Minutes(user.health.time,user.health.date,user.health.checkIn);
+    if (isNotWithin15Minutes && user.health.checkIn === false) {
+      // The appointment time is not within the next 15 minutes
+      // Update the appointment data to "N/A"
+      const db = getDatabase();
+      const userRef = ref(db, `users/${user.id}/health`);
+      const healthDataToUpdate = {
+        type: "N/A",
+        time: "N/A",
+        date: "N/A",
+        plant: "N/A",
+        relationship: "N/A",
+        checkInTime: "N/A",
+        pickedWhat: "N/A",
+        checkIn: false,
+      };
+      
+      update(userRef, healthDataToUpdate);
+      console.log(`Updated appointment for user with ID: ${user.id}`);
+    }else console.log("Check in already cannot delete")
+  }
+}
+  // Now you can use the updateAppointmentToNAIfNotComing function inside the useEffect
+  useEffect(() => {
+    if (users.length > 0) {
+      users.forEach((user) => {
+        updateAppointmentToNAIfNotComing(user);
+      });
+    }
+  }, [users]);
 
   const fetchCheckIn = async () => {
     let already = false;
@@ -132,60 +192,61 @@ export default function confirmation() {
     Swal.fire({
       title: 'ท่านต้องการจะ "เช็คอิน" หรือไม่',
       text: "",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#16a34a',
-      cancelButtonColor: '#D43732',
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonColor: "#16a34a",
+      cancelButtonColor: "#D43732",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
     }).then((result) => {
-    if (result.isConfirmed) {
-      const buttonId = e.target.id;
-      // Use the buttonId as needed
-      let userFound = false;
+      if (result.isConfirmed) {
+        const buttonId = e.target.id;
+        // Use the buttonId as needed
+        let userFound = false;
 
-      for (const user of users) {
-        if (
-          performConfirm(
-            user.employeeId,
-            user.firstName,
-            user.health.checkIn,
-            user.health.type
-          )
-        ) {
-          userFound = true;
-          break; // Exit the loop when a matching user is found
+        for (const user of users) {
+          if (
+            performConfirm(
+              user.employeeId,
+              user.firstName,
+              user.health.checkIn,
+              user.health.type
+            )
+          ) {
+            userFound = true;
+            break; // Exit the loop when a matching user is found
+          }
+        }
+        if (!userFound) {
+          // console.log("No match found for userFound:", userFound);
+          alert("Account Not Found");
+          router.push(`../`);
         }
       }
-      if (!userFound) {
-        // console.log("No match found for userFound:", userFound);
-        alert("Account Not Found");
-        router.push(`../`);
-      }
-    }})
+    });
   };
 
   const cancelHandler = async (e) => {
-    
     Swal.fire({
       title: 'ท่านต้องการจะ "ยกเลิก" การจองหรือไม่',
       text: "",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#16a34a',
-      cancelButtonColor: '#D43732',
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ยกเลิก'
+      confirmButtonColor: "#16a34a",
+      cancelButtonColor: "#D43732",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
     }).then((result) => {
-    if (result.isConfirmed) {
-      {
-        users.map(
-          (user) => performDelete(user.employeeId, user.firstName)
-          //user.checkIn = true
-        );
+      if (result.isConfirmed) {
+        {
+          users.map(
+            (user) => performDelete(user.employeeId, user.firstName)
+            //user.checkIn = true
+          );
+        }
+        //router.push(`../`);
       }
-      //router.push(`../`);
-    }})
+    });
   };
 
   function performDelete(idParameter, nameParameter) {
@@ -230,11 +291,7 @@ export default function confirmation() {
           };
           update(ref(db), updates)
             .then(() => {
-              Swal.fire(
-                'ยกเลิกสำเร็จ',
-                '',
-                'success'
-              )
+              Swal.fire("ยกเลิกสำเร็จ", "", "success");
             })
             .catch((error) => {
               console.error("Error updating data:", error);
@@ -293,23 +350,14 @@ export default function confirmation() {
       };
       updates["users/" + anotherEmployeeId + "/health/checkIn"] = true;
       updates["users/" + anotherEmployeeId + "/health/checkInTime"] = dateTime;
-      Swal.fire(
-        'เช็คอินสำเร็จ',
-        '',
-        'success',
-        
-      )
+      Swal.fire("เช็คอินสำเร็จ", "", "success");
       return update(ref(db), updates);
     } else if (
       idParameter === anotherEmployeeId &&
       nameParameter === anotherName &&
       checkinParameter === true
     ) {
-      Swal.fire(
-        'ท่านได้ทำการเช็คอินไปแล้ว',
-        '',
-        'warning'
-      )
+      Swal.fire("ท่านได้ทำการเช็คอินไปแล้ว", "", "warning");
       return true;
     } else if (
       idParameter === anotherEmployeeId &&
@@ -318,12 +366,12 @@ export default function confirmation() {
       typeParameter === "N/A"
     ) {
       Swal.fire({
-        title: 'ท่านยังไม่ได้ทำการเลือกเวลานัดหมาย',
-        text: '',
-        icon: 'warning',
-        confirmButtonText: 'ปิด',
-        confirmButtonColor: '#D43732'
-      })
+        title: "ท่านยังไม่ได้ทำการเลือกเวลานัดหมาย",
+        text: "",
+        icon: "warning",
+        confirmButtonText: "ปิด",
+        confirmButtonColor: "#D43732",
+      });
       return true;
     }
   }
@@ -349,7 +397,13 @@ export default function confirmation() {
                     <div className="text mb-3 text-left ">ประวัติการจอง</div>
                     <div className="border-b mb-3"></div>
                     <div className="text-center mb-4 text-2xl ">
-                      <strong>{user.health.type}</strong>
+                      <div>
+                        <strong>
+                          {user.health.type === "N/A"
+                            ? "ไม่พบคิวแพทย์"
+                            : user.health.type}
+                        </strong>
+                      </div>
                     </div>
                     <div className="flex justify-between mt-3">
                       <div className="mb-1">
@@ -363,11 +417,13 @@ export default function confirmation() {
                                   dateStyle: "long",
                                 }
                               )
-                            : " "}{" "}
+                            : "-"}{" "}
                         </strong>
                       </div>
                       <div className="mb-1">
-                        เวลา : <strong>{user.health.time}</strong>
+                        เวลา : <strong>{user.health.time === "N/A"
+                            ? "-"
+                            : user.health.time}</strong>
                       </div>
                     </div>
                     {/* Render other user data */}
@@ -375,7 +431,9 @@ export default function confirmation() {
                     {user.health && (
                       <div>
                         <div className="mb-1">
-                          Plant : <strong>{user.health.plant}</strong>
+                          Plant : <strong>{user.health.plant === "N/A"
+                            ? "-"
+                            : user.health.plant}</strong>
                         </div>
                         <p className="mb-1">
                           ชื่อ : <strong>{user.firstName}</strong>

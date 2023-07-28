@@ -61,10 +61,7 @@ export default function Home() {
           time: "N/A",
           plant: "N/A",
           hall: "N/A",
-          whoPickedCourse: {
-            counter : 1,
-            employeeId: ["AnalDa"]
-          }
+          
         },
         health: {
           firstName: firstName,

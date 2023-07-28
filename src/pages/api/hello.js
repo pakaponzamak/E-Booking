@@ -4,7 +4,7 @@ export default function handler(req, res) {
   res
     .status(200)
     .json({
-      name: "Anada Laocharoensombat",
+      name: "Analda Laocharoensombat",
       gerder: "Boy",
       Age: "99 Years old",
       Location: ""

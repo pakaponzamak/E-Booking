@@ -44,7 +44,7 @@ export default function selectionPage() {
             ระบบรักษาพยาบาล
           </button>
         </Link>
-        <Link href={`./tr_course/TRcalendar?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>
+        <Link href={`./tr_course/plant_select?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>
           <button
             type="summit"
             class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-lg px-10 py-2.5 text-center 

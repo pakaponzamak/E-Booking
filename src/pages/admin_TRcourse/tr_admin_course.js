@@ -6,6 +6,7 @@ import DensoLogo from "../images/Denso_logo.png";
 import { getDatabase, ref, remove, onValue, off } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2'
 
 const bai = Bai_Jamjuree({
   subsets: ["latin"],
@@ -27,7 +28,7 @@ export default function tr_admin_course() {
 
   StartFireBase();
 
-  useEffect(() => {
+useEffect(() => {
     const db = getDatabase();
     const courseRef = ref(db, "courses");
     // Listen for changes in the 'users' reference
@@ -50,9 +51,8 @@ export default function tr_admin_course() {
     };
   }, []);
 
-
-      //Auto go to current Date when entered
-      useEffect(() => {
+ //Auto go to current Date when entered
+useEffect(() => {
         // Scroll to current date section
         if (scrollRef.current) {
           const currentDateElement =
@@ -731,21 +731,23 @@ export default function tr_admin_course() {
                 <div
                   className={
                     course.number >= course.amount
-                      ? "text-white rounded-3xl bg-red-500 font-bold"
-                      : "text-white rounded-3xl bg-green-500 font-bold"
+                      ? "text-white rounded-3xl bg-red-500 font-bold cursor-pointer"
+                      : "text-white rounded-3xl bg-green-500 font-bold cursor-pointer"
                   }
+                 
                 >
                   {course.number} / {course.amount}
                 </div>
 
+                <div className="flex">
                 
-                <div>
                   <button
                     onClick={() => deleteSingleUserHandler(course)}
-                    className=" text-center p-1 px-5 text-white bg-red-600 rounded-3xl"
+                    className=" text-center p-1 px-3 text-white bg-red-600 rounded-3xl"
                   >
                     ลบ
                   </button>
+                  
                 </div>
               </div>
             ))}
