@@ -19,7 +19,7 @@ const bai = Bai_Jamjuree({
 });
 
 export default function admin() {
-  startFireBase();
+  //startFireBase();
 
   const [timeStart, setTimeStart] = useState("");
   const [timeEnd, setTimeEnd] = useState("");

@@ -94,9 +94,9 @@ export default function confirmation() {
     // Perform an effect for data
     fetchCheckIn();
   }, [users]);
-  
-  function isAppointmentWithin15Minutes(appointmentTime,appointmentDate,checkIn) {
-    const currentTime = new Date(); // Get the current time
+
+  function isAppointmentWithin15Minutes(appointmentTime,appointmentDate) {
+  const currentTime = new Date(); // Get the current time
   const date = currentTime.toISOString().split('T')[0];
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
@@ -118,13 +118,13 @@ export default function confirmation() {
       console.log("The appointment time has passed. The user cannot check in.");
       return false;
     }
-  } else return true;
+  } else {return true};
   }
   
 // Function to update the appointment data to "N/A" if the user didn't come within 15 minutes before the appointment
-function updateAppointmentToNAIfNotComing(user, currentTime) {
+function updateAppointmentToNAIfNotComing(user) {
   if (user?.health?.time) {
-    const isNotWithin15Minutes = !isAppointmentWithin15Minutes(user.health.time,user.health.date,user.health.checkIn);
+    const isNotWithin15Minutes = !isAppointmentWithin15Minutes(user.health.time,user.health.date);
     if (isNotWithin15Minutes && user.health.checkIn === false) {
       // The appointment time is not within the next 15 minutes
       // Update the appointment data to "N/A"
@@ -343,14 +343,21 @@ function updateAppointmentToNAIfNotComing(user, currentTime) {
       const postData = {
         firstName: nameParameter,
         employeeId: idParameter,
-        health: {
-          checkIn: true,
-          checkInTime: dateTime,
-        },
+      
       };
-      updates["users/" + anotherEmployeeId + "/health/checkIn"] = true;
-      updates["users/" + anotherEmployeeId + "/health/checkInTime"] = dateTime;
+      
+      //updates["users/" + anotherEmployeeId + "/health/checkIn"] = true;
+      //updates["users/" + anotherEmployeeId + "/health/checkInTime"] = dateTime;
+      updates["users/" + anotherEmployeeId + "/health/type"] = "N/A";
+      updates["users/" + anotherEmployeeId + "/health/time"] = "N/A";
+      updates["users/" + anotherEmployeeId + "/health/date"] = "N/A";
+      updates["users/" + anotherEmployeeId + "/health/plant"] = "N/A";
+      updates["users/" + anotherEmployeeId + "/health/relationship"] = "N/A";
+      updates["users/" + anotherEmployeeId + "/health/checkInTime"] = "N/A";
+      updates["users/" + anotherEmployeeId + "/health/pickedWhat"] = "N/A";
+      //updates["users/" + anotherEmployeeId + "/health/pickedWhat"] = "N/A";
       Swal.fire("เช็คอินสำเร็จ", "", "success");
+    
       return update(ref(db), updates);
     } else if (
       idParameter === anotherEmployeeId &&
@@ -442,28 +449,7 @@ function updateAppointmentToNAIfNotComing(user, currentTime) {
                           ID : <strong>{user.employeeId.toUpperCase()}</strong>
                         </p>
 
-                        <div
-                          className={`text-center p-3 px-10 rounded-xl justify-center flex overflow-hidden  ${
-                            user.health.checkIn
-                              ? "bg-green-500 text-white"
-                              : "border-red-500 text-red-500 border"
-                          }`}
-                        >
-                          <div className="flex items-center text-center">
-                            <div className="text-center ">
-                              {user.health.checkIn ? (
-                                <>
-                                  เช็คอินแล้ว ณ วันที่{" "}
-                                  <span className="font-bold">
-                                    {user.health.checkInTime}
-                                  </span>
-                                </>
-                              ) : (
-                                "ยังไม่ได้เช็คอิน"
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                        
                       </div>
                     )}
                   </div>
@@ -471,9 +457,9 @@ function updateAppointmentToNAIfNotComing(user, currentTime) {
               }
               return null;
             })}
-            <div className="mb-16 border-b mt-6"></div>
+            <div className="mb-20 border-b mt-6 "></div>
           </div>
-          <div className="justify-between flex -translate-y-28 gap-10 mx-10 ">
+          <div className="justify-between flex -translate-y-28 gap-10 mx-10 mt-10">
             <button
               onClick={cancelHandler}
               className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"

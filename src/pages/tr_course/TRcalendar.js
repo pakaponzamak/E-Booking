@@ -276,7 +276,7 @@ export default function Calendar() {
         date: course.date,
         hall: course.hall,
         time:course.timeStart,
-        plant:course.plant
+        
       }
 
       await update(

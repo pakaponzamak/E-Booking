@@ -6,6 +6,17 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useRouter } from "next/router";
 import Swal from 'sweetalert2'
+import {
+    getDatabase,
+    ref,
+    onValue,
+    off,
+    remove,
+    push,
+    update,
+    set,
+  } from "firebase/database";
+  import StartFireBase from "../../firebase/firebase_conf";
 
 export default function DropdownMenu() {
   const [company, setCompany] = useState("");
@@ -15,6 +26,7 @@ export default function DropdownMenu() {
   const router = useRouter();
   const { firstName, employeeId, checkIn } = router.query;
 
+  StartFireBase();
   const submitHandler = () => {
     if (
       company.trim() === "" ||
@@ -24,6 +36,16 @@ export default function DropdownMenu() {
     ) {
       alert("กรุณากรอกข้อมูล");
       return;
+    }
+    else{
+        const addPlant = {
+            company: company,
+            plant: plant,
+            division: division,
+            department: department,
+          };
+        const db = getDatabase();
+      update(ref(db, "users/" + employeeId + "/courses/"), addPlant)
     }
 
     router.push(
@@ -90,7 +112,7 @@ export default function DropdownMenu() {
         </Box>
       </div>
       <div className="mx-20 my-5">
-        <Box sx={{ minWidth: 120 }}>
+        <Box sx={{ }}>
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">เลือก Plant</InputLabel>
             <Select
@@ -115,8 +137,8 @@ export default function DropdownMenu() {
             className=" px-10 py-3 rounded-xl m-1 border"
             placeholder="Division"
             type="text"
-            name="username"
-            id="username"
+            name="division"
+            id="division"
             required="required"
             onChange={(e) => setDivision(e.target.value)}
           ></input>
@@ -127,8 +149,8 @@ export default function DropdownMenu() {
             className=" px-10 py-3 rounded-xl m-1 border"
             placeholder="Department"
             type="text"
-            name="username"
-            id="username"
+            name="department"
+            id="department"
             required="required"
             onChange={(e) => setDepartment(e.target.value)}
           ></input>

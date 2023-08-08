@@ -10,9 +10,9 @@ import {
   update,
 } from "firebase/database";
 import startFireBase from "../../firebase/firebase_conf";
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from "@vercel/analytics/react";
 
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
@@ -172,7 +172,7 @@ export default function Calendar() {
     setCurrentDate(nextDate);
     setStartIndex(1);
   };
-
+  
   const currentDay = currentDate.getDate();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
@@ -212,17 +212,17 @@ export default function Calendar() {
       : "text-right p-2 w-10 h-10 bg-slate-200 hover:bg-blue-300";
 
     const dayElement = (
-      <div key={i} className="flex-none">
+      <div key={i} className="flex-nowrap">
         <div className="text-center text-xs">{dayOfWeek}</div>
         <button
           onClick={() => handleNumberClick(i)}
-          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col overflow-x-auto`}
+          className={`${dayButtonClass} rounded-xl text-center justify-center items-center flex flex-col overflow-x-auto flex-nowrap`}
           disabled={isDisabled} // Disable the button for past dates
           style={
             isPastDate && !isCurrentDate ? { backgroundColor: "#f1f5f9" } : null
           } // Change background color for past dates
         >
-          <div className="text-center flex  overflow-x-auto">{i}</div>
+          <div className="text-center flex  flex-nowrap">{i}</div>
         </button>
       </div>
     );
@@ -230,20 +230,22 @@ export default function Calendar() {
     days.push(dayElement);
   }
 
-
   const pickedHandler = async (health) => {
     const db = getDatabase();
-  
+
     let isPick = false;
     for (const user of users) {
       if (user.employeeId === employeeId) {
-        if (user.health.pickedWhat !== "N/A" && user.employeeId === employeeId) {
+        if (
+          user.health.pickedWhat !== "N/A" &&
+          user.employeeId === employeeId
+        ) {
           isPick = true;
           break;
         }
       }
     }
-  
+
     if (isPick === true) {
       alert(`รหัส "${employeeId}" ได้ทำจองพบแพทย์ไปแล้วกรุณายกเลิกก่อน`);
     } else {
@@ -253,13 +255,15 @@ export default function Calendar() {
           year: "numeric",
           month: "long",
           day: "numeric",
-        })}</b><br>เวลา : <b>${health.timeStart}</b><br>สถานที่ : <b>${health.plant}</b>`,
-        icon: 'warning',
+        })}</b><br>เวลา : <b>${health.timeStart}</b><br>สถานที่ : <b>${
+          health.plant
+        }</b>`,
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#16a34a',
-      cancelButtonColor: '#D43732',
-      confirmButtonText: 'ยืนยัน',
-      cancelButtonText: 'ยกเลิก'
+        confirmButtonColor: "#16a34a",
+        cancelButtonColor: "#D43732",
+        confirmButtonText: "ยืนยัน",
+        cancelButtonText: "ยกเลิก",
       }).then((result) => {
         if (result.isConfirmed && !isPick) {
           if (health.alreadyPicked < 1) {
@@ -284,24 +288,30 @@ export default function Calendar() {
               type: health.doctor,
               pickedWhat: health.doctor + health.date + health.timeStart,
             };
-  
+
             update(
               ref(
                 db,
-                "health/" + health.plant + health.doctor + health.date + health.timeStart
+                "health/" +
+                  health.plant +
+                  health.doctor +
+                  health.date +
+                  health.timeStart
               ),
               postData
             );
-  
+
             update(ref(db, "users/" + employeeId + "/health"), addToUser);
+            router.push(
+              `./more_detail?firstName=${firstName}&employeeId=${employeeId}&date=${health.date}`
+            );
           } else {
-            alert('เต็มแล้ว');
+            alert("เต็มแล้ว");
           }
         }
       });
     }
   };
-  
 
   const handleToggleContent = () => {
     setShowContent(!showContent);
@@ -328,6 +338,7 @@ export default function Calendar() {
   };
 
   const plantFilterClick = (e) => {
+    console.log(healthCare)
     setPlantNumber(e);
     if (e === 1) {
       setPlantFilter("BPK");
@@ -338,12 +349,9 @@ export default function Calendar() {
     }
   };
 
- 
-
   const currentTime = new Date(); // Get the current time
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
-  
 
   return (
     <main
@@ -582,34 +590,41 @@ export default function Calendar() {
               doctor === healthCare.doctor &&
               plant === healthCare.plant
             );
-          }).filter((healthCare) => {
-            const startTime = healthCare.timeStart.split(":"); 
-            const startHour = parseInt(startTime[0]); 
+          })
+          .filter((healthCare) => {
+            const startTime = healthCare.timeStart.split(":");
+            const startHour = parseInt(startTime[0]);
             const startMinute = parseInt(startTime[1]);
-            const date = currentTime.toISOString().split('T')[0];
+            const date = currentTime.toISOString().split("T")[0];
             const isTimePassed =
-            date === healthCare.date &&
-            (currentHour > startHour ||
-              (currentHour === startHour && currentMinute >= startMinute)); return  !isTimePassed;})
+              date === healthCare.date &&
+              (currentHour > startHour ||
+                (currentHour === startHour && currentMinute >= startMinute));
+
+            return !isTimePassed;
+          })
           .map((healthCare) => {
             const startTime = healthCare.timeStart.split(":"); //09 : 05
             const startHour = parseInt(startTime[0]); // 09
-            const startMinute = parseInt(startTime[1]);// 05
-            const date = currentTime.toISOString().split('T')[0];
+            const startMinute = parseInt(startTime[1]); // 05
+            const date = currentTime.toISOString().split("T")[0];
             const isTimePassed =
-            date === healthCare.date &&
-            (currentHour > startHour ||
-              (currentHour === startHour && currentMinute >= startMinute));
+              date === healthCare.date &&
+              (currentHour > startHour ||
+                (currentHour === startHour && currentMinute >= startMinute));
             return (
               <div
-              key={healthCare.id}
-              className={`border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 ${
-                isTimePassed ? "opacity-50 pointer-events-none" : ""
-              }`}
-            >
+                key={healthCare.id}
+                className={`border-2 mx-3 p-2 rounded-xl bg-slate-200 drop-shadow-lg mb-5 ${
+                  isTimePassed ? "opacity-50 pointer-events-none" : ""
+                }`}
+              >
                 <div className="flex justify-between mb-2">
                   <h1>
-                    ประเภท : <u><strong>{healthCare.doctor} </strong></u>
+                    ประเภท :{" "}
+                    <u>
+                      <strong>{healthCare.doctor} </strong>
+                    </u>
                   </h1>
                 </div>
                 <div className="flex justify-between mb-2">
@@ -639,10 +654,10 @@ export default function Calendar() {
                   </p>
 
                   <button
-                onClick={() => pickedHandler(healthCare)}
-                className={healthCare.alreadyPicked >= 1 ? "" : ""}
-                disabled={healthCare.alreadyPicked >= 1 || isTimePassed}
-              >
+                    onClick={() => pickedHandler(healthCare)}
+                    className={healthCare.alreadyPicked >= 1 ? "" : ""}
+                    disabled={healthCare.alreadyPicked >= 1 || isTimePassed}
+                  >
                     <div className="">
                       {healthCare.alreadyPicked >= 1 ? (
                         <span className="text-white bg-red-600 p-2 px-2 rounded-2xl font-semibold">
@@ -663,4 +678,3 @@ export default function Calendar() {
     </main>
   );
 }
-

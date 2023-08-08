@@ -463,14 +463,14 @@ export default function TRusers() {
                   <strong>{user.employeeId.toUpperCase()}</strong>
                 </div>
                 <div>{user.firstName}</div>
-                <div>DNTH</div>
-                <div>WGR</div>
+                <div>{user.courses.company}</div>
+                <div>{user.courses.plant}</div>
                 <div>
                   <div className="whitespace-nowrap overflow-ellipsis">
-                    Auto CAD
+                  {user.courses.division}
                   </div>
                 </div>
-                <div>AR</div>
+                <div>{user.courses.department}</div>
                 <button
                   className="border border-orange-500 rounded-3xl bg-orange-500 text-white font-semibold"
                   onClick={() =>

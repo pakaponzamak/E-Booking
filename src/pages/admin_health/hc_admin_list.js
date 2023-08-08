@@ -79,16 +79,7 @@ export default function tr_admin_course() {
     }, []);
 
   const router = useRouter();
-  const toggleForm = (user) => {
-    if (
-      user.id !== "!!Do no delete!!" &&
-      user.employeeId !== "!!`~Do no delete~`!!"
-    ) {
-      setShowForm(user);
-    } else {
-      alert("Cannot perform this action");
-    }
-  };
+
   function deleteSingleUserHandler(health) {
     // Access the user object and perform actions
     console.log("Delete Button clicked for user:", health);
@@ -97,7 +88,7 @@ export default function tr_admin_course() {
     if (cnf) {
       remove(ref(db, "health/" + health.id));
     }
-    // Other actions...
+    // Other actions
   }
   function updateSingleUserHandler(course) {}
   const courseOptionChange = (event) => {

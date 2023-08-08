@@ -135,13 +135,7 @@ export default function TRusers() {
   
     XLSX.writeFile(workbook, 'users_data.xlsx');
   };
-  const getTimeFromString = (timeString) => {
-    const [hours, minutes] = timeString.split(":");
-    const currentTime = new Date();
-    currentTime.setHours(parseInt(hours));
-    currentTime.setMinutes(parseInt(minutes));
-    return currentTime;
-  };
+
 
   return (
     <div className={`${bai.className} bg-slate-100 flex h-screen `}>
@@ -428,7 +422,7 @@ export default function TRusers() {
             <div className="grid grid-cols-7 gap-3 mx-5 text-center font-bold">
               <div>รหัสพนักงาน</div>
               <div>ชื่อ-นามสกุล</div>
-              <div>ความสัมพันธ์</div>
+              
               <div>ประเภท</div>
               <div>วันที่ - เวลา</div>
               <div>Plant</div>
@@ -449,9 +443,7 @@ export default function TRusers() {
                   <div className="col-span-1">{user.health.firstName}</div>
                   {user.health && (
                     <>
-                      <div className="col-span-1">
-                        {user.health.relationship}
-                      </div>
+                      
                       <div className="col-span-1">
                         <strong>{user.health.type}</strong>
                       </div>
@@ -488,6 +480,12 @@ export default function TRusers() {
                           </div>
                         </div>
                       </div>
+                      <button
+                  className="border border-orange-500 rounded-3xl bg-orange-500 text-white font-semibold mx-3 my-3"
+                  
+                >
+                  ดูข้อมูลเพิ่มเติม
+                </button>
                     </>
                   )}
                   
