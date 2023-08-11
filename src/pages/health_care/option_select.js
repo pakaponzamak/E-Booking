@@ -29,7 +29,7 @@ export default function option_select() {
         <div className="text-center text-2xl font-semibold text-[#D43732]">
           (DNTH Health Care Center)
         </div>
-        <div className="mt-20  text-center">
+        <div className="mt-20  text-center flex">
         <Link href={`./HCcalendar?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>
           <div className=" inline-block p-4 px-5 text-center w-40 h-50 bg-slate-300 rounded-3xl mr-5">
             จองคิว

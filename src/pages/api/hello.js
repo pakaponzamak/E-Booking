@@ -20,8 +20,18 @@ export default function handler(req, res) {
       age: age || "",
       location: location || ""
     });
+  } else if (req.method === 'PUT') {
+    // Handle the PUT request
+    // Perform necessary operations to update data
+    // Respond with a success message or updated data
+    res.status(200).json({ message: 'Data updated successfully' });
+  } else if (req.method === 'DELETE') {
+    // Handle the DELETE request
+    // Perform necessary operations to delete data
+    // Respond with a success message
+    res.status(200).json({ message: 'Data deleted successfully' });
   } else {
     // Respond with an error message for other HTTP methods
-    res.status(405).json({ error: 'Analda Not Allowed' });
+    res.status(405).json({ error: 'Method Not Allowed' });
   }
 }

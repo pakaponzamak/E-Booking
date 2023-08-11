@@ -131,6 +131,7 @@ function updateAppointmentToNAIfNotComing(user) {
       const db = getDatabase();
       const userRef = ref(db, `users/${user.id}/health`);
       const healthDataToUpdate = {
+        
         type: "N/A",
         time: "N/A",
         date: "N/A",
