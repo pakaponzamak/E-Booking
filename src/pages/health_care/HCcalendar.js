@@ -303,7 +303,7 @@ export default function Calendar() {
 
             update(ref(db, "users/" + employeeId + "/health"), addToUser);
             router.push(
-              `./more_detail?firstName=${firstName}&employeeId=${employeeId}&date=${health.date}`
+              `./more_detail?firstName=${firstName}&employeeId=${employeeId}&date=${health.date}&time=${health.timeStart}`
             );
           } else {
             alert("เต็มแล้ว");
@@ -661,7 +661,7 @@ export default function Calendar() {
                     <div className="">
                       {healthCare.alreadyPicked >= 1 ? (
                         <span className="text-white bg-red-600 p-2 px-2 rounded-2xl font-semibold">
-                          จองแล้ว
+                          เต็มแล้ว
                         </span>
                       ) : (
                         <span className="text-white bg-green-600 p-2 px-8 rounded-2xl font-semibold">
