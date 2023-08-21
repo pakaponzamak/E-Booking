@@ -20,6 +20,11 @@ export default function appointment() {
   const [relation, setRelation] = useState("");
   const [user, setUser] = useState([]);
 
+   useEffect(() => {
+    
+   
+   }, []);
+
 
   return (
     <main className={`${bai_jamjuree.className}`}>
