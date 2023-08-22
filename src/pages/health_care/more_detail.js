@@ -8,6 +8,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
+import { getDatabase, ref, remove, onValue, off } from "firebase/database";
+import StartFireBase from "../../firebase/firebase_conf";
+
 const bai_jamjuree = Bai_Jamjuree({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
@@ -19,6 +22,7 @@ export default function appointment() {
   const [company, setCompany] = useState("");
   const [relation, setRelation] = useState("");
   const [user, setUser] = useState([]);
+  StartFireBase();
 
    useEffect(() => {
     
@@ -79,17 +83,15 @@ export default function appointment() {
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={relation}
-                  label="เลือก Company"
+                  label="สถานะผู้ติดต่อ"
                   onChange={(e) => setRelation(e.target.value)}
                 >
-                  <MenuItem value={"-"}></MenuItem>
-                  <MenuItem value={"..."}></MenuItem>
-                  <MenuItem value={"---"}></MenuItem>
+                  <MenuItem value={"employee"}>พนักงาน</MenuItem>
                 </Select>
               </FormControl>
             </Box>
           </div>
-          <div className = "mt-5 mx-10">
+          <div className = "mt-3 mx-10">
           <input
             className="rounded-xl m-1 border w-full p-3 "
             placeholder="เบอร์ติดต่อ"
@@ -108,10 +110,16 @@ export default function appointment() {
           ></input>
           </div>
         </div>
+        <div className="mt-5  text-center mx-16 flex justify-between">
+            <button className="border bg-[#E45A6B] px-10 py-4 text-xl rounded-2xl  text-white font-bold">
+                ยืนยัน
+            </button>
+            <button className="border bg-[#E45A6B] px-10 py-4 text-xl rounded-2xl text-white font-bold">
+                เพิ่ม
+            </button>
+        </div>
       </div>
-      <div>{user.map((item) => (
-          <li key={item.id}>{item.name}</li>
-        ))}</div>
+
     </main>
   );
 }

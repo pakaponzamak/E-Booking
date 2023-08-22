@@ -187,7 +187,6 @@ export default function Calendar() {
 
     days.push(dayElement);
   }
-
   const countClickCheckHandler = async (course) => {
     const db = getDatabase();
     const userPickedCourse = courses.find((c) => c.id === course.id);
@@ -301,6 +300,7 @@ export default function Calendar() {
       );
     }
   };
+
 
   return (
     <main

@@ -7,9 +7,8 @@ export default function Test() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [users, setUsers] = useState([]);
-  
-
-
+  const [test,setTest] = useState([]);
+  const [data, setData] = useState([]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -186,9 +185,10 @@ export default function Test() {
         <h2>Updated Data</h2>
         <ul>
           {users.map((user) => (
-            <li key={user.id}>Date: {user.name} Name: {user.date}</li>
+            <li key={user.id}>Date: {user.name} Name: {user.user_id}</li>
           ))}
         </ul>
+        
       </div>
 
 

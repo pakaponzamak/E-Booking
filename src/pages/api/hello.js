@@ -1,18 +1,4 @@
-
-import mysql from 'mysql2/promise';
-
-
-// Create a MySQL connection pool
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'testDatabase',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
-
+import pool from '../../server/mySQL'
 
 
 // Define a function to execute MySQL queries
@@ -28,7 +14,7 @@ async function executeQuery(query, values) {
 
 // Now you can use executeQuery to run MySQL queries
 const getUsers = async () => {
-  const query = 'SELECT * FROM employee';
+  const query = 'SELECT * FROM users';
   const users = await executeQuery(query);
   return users;
 };
@@ -36,7 +22,7 @@ const getUsers = async () => {
 
 // Define a function to insert a new user into the MySQL database
 async function postUser(fname, date) {
-  const query = 'INSERT INTO employee (date, name) VALUES (?, ?)';
+  const query = 'INSERT INTO users (user_id, name) VALUES (?, ?)';
   const values = [date, fname];
   try {
     await executeQuery(query, values);
