@@ -314,7 +314,9 @@ export default function Calendar() {
         }
       });
     }
-  } else {
+  } 
+  //If have more relation
+  else {
     Swal.fire({
       title: `${health.doctor}`,
       html: `วันที่ : <b>${new Date(health.date).toLocaleDateString("th-TH", {
@@ -331,18 +333,60 @@ export default function Calendar() {
       confirmButtonText: "ยืนยัน",
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
-      if (result.isConfirmed) {
+      if (result.isConfirmed ) {
         // Route to another page and send data
-        router.push({
-          pathname: "./relation_detail", // Replace with the actual path to your new page
-          query: {
-            doctor: health.doctor,
+        if (health.alreadyPicked < 1) {
+          const updatedHealth = healthCare.map((h) => {
+            if (h.id === health.id) {
+              return {
+                ...h,
+                alreadyPicked: h.alreadyPicked + 1,
+              };
+            }
+            return h;
+          });
+          setHealthCare(updatedHealth);
+          const postData = {
+            alreadyPicked: health.alreadyPicked + 1,
+            whoPickedThis: employeeId,
+          };
+          const addToUser = {
             date: health.date,
-            timeStart: health.timeStart,
             plant: health.plant,
-            // Add more data properties as needed
-          },
-        });
+            time: health.timeStart,
+            type: health.doctor,
+            pickedWhat: health.doctor + health.date + health.timeStart,
+          };
+
+          update(
+            ref(
+              db,
+              "health/" +
+                health.plant +
+                health.doctor +
+                health.date +
+                health.timeStart
+            ),
+            postData
+          );
+
+          update(ref(db, "relation_health_care/" + employeeId), addToUser);
+          router.push({
+            pathname: "./relation_detail", // Replace with the actual path to your new page
+            query: {
+              doctor: health.doctor,
+              date: health.date,
+              timeStart: health.timeStart,
+              plant: health.plant,
+              employeeId:employeeId,
+              firstName:firstName
+              // Add more data properties as needed
+            },
+          });
+        } else {
+          alert("เต็มแล้ว");
+        }
+        
       }
     });
   }

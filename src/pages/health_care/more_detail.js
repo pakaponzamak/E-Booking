@@ -85,7 +85,7 @@ const alertHandler = () => {
       <div>
         <Analytics />
         <h1
-          className="text-center text-3xl mt-10 mb-5"
+          className="text-center text-3xl mt-5 mb-5"
         >
           ข้อมูลเพิ่มเติม
         </h1>

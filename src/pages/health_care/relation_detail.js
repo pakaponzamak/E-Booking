@@ -1,5 +1,5 @@
 import { Analytics } from "@vercel/analytics/react";
-import { Bai_Jamjuree } from "next/font/google";
+import { Bai_Jamjuree, Telex } from "next/font/google";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
@@ -8,8 +8,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
-import { getDatabase, ref, remove, onValue, off } from "firebase/database";
+import { getDatabase, ref, remove, onValue, off,update } from "firebase/database";
 import StartFireBase from "../../firebase/firebase_conf";
 
 const bai_jamjuree = Bai_Jamjuree({
@@ -20,15 +21,60 @@ const bai_jamjuree = Bai_Jamjuree({
 export default function relation_detail() {
   const router = useRouter();
   const { firstName, employeeId, date, timeStart, doctor } = router.query;
-  const [company, setCompany] = useState("");
   const [relation, setRelation] = useState("");
-  const [user, setUser] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  
+  const [name, setName] = useState("");
+  const [tel,setTel] = useState("");
+  const [symptom,setSymptom] = useState("");
   const [addRelation, setAddRelation] = useState("true");
 
   StartFireBase();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+
+
+  }, []);
+
+  const alertHandler = () => {
+    // Check if any of the fields are empty
+    if (
+        name.trim() === "" ||
+        tel.trim() === "" ||
+        symptom.trim() === "" ||
+      relation.trim() === ""
+    ) {
+      alert("กรุณากรอกข้อมูล");
+      return; // Don't proceed if any field is empty
+    }
+  
+    Swal.fire({
+      title: 'สำเร็จ',
+      icon: 'success'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const db = getDatabase();
+        const data = {
+          name: name,
+          relation: relation,
+          telphone_num: tel,
+          symptom: symptom,
+        };
+  
+        update(ref(db, "relation_health_care/" + employeeId), data)
+          .then(() => {
+            
+          })
+          .catch((error) => {
+            console.error("Error inserting data:", error);
+          });
+  
+        router.push({
+          pathname: `./option_select`,
+          query: { firstName, employeeId },
+        });
+      }
+    });
+  };
 
   return (
     <main className={`${bai_jamjuree.className}`}>
@@ -77,6 +123,7 @@ export default function relation_detail() {
               name="tel"
               id="tel"
               required="required"
+              onChange={(e) => setName(e.target.value)}
             ></input>
             <input
               className="rounded-xl m-1 border w-full p-3 "
@@ -85,6 +132,7 @@ export default function relation_detail() {
               name="tel"
               id="tel"
               required="required"
+              onChange={(e) => setTel(e.target.value)}
             ></input>
             <textarea
               className="rounded-xl m-1 border w-full p-2"
@@ -94,12 +142,14 @@ export default function relation_detail() {
               required="required"
               maxLength="50"
               rows="4" // Specify the number of visible lines
+              onChange={(e) => setSymptom(e.target.value)}
             ></textarea>
           </div>
         </div>
 
         <div className="mt-5  text-center mx-16   pb-10">
-          <button className="border bg-[#E45A6B] px-16 py-4 text-xl rounded-2xl  text-white font-bold">
+          <button className="border bg-[#E45A6B] px-16 py-4 text-xl rounded-2xl  text-white font-bold"
+           onClick={() => {alertHandler()}}>
             ยืนยัน
           </button>
         </div>
