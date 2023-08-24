@@ -37,11 +37,13 @@ export default function Calendar() {
   const [showPlant, setShowPlant] = useState(false);
   const [plantNumber, setPlantNumber] = useState(null);
 
+  const [ifHaveRealtion,setIfHaveRelation] = useState(false);
+
   startFireBase();
 
   const scrollRef = useRef(null);
   const router = useRouter();
-  const { firstName, employeeId, checkIn } = router.query;
+  const { firstName, employeeId, checkIn,relation } = router.query;
 
   useEffect(() => {
     const db = getDatabase();
@@ -246,7 +248,8 @@ export default function Calendar() {
       }
     }
 
-    if (isPick === true) {
+    if(relation !== "true"){
+    if (isPick === true ) {
       alert(`รหัส "${employeeId}" ได้ทำจองพบแพทย์ไปแล้วกรุณายกเลิกก่อน`);
     } else {
       Swal.fire({
@@ -311,6 +314,38 @@ export default function Calendar() {
         }
       });
     }
+  } else {
+    Swal.fire({
+      title: `${health.doctor}`,
+      html: `วันที่ : <b>${new Date(health.date).toLocaleDateString("th-TH", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })}</b><br>เวลา : <b>${health.timeStart}</b><br>สถานที่ : <b>${
+        health.plant
+      }</b>`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#16a34a",
+      cancelButtonColor: "#D43732",
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Route to another page and send data
+        router.push({
+          pathname: "./relation_detail", // Replace with the actual path to your new page
+          query: {
+            doctor: health.doctor,
+            date: health.date,
+            timeStart: health.timeStart,
+            plant: health.plant,
+            // Add more data properties as needed
+          },
+        });
+      }
+    });
+  }
   };
 
   const handleToggleContent = () => {

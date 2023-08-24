@@ -41,7 +41,7 @@ export default function selectionPage() {
             class="text-white bg-[#D43732] hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 rounded-full text-lg px-10 py-2.5 text-center 
                                 mr-2 mb-5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold"
           >
-            ระบบรักษาพยาบาล
+            จองคิวรักษาพยาบาล
           </button>
         </Link>
         <Link href={`./tr_course/plant_select?firstName=${firstName}&employeeId=${employeeId}&checkIn=${checkIn}`}>

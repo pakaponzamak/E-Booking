@@ -32,7 +32,7 @@ async function postUser(fname, date) {
 }
 
 async function deleteUserByFname(fname) {
-  const query = 'DELETE FROM employee WHERE name = ?'; // Assuming 'id' is the unique identifier for your records
+  const query = 'DELETE FROM users WHERE name = ?'; // Assuming 'id' is the unique identifier for your records
   const values = [fname];
   
   try {
