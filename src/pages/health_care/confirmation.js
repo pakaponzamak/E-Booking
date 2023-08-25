@@ -31,6 +31,7 @@ export default function confirmation() {
   const [name, setName] = useState("");
   const [emp, setEmp] = useState("");
   const [checkInStatus, setCheckInStatus] = useState("");
+  const [relationUser,setRelationUser] = useState([]);
 
   var today = new Date();
   var options = { month: "short", day: "numeric" };
@@ -91,6 +92,31 @@ export default function confirmation() {
   }, []);
 
   useEffect(() => {
+    const db = getDatabase();
+    const usersRef = ref(db, "relation_health_care");
+
+    onValue(usersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const usersArray = Object.keys(data).map((key) => {
+          const user = {
+            id: key,
+            ...data[key],
+            user: data[key]?.user || null,
+          };
+          return user;
+        });
+
+        setRelationUser(usersArray);
+      }
+    });
+
+    return () => {
+      off(usersRef);
+    };
+  }, []);
+
+  useEffect(() => {
     // Perform an effect for data
     fetchCheckIn();
   }, [users]);
@@ -131,7 +157,7 @@ function updateAppointmentToNAIfNotComing(user) {
       const db = getDatabase();
       const userRef = ref(db, `users/${user.id}/health`);
       const healthDataToUpdate = {
-        
+
         type: "N/A",
         time: "N/A",
         date: "N/A",
@@ -392,11 +418,11 @@ function updateAppointmentToNAIfNotComing(user) {
   };
 
   return (
-    <div className={`${bai_jamjuree.className} bg-slate-100 h-screen`}>
+    <div className={`${bai_jamjuree.className} bg-slate-100 h-max`}>
       <Analytics />
       <div className="flex justify-center item-center">
         <div>
-          <div className="border p-6  mb-10 mt-32  rounded-xl bg-white drop-shadow-md">
+          <div className="border p-6  mb-10 mt-28  rounded-xl bg-white drop-shadow-md">
             {users.map((user) => {
               const timeStart = getTimeFromString(user.health.time);
               if (user.employeeId === emp && user.firstName === name) {
@@ -446,13 +472,14 @@ function updateAppointmentToNAIfNotComing(user) {
                         <p className="mb-1">
                           ชื่อ : <strong>{user.firstName}</strong>
                         </p>
-                        <p className="mb-3">
+                        <p className="mb-1">
                           ID : <strong>{user.employeeId.toUpperCase()}</strong>
                         </p>
-
+                        <p className="mb-3">อาการ : <strong>{user.health.symtom}</strong></p>
                         
                       </div>
                     )}
+                    
                   </div>
                 );
               }
@@ -476,6 +503,92 @@ function updateAppointmentToNAIfNotComing(user) {
             </button>
           </div>
         </div>
+
+        
+      </div>
+      <div>
+      <div className="flex justify-center item-center">
+        <div>
+          
+          
+            {relationUser.map((user) => {
+             
+              if (user.id === emp ) {
+                return (
+                  <div className="border p-6  mb-10 mt-2  rounded-xl bg-white drop-shadow-md">
+                  <div className="mx-2">
+                    <div className="text mb-2 text-left">ประวัติการจองของญาติ</div>
+                    <div className="border-b mb-3"></div>
+                    <div className="text-center mb-4 text-2xl">
+                      <div>
+                        <strong>
+                          {user.type === null ? "ไม่พบคิวแพทย์" : user.type}
+                        </strong>
+                      </div>
+                    </div>
+                    <div className="flex justify-between mt-3">
+                      <div className="mb-1">
+                        วันที่ :{" "}
+                        <strong>
+                          {user.date && !isNaN(new Date(user.date))
+                            ? new Date(user.date).toLocaleDateString("th-TH", {
+                                dateStyle: "long",
+                              })
+                            : "-"}{" "}
+                        </strong>
+                      </div>
+                      <div className="mb-1">
+                        เวลา :{" "}
+                        <strong>
+                          {user.time === "N/A" ? "-" : user.time}
+                        </strong>
+                      </div>
+                    </div>
+                    {/* Render other user data */}
+                    {user && (
+                      <div>
+                        <div className="mb-1">
+                          Plant :{" "}
+                          <strong>
+                            {user.plant === "N/A" ? "-" : user.plant}
+                          </strong>
+                        </div>
+                        <p className="mb-1">
+                          ชื่อ : <strong>{user.name}</strong>
+                        </p>
+                        <p>
+                          อาการ : <strong>{user.symptom}</strong>
+                        </p>
+                      </div>
+                    )}
+                    <div className="mb-5 border-b mt-6 "></div>
+                  </div>
+                  <div className="justify-between flex  gap-10 mx-10 mt-2">
+                  <button
+              onClick={cancelHandler}
+              className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+            >
+              ยกเลิก
+            </button>
+            <button
+              onClick={confirmHandler}
+              id="confirm-btn"
+              className="flex-grow text-white bg-[#16a34a] hover:bg-[#0E8A37] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+            >
+              เช็คอิน
+            </button>
+                  </div>
+                </div>
+                );
+              } 
+              return null;
+            })}
+            
+
+        </div>
+
+        
+      </div>
       </div>
     </div>
   );

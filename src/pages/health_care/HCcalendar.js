@@ -43,7 +43,7 @@ export default function Calendar() {
 
   const scrollRef = useRef(null);
   const router = useRouter();
-  const { firstName, employeeId, checkIn,relation } = router.query;
+  const { firstName, employeeId, checkIn,addRelation } = router.query;
 
   useEffect(() => {
     const db = getDatabase();
@@ -248,7 +248,7 @@ export default function Calendar() {
       }
     }
 
-    if(relation !== "true"){
+    if(addRelation !== "true"){
     if (isPick === true ) {
       alert(`รหัส "${employeeId}" ได้ทำจองพบแพทย์ไปแล้วกรุณายกเลิกก่อน`);
     } else {

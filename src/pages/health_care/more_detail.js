@@ -79,6 +79,42 @@ const alertHandler = () => {
   });
 };
 
+const addmoreHandler = () => {
+    if (
+        employeeId.trim() === "" ||
+        relation.trim() === "" ||
+        company.trim() === "" ||
+        telphoneNum.trim() === "" ||
+        symptom.trim() === ""
+      ) {
+        alert("กรุณากรอกข้อมูล");
+        return; // Don't proceed if any field is empty
+      }
+
+      const db = getDatabase();
+      const data = {
+        id: employeeId,
+        relation: relation,
+        company: company,
+        telphone_num: telphoneNum,
+        symtom: symptom,
+      };
+
+      update(ref(db, "users/" + employeeId + "/health"), data)
+        .then(() => {
+            router.push({
+                pathname: `./HCcalendar`,
+                query: { firstName, employeeId , addRelation},
+              });
+        })
+        .catch((error) => {
+          console.error("Error inserting data:", error);
+        });
+
+      
+
+}
+
 
   return (
     <main className={`${bai_jamjuree.className}`}>
@@ -172,11 +208,12 @@ const alertHandler = () => {
                 ยืนยัน
             </button>
         
-            <Link href={`./HCcalendar?firstName=${firstName}&employeeId=${employeeId}&relation=${addRelation}`}>
-            <button className="border bg-[#E45A6B] px-10 py-4 text-xl rounded-2xl text-white font-bold">
+           
+            <button className="border bg-[#E45A6B] px-10 py-4 text-xl rounded-2xl text-white font-bold"
+            onClick={() => {addmoreHandler()}}>
                 เพิ่ม
             </button>
-            </Link>
+            
         </div>
       </div>
 
