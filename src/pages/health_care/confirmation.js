@@ -420,7 +420,8 @@ function updateAppointmentToNAIfNotComing(user) {
   return (
     <div className={`${bai_jamjuree.className} bg-slate-100 h-max`}>
       <Analytics />
-      <div className="flex justify-center item-center">
+      <div>
+      <div className="flex justify-center item-center mb-10">
         <div>
           <div className="border p-6  mb-10 mt-28  rounded-xl bg-white drop-shadow-md">
             {users.map((user) => {
@@ -506,7 +507,7 @@ function updateAppointmentToNAIfNotComing(user) {
 
         
       </div>
-      <div>
+      
       <div className="flex justify-center item-center">
         <div>
           
@@ -586,10 +587,10 @@ function updateAppointmentToNAIfNotComing(user) {
             
 
         </div>
-
+        </div>
         
       </div>
-      </div>
+      
     </div>
   );
 }
