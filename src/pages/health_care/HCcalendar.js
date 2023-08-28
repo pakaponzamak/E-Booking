@@ -68,6 +68,36 @@ export default function Calendar() {
     };
   }, []);
 
+
+  //------------------- Prepared For MySQL Database ----------------------// This "GET Method" Word Fine
+  //------------------- Prepared For MySQL Database ----------------------//
+  //------------------- Prepared For MySQL Database ----------------------//
+  /*const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/health_admin/hc_insert_api', {
+        method: 'GET',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setHealthCare(data);
+      } else {
+        console.error('Error:', response.status, response.statusText);
+        setMessage('Error occurred while fetching data.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('Error occurred while fetching data.');
+    }
+  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);*/
+
+  //------------------- ---------------------------- ----------------------//
+  //------------------- ---------------------------- ----------------------//
+  //------------------- ---------------------------- ----------------------//
+  
   useEffect(() => {
     const db = getDatabase();
     const userRef = ref(db, "users");
