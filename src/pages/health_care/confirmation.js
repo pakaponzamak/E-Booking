@@ -31,7 +31,7 @@ export default function confirmation() {
   const [name, setName] = useState("");
   const [emp, setEmp] = useState("");
   const [checkInStatus, setCheckInStatus] = useState("");
-  const [relationUser,setRelationUser] = useState([]);
+  const [relationUser, setRelationUser] = useState([]);
 
   var today = new Date();
   var options = { month: "short", day: "numeric" };
@@ -121,58 +121,68 @@ export default function confirmation() {
     fetchCheckIn();
   }, [users]);
 
-  function isAppointmentWithin15Minutes(appointmentTime,appointmentDate) {
-  const currentTime = new Date(); // Get the current time
-  const date = currentTime.toISOString().split('T')[0];
-  const currentHour = currentTime.getHours();
-  const currentMinute = currentTime.getMinutes();
+  function isAppointmentWithin15Minutes(appointmentTime, appointmentDate) {
+    const currentTime = new Date(); // Get the current time
+    const date = currentTime.toISOString().split("T")[0];
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
 
-  const startTime = appointmentTime.split(":"); 
-  const appointmentHour = parseInt(startTime[0]); 
-  const appointmentMinute = parseInt(startTime[1]);
+    const startTime = appointmentTime.split(":");
+    const appointmentHour = parseInt(startTime[0]);
+    const appointmentMinute = parseInt(startTime[1]);
 
-  // Compare the date of the appointment and the current date
-  if (date === appointmentDate.split('T')[0]) {
-    // If the date is the same, check the time
-    const timeDiffInMinutes = (appointmentHour - currentHour) * 60 + (appointmentMinute - currentMinute);
-    
-    // Check if the appointment time is within 15 minutes of the current time
-    if (timeDiffInMinutes > 15 && timeDiffInMinutes >= 0) {
-      console.log("The user can check in. It's within 15 minutes of the appointment.");
-      return true;
+    // Compare the date of the appointment and the current date
+    if (date === appointmentDate.split("T")[0]) {
+      // If the date is the same, check the time
+      const timeDiffInMinutes =
+        (appointmentHour - currentHour) * 60 +
+        (appointmentMinute - currentMinute);
+
+      // Check if the appointment time is within 15 minutes of the current time
+      if (timeDiffInMinutes > 15 && timeDiffInMinutes >= 0) {
+        console.log(
+          "The user can check in. It's within 15 minutes of the appointment."
+        );
+        return true;
+      } else {
+        console.log(
+          "The appointment time has passed. The user cannot check in."
+        );
+        return false;
+      }
     } else {
-      console.log("The appointment time has passed. The user cannot check in.");
-      return false;
+      return true;
     }
-  } else {return true};
   }
-  
-// Function to update the appointment data to "N/A" if the user didn't come within 15 minutes before the appointment
-function updateAppointmentToNAIfNotComing(user) {
-  if (user?.health?.time) {
-    const isNotWithin15Minutes = !isAppointmentWithin15Minutes(user.health.time,user.health.date);
-    if (isNotWithin15Minutes && user.health.checkIn === false) {
-      // The appointment time is not within the next 15 minutes
-      // Update the appointment data to "N/A"
-      const db = getDatabase();
-      const userRef = ref(db, `users/${user.id}/health`);
-      const healthDataToUpdate = {
 
-        type: "N/A",
-        time: "N/A",
-        date: "N/A",
-        plant: "N/A",
-        relationship: "N/A",
-        checkInTime: "N/A",
-        pickedWhat: "N/A",
-        checkIn: false,
-      };
-      
-      update(userRef, healthDataToUpdate);
-      console.log(`Updated appointment for user with ID: ${user.id}`);
-    }else console.log("Check in already cannot delete")
+  // Function to update the appointment data to "N/A" if the user didn't come within 15 minutes before the appointment
+  function updateAppointmentToNAIfNotComing(user) {
+    if (user?.health?.time) {
+      const isNotWithin15Minutes = !isAppointmentWithin15Minutes(
+        user.health.time,
+        user.health.date
+      );
+      if (isNotWithin15Minutes && user.health.checkIn === false) {
+        // The appointment time is not within the next 15 minutes
+        // Update the appointment data to "N/A"
+        const db = getDatabase();
+        const userRef = ref(db, `users/${user.id}/health`);
+        const healthDataToUpdate = {
+          type: "N/A",
+          time: "N/A",
+          date: "N/A",
+          plant: "N/A",
+          relationship: "N/A",
+          checkInTime: "N/A",
+          pickedWhat: "N/A",
+          checkIn: false,
+        };
+
+        update(userRef, healthDataToUpdate);
+        console.log(`Updated appointment for user with ID: ${user.id}`);
+      } else console.log("Check in already cannot delete");
+    }
   }
-}
   // Now you can use the updateAppointmentToNAIfNotComing function inside the useEffect
   useEffect(() => {
     if (users.length > 0) {
@@ -276,6 +286,13 @@ function updateAppointmentToNAIfNotComing(user) {
     });
   };
 
+  const relationButtonHandler = async (e) => {
+    users.map(
+      (user) => relationButton(user.employeeId, user.firstName)
+      //user.checkIn = true
+    );
+  };
+
   function performDelete(idParameter, nameParameter) {
     const anotherEmployeeId = employeeId;
     const anotherName = firstName;
@@ -284,11 +301,6 @@ function updateAppointmentToNAIfNotComing(user) {
 
     if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
       for (const health of healthCare) {
-        console.log(
-          "Match found for employeeId in for:",
-          health.whoPickedThis,
-          anotherEmployeeId
-        );
         if (health.whoPickedThis === anotherEmployeeId) {
           const updates = {
             ["health/" +
@@ -370,9 +382,8 @@ function updateAppointmentToNAIfNotComing(user) {
       const postData = {
         firstName: nameParameter,
         employeeId: idParameter,
-      
       };
-      
+
       //updates["users/" + anotherEmployeeId + "/health/checkIn"] = true;
       //updates["users/" + anotherEmployeeId + "/health/checkInTime"] = dateTime;
       updates["users/" + anotherEmployeeId + "/health/type"] = "N/A";
@@ -384,7 +395,7 @@ function updateAppointmentToNAIfNotComing(user) {
       updates["users/" + anotherEmployeeId + "/health/pickedWhat"] = "N/A";
       //updates["users/" + anotherEmployeeId + "/health/pickedWhat"] = "N/A";
       Swal.fire("เช็คอินสำเร็จ", "", "success");
-    
+
       return update(ref(db), updates);
     } else if (
       idParameter === anotherEmployeeId &&
@@ -409,6 +420,36 @@ function updateAppointmentToNAIfNotComing(user) {
       return true;
     }
   }
+
+ function relationButton(idParameter, nameParameter) {
+    const anotherEmployeeId = employeeId;
+    const anotherName = firstName;
+    const db = getDatabase();
+
+      if (idParameter === anotherEmployeeId && nameParameter === anotherName) {
+        console.log("Data deleted successfully");
+        for (const relation of relationUser) {
+          if (relation.id === anotherEmployeeId) {
+            const locationRef = ref(
+              db,
+              "relation_health_care/" + anotherEmployeeId
+            );
+             remove(locationRef)
+              .then(() => {
+                // Data successfully deleted
+                console.log("Data deleted successfully");
+                Swal.fire("สำเร็จ", "", "success");
+              })
+              .catch((error) => {
+                // Handle any errors that occur during deletion
+                console.error("Error deleting data:", error);
+              });
+          }
+        }
+      }
+
+
+  }
   const getTimeFromString = (timeString) => {
     const [hours, minutes] = timeString.split(":");
     const currentTime = new Date();
@@ -421,176 +462,179 @@ function updateAppointmentToNAIfNotComing(user) {
     <div className={`${bai_jamjuree.className} bg-slate-100 h-max`}>
       <Analytics />
       <div>
-      <div className="flex justify-center item-center mb-10">
-        <div>
-          <div className="border p-6  mb-10 mt-28  rounded-xl bg-white drop-shadow-md">
-            {users.map((user) => {
-              const timeStart = getTimeFromString(user.health.time);
-              if (user.employeeId === emp && user.firstName === name) {
-                return (
-                  <div className=" mx-2">
-                    <div className="text mb-3 text-left ">ประวัติการจอง</div>
-                    <div className="border-b mb-3"></div>
-                    <div className="text-center mb-4 text-2xl ">
-                      <div>
-                        <strong>
-                          {user.health.type === "N/A"
-                            ? "ไม่พบคิวแพทย์"
-                            : user.health.type}
-                        </strong>
-                      </div>
-                    </div>
-                    <div className="flex justify-between mt-3">
-                      <div className="mb-1">
-                        วันที่ :{" "}
-                        <strong>
-                          {user.health.date &&
-                          !isNaN(new Date(user.health.date))
-                            ? new Date(user.health.date).toLocaleDateString(
-                                "th-TH",
-                                {
-                                  dateStyle: "long",
-                                }
-                              )
-                            : "-"}{" "}
-                        </strong>
-                      </div>
-                      <div className="mb-1">
-                        เวลา : <strong>{user.health.time === "N/A"
-                            ? "-"
-                            : user.health.time}</strong>
-                      </div>
-                    </div>
-                    {/* Render other user data */}
-
-                    {user.health && (
-                      <div>
-                        <div className="mb-1">
-                          Plant : <strong>{user.health.plant === "N/A"
-                            ? "-"
-                            : user.health.plant}</strong>
+        <div className="flex justify-center item-center mb-10">
+          <div>
+            <div className="border p-6  mb-10 mt-28  rounded-xl bg-white drop-shadow-md">
+              {users.map((user) => {
+                const timeStart = getTimeFromString(user.health.time);
+                if (user.employeeId === emp && user.firstName === name) {
+                  return (
+                    <div className=" mx-2">
+                      <div className="text mb-3 text-left ">ประวัติการจอง</div>
+                      <div className="border-b mb-3"></div>
+                      <div className="text-center mb-4 text-2xl ">
+                        <div>
+                          <strong>
+                            {user.health.type === "N/A"
+                              ? "ไม่พบคิวแพทย์"
+                              : user.health.type}
+                          </strong>
                         </div>
-                        <p className="mb-1">
-                          ชื่อ : <strong>{user.firstName}</strong>
-                        </p>
-                        <p className="mb-1">
-                          ID : <strong>{user.employeeId.toUpperCase()}</strong>
-                        </p>
-                        <p className="mb-3">อาการ : <strong>{user.health.symtom}</strong></p>
-                        
                       </div>
-                    )}
-                    
+                      <div className="flex justify-between mt-3">
+                        <div className="mb-1">
+                          วันที่ :{" "}
+                          <strong>
+                            {user.health.date &&
+                            !isNaN(new Date(user.health.date))
+                              ? new Date(user.health.date).toLocaleDateString(
+                                  "th-TH",
+                                  {
+                                    dateStyle: "long",
+                                  }
+                                )
+                              : "-"}{" "}
+                          </strong>
+                        </div>
+                        <div className="mb-1">
+                          เวลา :{" "}
+                          <strong>
+                            {user.health.time === "N/A"
+                              ? "-"
+                              : user.health.time}
+                          </strong>
+                        </div>
+                      </div>
+                      {/* Render other user data */}
+
+                      {user.health && (
+                        <div>
+                          <div className="mb-1">
+                            Plant :{" "}
+                            <strong>
+                              {user.health.plant === "N/A"
+                                ? "-"
+                                : user.health.plant}
+                            </strong>
+                          </div>
+                          <p className="mb-1">
+                            ชื่อ : <strong>{user.firstName}</strong>
+                          </p>
+                          <p className="mb-1">
+                            ID :{" "}
+                            <strong>{user.employeeId.toUpperCase()}</strong>
+                          </p>
+                          <p className="mb-3">
+                            อาการ : <strong>{user.health.symtom}</strong>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                return null;
+              })}
+              <div className="mb-20 border-b mt-6 "></div>
+            </div>
+            <div className="justify-between flex -translate-y-28 gap-10 mx-10 mt-10">
+              <button
+                onClick={cancelHandler}
+                className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+              >
+                ยกเลิก
+              </button>
+              <button
+                onClick={confirmHandler}
+                id="confirm-btn"
+                className="flex-grow text-white bg-[#16a34a] hover:bg-[#0E8A37] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+              >
+                เช็คอิน
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-center item-center">
+          <div>
+            {relationUser.map((user) => {
+              if (user.id === emp) {
+                return (
+                  <div className="border p-6  mb-10 mt-2  rounded-xl bg-white drop-shadow-md">
+                    <div className="mx-2">
+                      <div className="text mb-2 text-left">
+                        ประวัติการจองของญาติ
+                      </div>
+                      <div className="border-b mb-3"></div>
+                      <div className="text-center mb-4 text-2xl">
+                        <div>
+                          <strong>
+                            {user.type === null ? "ไม่พบคิวแพทย์" : user.type}
+                          </strong>
+                        </div>
+                      </div>
+                      <div className="flex justify-between mt-3">
+                        <div className="mb-1">
+                          วันที่ :{" "}
+                          <strong>
+                            {user.date && !isNaN(new Date(user.date))
+                              ? new Date(user.date).toLocaleDateString(
+                                  "th-TH",
+                                  {
+                                    dateStyle: "long",
+                                  }
+                                )
+                              : "-"}{" "}
+                          </strong>
+                        </div>
+                        <div className="mb-1">
+                          เวลา :{" "}
+                          <strong>
+                            {user.time === "N/A" ? "-" : user.time}
+                          </strong>
+                        </div>
+                      </div>
+                      {/* Render other user data */}
+                      {user && (
+                        <div>
+                          <div className="mb-1">
+                            Plant :{" "}
+                            <strong>
+                              {user.plant === "N/A" ? "-" : user.plant}
+                            </strong>
+                          </div>
+                          <p className="mb-1">
+                            ชื่อ : <strong>{user.name}</strong>
+                          </p>
+                          <p>
+                            อาการ : <strong>{user.symptom}</strong>
+                          </p>
+                        </div>
+                      )}
+                      <div className="mb-5 border-b mt-6 "></div>
+                    </div>
+                    <div className="justify-between flex  gap-10 mx-10 mt-2">
+                      <button
+                        onClick={relationButtonHandler}
+                        className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+                      >
+                        ยกเลิก
+                      </button>
+                      <button
+                        onClick={relationButtonHandler}
+                        id="confirm-btn"
+                        className="flex-grow text-white bg-[#16a34a] hover:bg-[#0E8A37] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
+                      >
+                        เช็คอิน
+                      </button>
+                    </div>
                   </div>
                 );
               }
               return null;
             })}
-            <div className="mb-20 border-b mt-6 "></div>
-          </div>
-          <div className="justify-between flex -translate-y-28 gap-10 mx-10 mt-10">
-            <button
-              onClick={cancelHandler}
-              className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
-            >
-              ยกเลิก
-            </button>
-            <button
-              onClick={confirmHandler}
-              id="confirm-btn"
-              className="flex-grow text-white bg-[#16a34a] hover:bg-[#0E8A37] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
-            >
-              เช็คอิน
-            </button>
           </div>
         </div>
-
-        
       </div>
-      
-      <div className="flex justify-center item-center">
-        <div>
-          
-          
-            {relationUser.map((user) => {
-             
-              if (user.id === emp ) {
-                return (
-                  <div className="border p-6  mb-10 mt-2  rounded-xl bg-white drop-shadow-md">
-                  <div className="mx-2">
-                    <div className="text mb-2 text-left">ประวัติการจองของญาติ</div>
-                    <div className="border-b mb-3"></div>
-                    <div className="text-center mb-4 text-2xl">
-                      <div>
-                        <strong>
-                          {user.type === null ? "ไม่พบคิวแพทย์" : user.type}
-                        </strong>
-                      </div>
-                    </div>
-                    <div className="flex justify-between mt-3">
-                      <div className="mb-1">
-                        วันที่ :{" "}
-                        <strong>
-                          {user.date && !isNaN(new Date(user.date))
-                            ? new Date(user.date).toLocaleDateString("th-TH", {
-                                dateStyle: "long",
-                              })
-                            : "-"}{" "}
-                        </strong>
-                      </div>
-                      <div className="mb-1">
-                        เวลา :{" "}
-                        <strong>
-                          {user.time === "N/A" ? "-" : user.time}
-                        </strong>
-                      </div>
-                    </div>
-                    {/* Render other user data */}
-                    {user && (
-                      <div>
-                        <div className="mb-1">
-                          Plant :{" "}
-                          <strong>
-                            {user.plant === "N/A" ? "-" : user.plant}
-                          </strong>
-                        </div>
-                        <p className="mb-1">
-                          ชื่อ : <strong>{user.name}</strong>
-                        </p>
-                        <p>
-                          อาการ : <strong>{user.symptom}</strong>
-                        </p>
-                      </div>
-                    )}
-                    <div className="mb-5 border-b mt-6 "></div>
-                  </div>
-                  <div className="justify-between flex  gap-10 mx-10 mt-2">
-                  <button
-              onClick={cancelHandler}
-              className="flex-grow text-white bg-[#D43732] hover:bg-[#FF4D49] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
-            >
-              ยกเลิก
-            </button>
-            <button
-              onClick={confirmHandler}
-              id="confirm-btn"
-              className="flex-grow text-white bg-[#16a34a] hover:bg-[#0E8A37] transition-colors duration-300 text-lg text-center px-8 py-3 rounded-xl font-semibold"
-            >
-              เช็คอิน
-            </button>
-                  </div>
-                </div>
-                );
-              } 
-              return null;
-            })}
-            
-
-        </div>
-        </div>
-        
-      </div>
-      
     </div>
   );
 }

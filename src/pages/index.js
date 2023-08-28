@@ -61,7 +61,6 @@ export default function Home() {
           time: "N/A",
           plant: "N/A",
           hall: "N/A",
-          
         },
         health: {
           firstName: firstName,

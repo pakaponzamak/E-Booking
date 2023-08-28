@@ -13,10 +13,10 @@ async function executeQuery(query, values) {
   }
 
     // Define a function to insert a new user into the MySQL database
-async function postUser(health_id, user_id, name, doctor_type, phone_num, time_selected, date_selected, plant_selected, checkIn_time, picked_what, chechOrNot, more_detail) {
+async function postRelation(user_id	,health_id,relation_type,name,phone_num,doctor_type,time_selected,date_selected,picked_what,more_detail) {
     const query =
-  'INSERT INTO health_care (health_id, user_id, name, doctor_type, phone_num, time_selected, date_selected, plant_selected, checkIn_time, picked_what, chechOrNot, more_detail) VALUES (?, ?,?,?,?,?,?,?,?,?,?,?)';
-    const values = [health_id, user_id, name, doctor_type, phone_num, time_selected, date_selected, plant_selected, checkIn_time, picked_what, chechOrNot, more_detail];
+  'INSERT INTO emp_relation (user_id, health_id, relation_type, name, phone_num, doctor_type, time_selected, date_selected, picked_what, more_detail) VALUES (?, ?,?,?,?,?,?,?,?,?)';
+    const values = [user_id	,health_id,relation_type,name,phone_num,doctor_type,time_selected,date_selected,picked_what,more_detail];
     try {
       await executeQuery(query, values);
     } catch (error) {
@@ -24,8 +24,8 @@ async function postUser(health_id, user_id, name, doctor_type, phone_num, time_s
     }
   }
     // Now you can use executeQuery to run MySQL queries
-const getHealth = async () => {
-    const query = 'SELECT * FROM health_care';
+const getUsersRelation = async () => {
+    const query = 'SELECT * FROM emp_relation';
     const health = await executeQuery(query);
     return health;
   };
@@ -34,15 +34,15 @@ export default async function health(req,res)
 {
     if (req.method === 'GET') {
         // Handle GET request, e.g., fetch data from MySQL
-        const health = await getHealth();
-        res.status(200).json(health);
+        const users = await getUsersRelation();
+        res.status(200).json(users);
       }
    else if (req.method === 'POST') {
         // Handle POST request, e.g., insert data into MySQL
-        const { health_id, user_id, name, doctor_type, phone_num, time_selected, date_selected, plant_selected, checkIn_time, picked_what, chechOrNot, more_detail } = req.body;
+        const { user_id	,relation_type,name,phone_num,doctor_type,time_selected,date_selected,picked_what,more_detail,health_id } = req.body;
       
         try {
-          await postUser(health_id, user_id, name, doctor_type, phone_num, time_selected, date_selected, plant_selected, checkIn_time, picked_what, chechOrNot, more_detail);
+          await postRelation(user_id,health_id,relation_type,name,phone_num,doctor_type,time_selected,date_selected,picked_what,more_detail);
           res.status(200).json({ message: 'Data inserted successfully' });
         } catch (error) {
           console.error('Error inserting data:', error);

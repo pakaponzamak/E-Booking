@@ -30,6 +30,8 @@ async function postUser(course_name	,time_Start,time_End,date_course,lecturer	,a
   }
 }
 
+
+
 export default async function tr_insert (req,res) {
   if (req.method === 'GET') {
     // Handle GET request, e.g., fetch data from MySQL
@@ -48,5 +50,8 @@ export default async function tr_insert (req,res) {
       console.error('Error inserting data:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
+  }
+  else {
+    res.status(405).json({error: 'This Method is Not Support'})
   }
 }

@@ -20,10 +20,10 @@ const getHealth = async () => {
   };
 
     // Define a function to insert a new user into the MySQL database
-async function postUser(health_care_name,health_date,time_Start,time_End,plant,doctor_type,who_picked,already_picked) {
+async function postUser( health_care_name, health_date, time_Start, time_End, plant, doctor_type, who_picked, already_picked) {
     const query =
-  'INSERT INTO insert_health_care (health_care_name,health_date,time_Start,time_End,plant,doctor_type,who_picked,already_picked) VALUES (?, ?,?,?,?,?,?,?)';
-    const values = [health_care_name,health_date,time_Start,time_End,plant,doctor_type,who_picked,already_picked];
+  'INSERT INTO insert_health_care ( health_care_name, health_date, time_Start, time_End, plant, doctor_type, who_picked, already_picked) VALUES (?, ?,?,?,?,?,?,?)';
+    const values = [ health_care_name, health_date, time_Start, time_End, plant, doctor_type, who_picked, already_picked];
     try {
       await executeQuery(query, values);
     } catch (error) {
@@ -39,10 +39,10 @@ export default async function health_care (req,res){
       }
       else if (req.method === 'POST') {
         // Handle POST request, e.g., insert data into MySQL
-        const { health_care_name,health_date,time_Start,time_End,plant,doctor_type,who_picked,already_picked } = req.body;
+        const { health_care_name, health_date, time_Start, time_End, plant, doctor_type, who_picked, already_picked} = req.body;
       
         try {
-          await postUser(health_care_name,health_date,time_Start,time_End,plant,doctor_type,who_picked,already_picked);
+          await postUser( health_care_name, health_date, time_Start, time_End, plant, doctor_type, who_picked, already_picked);
           res.status(200).json({ message: 'Data inserted successfully' });
         } catch (error) {
           console.error('Error inserting data:', error);
